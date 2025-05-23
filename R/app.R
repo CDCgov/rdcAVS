@@ -27,7 +27,6 @@
 #' campagneApp()
 #' }
 campagneApp <- function(...) {
-  pkgload::load_all()
   checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
   checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white;"
   gui <- fluidPage(
