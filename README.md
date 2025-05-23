@@ -1,0 +1,34 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# rdcAVS
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of rdcAVS is to streamline the process of creating SIA campaign
+folders. The package is designed to be portable, thanks to the use of
+`renv`. By default, the `.Renviron` file loads the library contained
+within the package. This ensures minimal set-up is required for building
+the app.
+
+## Installation
+
+You can install the development version of rdcAVS from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("mcuadera/rdcAVS")
+```
+
+## Example
+
+To run the app, simply run the following code:
+
+``` r
+library(rdcAVS)
+
+## basic example code
+campagneApp()
+```
