@@ -7,9 +7,10 @@
 #' than one record is passed unto the `dribble`, all records will have the same
 #' permissions as specified by the `permissions_table`.
 #'
-#' @param dribble `dribble` A dribble object to assign permissions to.
+#' @param campaign_name `str` Name of the campaign.
 #' @param permissions_table `tibble` A tibble with permissions info. Required
 #' columns are: `emailAddress` and `role`.
+#' @param dribble_files `dribble_files` A dribble object to assign permissions to.
 #'
 #' @details
 #' Please see [drive_share()](https://googledrive.tidyverse.org/reference/drive_share.html)
@@ -20,7 +21,11 @@
 #' @keywords internal
 #'
 #' @examples
-#' \dontrun{}
+#' \dontrun{
+#' files <- drive_find()
+#' set_permissions("CAMPAGNE_example", perm_data, files)
+#'
+#' }
 set_permissions <- function(campaign_name,
                             permissions_table,
                             dribble_files) {

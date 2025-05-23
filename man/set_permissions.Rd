@@ -7,10 +7,12 @@
 set_permissions(campaign_name, permissions_table, dribble_files)
 }
 \arguments{
+\item{campaign_name}{\code{str} Name of the campaign.}
+
 \item{permissions_table}{\code{tibble} A tibble with permissions info. Required
 columns are: \code{emailAddress} and \code{role}.}
 
-\item{dribble}{\code{dribble} A dribble object to assign permissions to.}
+\item{dribble_files}{\code{dribble_files} A dribble object to assign permissions to.}
 }
 \value{
 \code{NULL} upon success.
@@ -25,6 +27,10 @@ Please see \href{https://googledrive.tidyverse.org/reference/drive_share.html}{d
 for a full explanation on valid roles.
 }
 \examples{
-\dontrun{}
+\dontrun{
+files <- drive_find()
+set_permissions("CAMPAGNE_example", perm_data, files)
+
+}
 }
 \keyword{internal}

@@ -27,7 +27,7 @@
 #' campagneApp()
 #' }
 campagneApp <- function(...) {
-  devtools::load_all()
+  pkgload::load_all()
   checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
   checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white;"
   gui <- fluidPage(
@@ -535,7 +535,7 @@ campagneApp <- function(...) {
             antenne_target = input$selected_ant,
             zs_target = input$selected_zs,
             gdb = geo_data,
-            zs_masque = file.path("data", "zs_masque_template.xlsx"),
+            zs_masque = file.path("inst", "zs_masque_template.xlsx"),
             output_folder = selected_dir()
           )
 

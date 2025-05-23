@@ -5,8 +5,7 @@ Authors@R:
     person("Mervin Keith", "Cuadera", , "xrg9@cdc.com", role = c("aut", "cre"))
 Description: This app assists in creating campaigns and setting permissions for 
     campaigns in google drive.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -14,20 +13,23 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Imports: 
-    arrow,
-    devtools,
+    cli,
     doFuture,
     dplyr,
     DT,
     foreach,
+    fs,
     future,
     googledrive,
     lubridate,
     openxlsx,
+    pkgload,
     progressr,
+    purrr,
     readr,
     rstudioapi,
     shiny,
     shinyFiles,
     shinyjs,
-    stringr
+    stringr,
+    usethis
