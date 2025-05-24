@@ -32,7 +32,6 @@
 #' @importFrom rappdirs user_data_dir
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
-#' @importFrom stringi stri_escape_unicode
 ## usethis namespace: end
 
 utils::globalVariables(c("aires_de_sante", "antenne", "antennes", "debut", "email",

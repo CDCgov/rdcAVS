@@ -35,7 +35,7 @@ escape_non_ascii_only <- function(line) {
 #'
 #' @param char `chr`
 #'
-#' @returns
+#' @returns `bool` Whether it is an ASCII character or not
 #' @keywords internal
 #'
 is_ascii_char <- function(char) {

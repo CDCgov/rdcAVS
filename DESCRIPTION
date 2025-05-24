@@ -30,5 +30,6 @@ Imports:
     shiny,
     shinyFiles,
     shinyjs,
-    stringi,
     stringr
+Suggests:
+    stringi

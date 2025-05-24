@@ -31,7 +31,7 @@ campagneApp <- function(...) {
   checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white;"
   gui <- fluidPage(
     useShinyjs(),
-    titlePanel("Créateur de Campagne (beta)"),
+    titlePanel("Cr\u00e9ateur de Campagne (beta)"),
     verticalLayout(sidebarPanel(
       helpText(
         "Enter a unique campaign name. This will also be the main folder name."
@@ -41,16 +41,16 @@ campagneApp <- function(...) {
       tabsetPanel(
         ## Campaign creation panel ----
         tabPanel(
-          "Créer Une Campagne",
+          "Cr\u00e9er Une Campagne",
           sidebarPanel(
             textInput("campaign_name", "Nom de la Campagne"),
-            dateInput("start_date", "Début", language = "fr", format = "dd/mm/yyyy"),
+            dateInput("start_date", "D\u00e9but", language = "fr", format = "dd/mm/yyyy"),
             dateInput("end_date", "Fin", language = "fr", format = "dd/mm/yyyy"),
             br(),
             fluidRow(
               column(
                 8,
-                actionLink("select_all_prov", "Sélectionner Tout / Désélectionner Tout"),
+                actionLink("select_all_prov", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
                 h4("Provinces"),
                 tags$div(style = checkbox_title_style, tags$div(
                   style = checkbox_style,
@@ -59,7 +59,7 @@ campagneApp <- function(...) {
               ),
               column(
                 8,
-                actionLink("select_all_ant", "Sélectionner Tout / Désélectionner Tout"),
+                actionLink("select_all_ant", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
                 h4("Antennes"),
                 tags$div(style = checkbox_title_style, tags$div(
                   style = checkbox_style,
@@ -68,7 +68,7 @@ campagneApp <- function(...) {
               ),
               column(
                 8,
-                actionLink("select_all_zs", "Sélectionner Tout / Désélectionner Tout"),
+                actionLink("select_all_zs", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
                 h4("Zones de Sante"),
                 tags$div(style = checkbox_title_style, tags$div(
                   style = checkbox_style, checkboxGroupInput("selected_zs", NULL, choices = NULL)
@@ -77,33 +77,33 @@ campagneApp <- function(...) {
             ),
             shinyDirButton(
               "dir",
-              "Sélectionner le Répertoire Cible",
-              "Sélectionner un Dossier"
+              "S\u00e9lectionner le R\u00e9pertoire Cible",
+              "S\u00e9lectionner un Dossier"
             ),
             verbatimTextOutput("selected_dir"),
             br(),
-            actionButton("create_campaign", "Créer une Campagne", class = "btn-primary"),
+            actionButton("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
             width = 20
           ),
         ),
 
         ## Geo panel ----
         tabPanel(
-          "Géographiques",
+          "G\u00e9ographiques",
           fluidRow(
-            h4("Données Géographiques"),
-            fluidRow(column(8, fileInput("upload_geo", "Télécharger Un Fichier CSV Géographique",
+            h4("Donn\u00e9es G\u00e9ographiques"),
+            fluidRow(column(8, fileInput("upload_geo", "T\u00e9l\u00e9charger Un Fichier CSV G\u00e9ographique",
                                          accept = ".csv"
             ))),
             DTOutput("geo_table"),
             br(),
             fluidRow(column(
-              9, actionButton("delete_row", "Supprimer la sélection", class = "btn-danger"),
+              9, actionButton("delete_row", "Supprimer la s\u00e9lection", class = "btn-danger"),
               actionButton("undo_geo", "Annuler", icon = icon("undo")),
-              actionButton("redo_geo", "Rétablir", icon = icon("redo"))
+              actionButton("redo_geo", "R\u00e9tablir", icon = icon("redo"))
             ), br(), br()),
             actionButton("clear_geo", "Tout Effacer", icon = icon("trash"), class = "btn-danger"),
-            downloadButton("download_geo", "Télécharger la base de données géographique actuelle"),
+            downloadButton("download_geo", "T\u00e9l\u00e9charger la base de donn\u00e9es g\u00e9ographique actuelle"),
             fluidRow(
               br(),
               column(3, textInput("new_province", "Province")),
@@ -112,7 +112,7 @@ campagneApp <- function(...) {
               column(3, textInput("new_as", "Aires de Sante")),
               column(3, numericInput("new_pop", "Population Totale", value = 0))
             ),
-            fluidRow(column(3, actionButton("add_row", "Ajouter Une Entrée", class = "btn-success"))),
+            fluidRow(column(3, actionButton("add_row", "Ajouter Une Entr\u00e9e", class = "btn-success"))),
             br(),
             br()
           )
@@ -120,14 +120,14 @@ campagneApp <- function(...) {
 
         ## Permission panel ----
         tabPanel(
-          "Gérer les Autorisations",
+          "G\u00e9rer les Autorisations",
           fluidRow(
-            h4("Gérer les Niveaux d'Autorisation"),
+            h4("G\u00e9rer les Niveaux d'Autorisation"),
             fluidRow(column(
               8,
               fileInput(
                 "upload_permissions",
-                "Autorisations de Téléchargement CSV",
+                "Autorisations de T\u00e9l\u00e9chargement CSV",
                 accept = ".csv"
               )
             )),
@@ -135,9 +135,9 @@ campagneApp <- function(...) {
             br(),
             fluidRow(
               column(
-                8, actionButton("delete_permission", "Supprimer la Sélection", class = "btn-danger"),
+                8, actionButton("delete_permission", "Supprimer la S\u00e9lection", class = "btn-danger"),
                 actionButton("undo_perm", "Annuler", icon = icon("undo")),
-                actionButton("redo_perm", "Rétablir", icon = icon("redo"))
+                actionButton("redo_perm", "R\u00e9tablir", icon = icon("redo"))
               ),
               br(), br()
             ),
@@ -149,7 +149,7 @@ campagneApp <- function(...) {
             ),
             downloadButton(
               "download_permissions",
-              "Télécharger les Autorisations Actuelles"
+              "T\u00e9l\u00e9charger les Autorisations Actuelles"
             ),
             br(),
             br(),
@@ -174,7 +174,7 @@ campagneApp <- function(...) {
                   "perm_province",
                   "Province",
                   choices = NULL,
-                  options = list(placeholder = "Sélectionnez une province")
+                  options = list(placeholder = "S\u00e9lectionnez une province")
                 )
               )),
 
@@ -185,7 +185,7 @@ campagneApp <- function(...) {
                   "perm_antenne",
                   "Antenne",
                   choices = NULL,
-                  options = list(placeholder = "Sélectionnez une antenne")
+                  options = list(placeholder = "S\u00e9lectionnez une antenne")
                 )
               )),
 
@@ -196,7 +196,7 @@ campagneApp <- function(...) {
                   "perm_zs",
                   "Zones de Sante",
                   choices = NULL,
-                  options = list(placeholder = "Sélectionnez une zone de santé")
+                  options = list(placeholder = "S\u00e9lectionnez une zone de sant\u00e9")
                 )
               ))
             ),
@@ -221,7 +221,7 @@ campagneApp <- function(...) {
             ))
           ),
           fluidRow(
-            h4("Sélection de Campagne"),
+            h4("S\u00e9lection de Campagne"),
             uiOutput("campaign_drive_picker"),
             actionButton("set_permissions_btn", "Set Permissions", class = "btn-primary"),
             br(),
@@ -243,8 +243,8 @@ campagneApp <- function(...) {
     if (!dir.exists(cache_dir)) {
       # First-time user: prompt for setup
       showModal(modalDialog(
-        title = "Initialisation des Données",
-        paste0("Ceci est la première fois que vous exécutez l'application. Les données géographiques et les autorisations seront initialisées.",
+        title = "Initialisation des Donn\u00e9es",
+        paste0("Ceci est la premi\u00e8re fois que vous ex\u00e9cutez l'application. Les donn\u00e9es g\u00e9ographiques et les autorisations seront initialis\u00e9es.",
                "\n You can find the folders here: ", cache_dir),
         easyClose = TRUE,
         footer = modalButton("OK")
@@ -565,9 +565,9 @@ campagneApp <- function(...) {
 
           showModal(
             modalDialog(
-              title = "Succès",
+              title = "Succ\u00e8s",
               paste(
-                "Dossiers de campagne créés à :",
+                "Dossiers de campagne cr\u00e9\u00e9s \u00e0 :",
                 file.path(selected_dir(), input$campaign_name)
               ),
               easyClose = TRUE,
@@ -580,7 +580,7 @@ campagneApp <- function(...) {
           showModal(
             modalDialog(
               title = "Erreur",
-              paste("Quelque chose s'est mal passé:", e$message),
+              paste("Quelque chose s'est mal pass\u00e9:", e$message),
               easyClose = TRUE,
               footer = NULL,
               style = "background-color: #fae8e8;"
@@ -780,7 +780,7 @@ campagneApp <- function(...) {
 
       geo_data <- arrange(geo_values$data)
       save(geo_data, file = geo_cache_path)
-      showNotification("Données géographiques mises à jour et enregistrées",
+      showNotification("Donn\u00e9es g\u00e9ographiques mises \u00e0 jour et enregistr\u00e9es",
                        type = "message"
       )
       updateGeoCheckboxes()
@@ -803,10 +803,10 @@ campagneApp <- function(...) {
 
         geo_data <- geo_values$data
         save(geo_data, file = geo_cache_path)
-        showNotification("Ligne ajoutée et enregistrée.", type = "message")
+        showNotification("Ligne ajout\u00e9e et enregistr\u00e9e.", type = "message")
         updateGeoCheckboxes()
       } else {
-        showNotification("Entrée en double. Non ajoutée.", type = "error")
+        showNotification("Entr\u00e9e en double. Non ajout\u00e9e.", type = "error")
       }
     })
 
@@ -819,7 +819,7 @@ campagneApp <- function(...) {
         geo_values$data <- arrange(geo_values$data[-selected, ])
         geo_data <- geo_values$data
         save(geo_data, file = geo_cache_path)
-        showNotification("Ligne supprimée", type = "message")
+        showNotification("Ligne supprim\u00e9e", type = "message")
         updateGeoCheckboxes()
       }
     })
@@ -847,7 +847,7 @@ campagneApp <- function(...) {
       showModal(
         modalDialog(
           title = "Confirmation",
-          "Êtes-vous sûr de vouloir effacer toutes les données géographiques?",
+          "\u00cates-vous s\u00fbr de vouloir effacer toutes les donn\u00e9es g\u00e9ographiques?",
           footer = tagList(
             modalButton("Annuler"),
             actionButton("confirm_clear_geo", "Confirmer", class = "btn-danger")
@@ -865,7 +865,7 @@ campagneApp <- function(...) {
       geo_data <- geo_values$data
       save(geo_data, file = geo_cache_path)
 
-      showNotification("Toutes les données géographiques ont été effacées",
+      showNotification("Toutes les donn\u00e9es g\u00e9ographiques ont \u00e9t\u00e9 effac\u00e9es",
                        type = "warning"
       )
       updateGeoCheckboxes()
@@ -878,15 +878,15 @@ campagneApp <- function(...) {
     # Dynamically list campaign folders in Drive after auth
     drive_files <- reactiveVal(NULL)
     campaign_drive_folders <- reactiveVal(NULL)
-    auth_status <- reactiveVal("Non authentifié")
+    auth_status <- reactiveVal("Non authentifi\u00e9")
 
     observeEvent(input$auth_drive, {
       drive_auth(email = NA) # Will open browser to authenticate
       if (drive_has_token()) {
         showModal(
           modalDialog(
-            title = "Récupération des informations de Google Drive",
-            "Veuillez patienter pendant que les données sont collectées...",
+            title = "R\u00e9cup\u00e9ration des informations de Google Drive",
+            "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
             easyClose = FALSE,
             footer = NULL
           )
@@ -902,8 +902,8 @@ campagneApp <- function(...) {
 
         showModal(
           modalDialog(
-            title = "Succès",
-            "Données Google Drive collectées.",
+            title = "Succ\u00e8s",
+            "Donn\u00e9es Google Drive collect\u00e9es.",
             easyClose = TRUE,
             footer = NULL,
             style = "background-color: #ecfae8;"
@@ -912,10 +912,10 @@ campagneApp <- function(...) {
 
         drive_files(files)
         campaign_drive_folders(folders)
-        auth_status("✅ Suthentifié avec succès avec Google Drive.")
+        auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
         show("refresh_drive")
       } else {
-        auth_status("❌ Échec de l'authentification.")
+        auth_status("\u274c \u00c9chec de l'authentification.")
       }
     })
 
@@ -929,8 +929,8 @@ campagneApp <- function(...) {
       if (drive_has_token()) {
         showModal(
           modalDialog(
-            title = "Récupération des informations de Google Drive",
-            "Veuillez patienter pendant que les données sont collectées...",
+            title = "R\u00e9cup\u00e9ration des informations de Google Drive",
+            "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
             easyClose = FALSE,
             footer = NULL
           )
@@ -946,8 +946,8 @@ campagneApp <- function(...) {
 
         showModal(
           modalDialog(
-            title = "Succès",
-            "Données Google Drive collectées.",
+            title = "Succ\u00e8s",
+            "Donn\u00e9es Google Drive collect\u00e9es.",
             easyClose = TRUE,
             footer = NULL,
             style = "background-color: #ecfae8;"
@@ -1174,7 +1174,7 @@ campagneApp <- function(...) {
       perm_data <- perm_values$data
       save(perm_data, file = perm_cache_path)
 
-      showNotification("Données d'autorisation mises à jour et enregistrées",
+      showNotification("Donn\u00e9es d'autorisation mises \u00e0 jour et enregistr\u00e9es",
                        type = "message"
       )
       updateGeoCheckboxes()
@@ -1237,9 +1237,9 @@ campagneApp <- function(...) {
 
         perm_data <- perm_values$data
         save(perm_data, file = perm_cache_path)
-        showNotification("Ligne ajoutée et enregistrée.", type = "message")
+        showNotification("Ligne ajout\u00e9e et enregistr\u00e9e.", type = "message")
       } else {
-        showNotification("Entrée en double. Non ajoutée.", type = "error")
+        showNotification("Entr\u00e9e en double. Non ajout\u00e9e.", type = "error")
       }
     })
 
@@ -1254,7 +1254,7 @@ campagneApp <- function(...) {
         perm_values$data <- arrange(perm_values$data[-selected, ])
         perm_data <- perm_values$data
         save(perm_data, file = perm_cache_path)
-        showNotification("Ligne supprimée", type = "message")
+        showNotification("Ligne supprim\u00e9e", type = "message")
       }
     })
 
@@ -1283,7 +1283,7 @@ campagneApp <- function(...) {
 
           showModal(
             modalDialog(
-              title = "Succès",
+              title = "Succ\u00e8s",
               "Permissions set",
               easyClose = TRUE,
               footer = NULL,
@@ -1295,7 +1295,7 @@ campagneApp <- function(...) {
           showModal(
             modalDialog(
               title = "Erreur",
-              paste("Quelque chose s'est mal passé:", e$message),
+              paste("Quelque chose s'est mal pass\u00e9:", e$message),
               easyClose = TRUE,
               footer = NULL,
               style = "background-color: #fae8e8;"
@@ -1326,7 +1326,7 @@ campagneApp <- function(...) {
       showModal(
         modalDialog(
           title = "Confirmation",
-          "Êtes-vous sûr de vouloir effacer toutes les autorisations?",
+          "\u00cates-vous s\u00fbr de vouloir effacer toutes les autorisations?",
           footer = tagList(
             modalButton("Annuler"),
             actionButton("confirm_clear_perm", "Confirmer", class = "btn-danger")
@@ -1343,7 +1343,7 @@ campagneApp <- function(...) {
       perm_data <- perm_values$data
       save(perm_data, file = perm_cache_path)
 
-      showNotification("Toutes les autorisations ont été effacées", type = "warning")
+      showNotification("Toutes les autorisations ont \u00e9t\u00e9 effac\u00e9es", type = "warning")
     })
 
     ### Outputs ----
