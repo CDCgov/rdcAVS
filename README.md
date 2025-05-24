@@ -13,7 +13,8 @@ folders in the DRC. The package is designed to be portable and secure.
 Data for the geographies and permissions are stored locally and are
 uploaded by the user directly. Currently, the package comes with the
 campaign template, but future versions will allow users to upload their
-own modified campaign template file.
+own modified campaign template file. The package is still under
+development, but a beta version is available.
 
 ## Installation
 
@@ -27,11 +28,11 @@ pak::pak("mcuadera/rdcAVS")
 
 ## Example
 
-To run the app, simply run the following code:
+There is only one function in this package. To deploy the app locally,
+simply run the following code:
 
 ``` r
 library(rdcAVS)
 
-## basic example code
 campagneApp()
 ```
