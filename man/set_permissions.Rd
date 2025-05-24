@@ -30,7 +30,6 @@ for a full explanation on valid roles.
 \dontrun{
 files <- drive_find()
 set_permissions("CAMPAGNE_example", perm_data, files)
-
 }
 }
 \keyword{internal}

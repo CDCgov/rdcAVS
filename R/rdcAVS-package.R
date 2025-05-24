@@ -35,9 +35,11 @@
 #' @importFrom shinyjs useShinyjs
 ## usethis namespace: end
 
-utils::globalVariables(c("aires_de_sante", "antenne", "antennes", "debut", "email",
-                         "fin", "level", "local_path", "masque_names",
-                         "mime_type", "path", "population_totale", "province", "provinces", "role",
-                         "x", "zone_de_sante", "zones_de_sante"))
+utils::globalVariables(c(
+  "aires_de_sante", "antenne", "antennes", "debut", "email",
+  "fin", "level", "local_path", "masque_names",
+  "mime_type", "path", "population_totale", "province", "provinces", "role",
+  "x", "zone_de_sante", "zones_de_sante"
+))
 
 NULL

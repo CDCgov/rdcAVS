@@ -1,4 +1,4 @@
-#Public functions ----
+# Public functions ----
 
 #' Sets the permissions across dribbles based on permissions table
 #'
@@ -24,7 +24,6 @@
 #' \dontrun{
 #' files <- drive_find()
 #' set_permissions("CAMPAGNE_example", perm_data, files)
-#'
 #' }
 set_permissions <- function(campaign_name,
                             permissions_table,
@@ -35,8 +34,7 @@ set_permissions <- function(campaign_name,
                                  province = NA,
                                  antenne = NA,
                                  zone_de_sante = NA) {
-    switch(
-      level,
+    switch(level,
       "global" = paste0(campaign_name, "/"),
       "province" = paste0(campaign_name, "/", province, "/"),
       "antenne" = paste0(campaign_name, "/", province, "/", antenne, "/"),
@@ -51,7 +49,7 @@ set_permissions <- function(campaign_name,
         "/"
       ),
       NA
-    )  # Return NA if level doesn't match any case
+    ) # Return NA if level doesn't match any case
   }
 
   # Create associations for each dribble
@@ -125,30 +123,30 @@ set_permissions_parallel <- function(dribble_permissions) {
         x = xs,
         .packages = c("googledrive")
       ), {
-
         p()
 
-        tryCatch({
-          purrr::pwalk(dribble_permissions[x, c("email", "id", "role")],
-                       \(email, id, role) googledrive::with_drive_quiet(
-                         googledrive::drive_share(googledrive::as_id(id),
-                                                  type = "user",
-                                                  role = role,
-                                                  emailAddress = email)
-                       ),
-                       .progress = TRUE)
-        }, error = \(e) {
-          cli::cli_alert_info("Error setting permissions to: ")
-          record <- dribble_permissions[x, ]
-          cli::cli_alert_info(paste0("Email: ", record$email," ", "Dribble ID: ", record$id))
-          invisible()
-        })
-
-      }
-      )
-  }
-  )
+        tryCatch(
+          {
+            purrr::pwalk(dribble_permissions[x, c("email", "id", "role")],
+              \(email, id, role) googledrive::with_drive_quiet(
+                googledrive::drive_share(googledrive::as_id(id),
+                  type = "user",
+                  role = role,
+                  emailAddress = email
+                )
+              ),
+              .progress = TRUE
+            )
+          },
+          error = \(e) {
+            cli::cli_alert_info("Error setting permissions to: ")
+            record <- dribble_permissions[x, ]
+            cli::cli_alert_info(paste0("Email: ", record$email, " ", "Dribble ID: ", record$id))
+            invisible()
+          }
+        )
+      })
+  })
 
   invisible()
-
 }

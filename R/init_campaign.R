@@ -35,9 +35,10 @@ init_campaign <- function(start_date,
                           zs_target = NULL,
                           gdb = NULL,
                           zs_masque = system.file("extdata", "zs_masque_template.xlsx",
-                                                  package = "rdcAVS"),
+                            package = "rdcAVS"
+                          ),
                           output_folder = campaign_folder) {
-  #start
+  # start
   start_time <- Sys.time()
 
   # Format the start and end dates
@@ -98,7 +99,7 @@ init_campaign <- function(start_date,
 
   if (!is.null(zs_target)) {
     staged_folder <- staged_folder |> dplyr::filter(zones_de_sante %in% zs_target |
-                                                      antennes %in% antenne_target)
+      antennes %in% antenne_target)
   }
 
   # Alert user for how many ZS folders will be created
@@ -155,8 +156,9 @@ init_campaign <- function(start_date,
   # Add the masques to each folder
   cli::cli_process_start("Creating template files")
   purrr::walk(folder_structure$masque_path,
-              \(x) file.copy(zs_masque, x),
-              .progress = TRUE)
+    \(x) file.copy(zs_masque, x),
+    .progress = TRUE
+  )
   cli::cli_process_done()
 
   # Edit the masques and add information
@@ -173,11 +175,14 @@ init_campaign <- function(start_date,
     "MB"
   ))
 
-  cli::cli_alert_success(paste0("Campaign successfully initialized in ",
-                                round(difftime(Sys.time(),
-                                         start_time, units = "mins"), 2), " mins!"))
+  cli::cli_alert_success(paste0(
+    "Campaign successfully initialized in ",
+    round(difftime(Sys.time(),
+      start_time,
+      units = "mins"
+    ), 2), " mins!"
+  ))
   invisible()
-
 }
 
 # Private functions ----
@@ -195,27 +200,29 @@ init_campaign <- function(start_date,
 #' @keywords internal
 #'
 validate_geography <- function(gdb, geo_vector, spatial_scale) {
-
   check <- switch(spatial_scale,
-                  "prov" = unique(dplyr::pull(gdb, "provinces")),
-                  "zs" = unique(dplyr::pull(gdb, "zones_de_sante")),
-                  "as" = unique(dplyr::pull(gdb, "aires_de_sante")),
-                  "ant" = unique(dplyr::pull(gdb, "antennes"))
+    "prov" = unique(dplyr::pull(gdb, "provinces")),
+    "zs" = unique(dplyr::pull(gdb, "zones_de_sante")),
+    "as" = unique(dplyr::pull(gdb, "aires_de_sante")),
+    "ant" = unique(dplyr::pull(gdb, "antennes"))
   )
 
   check <- setdiff(geo_vector, check)
 
   col_name <- switch(spatial_scale,
-                     "prov" = "provinces",
-                     "zs" = "zones de sante",
-                     "as" = "aires de sante",
-                     "ant" = "antennes")
+    "prov" = "provinces",
+    "zs" = "zones de sante",
+    "as" = "aires de sante",
+    "ant" = "antennes"
+  )
 
   if (length(check) > 0) {
     cli::cli_alert_warning(paste0("The following ", col_name, " are not in the geodatabase: "))
     cli::cli_li(check)
-    cli::cli_abort(paste0("\nPlease double check or add this entry into the geodatabase. ",
-                          "To add a new entry to the geodatabase, please see: ?add_gdb_record()"))
+    cli::cli_abort(paste0(
+      "\nPlease double check or add this entry into the geodatabase. ",
+      "To add a new entry to the geodatabase, please see: ?add_gdb_record()"
+    ))
   } else {
     cli::cli_alert_success(paste0("All ", col_name, " in the geodatabase"))
   }
@@ -242,7 +249,6 @@ check_folder_size <- function(folder_path) {
 }
 
 edit_zs_template_parallel <- function(template_info) {
-
   doFuture::registerDoFuture()
 
   if (stringr::str_starts(Sys.getenv("SF_PARTNER"), "posit_workbench")) {
@@ -263,55 +269,68 @@ edit_zs_template_parallel <- function(template_info) {
         .packages = c("openxlsx"),
         .export = "template_info"
       ), {
-
         p()
 
         edit_zs_template <- function(template_info) {
           template_file <- openxlsx::loadWorkbook(template_info$masque_path)
 
-          openxlsx::writeData(template_file, sheet = 1, template_info$debut,
-                              startRow = 2, startCol = "B")
-          openxlsx::writeData(template_file, sheet = 1, template_info$fin,
-                              startRow = 2, startCol = "D")
-          openxlsx::writeData(template_file, sheet = 1, template_info$period,
-                              startRow = 1, startCol = "B")
+          openxlsx::writeData(template_file,
+            sheet = 1, template_info$debut,
+            startRow = 2, startCol = "B"
+          )
+          openxlsx::writeData(template_file,
+            sheet = 1, template_info$fin,
+            startRow = 2, startCol = "D"
+          )
+          openxlsx::writeData(template_file,
+            sheet = 1, template_info$period,
+            startRow = 1, startCol = "B"
+          )
 
           if ("provinces" %in% names(template_info)) {
-            openxlsx::writeData(template_file, sheet = 1, template_info$provinces,
-                                startRow = 1, startCol = "K")
+            openxlsx::writeData(template_file,
+              sheet = 1, template_info$provinces,
+              startRow = 1, startCol = "K"
+            )
           }
 
           if ("antennes" %in% names(template_info)) {
-            openxlsx::writeData(template_file, sheet = 1, template_info$antennes,
-                                startRow = 1, startCol = "P")
+            openxlsx::writeData(template_file,
+              sheet = 1, template_info$antennes,
+              startRow = 1, startCol = "P"
+            )
           }
 
           if ("zones_de_sante" %in% names(template_info)) {
-            openxlsx::writeData(template_file, sheet = 1, template_info$zones_de_sante,
-                                startRow = 1, startCol = "V")
+            openxlsx::writeData(template_file,
+              sheet = 1, template_info$zones_de_sante,
+              startRow = 1, startCol = "V"
+            )
           }
 
-          openxlsx::writeData(template_file, sheet = 1,
-                              unlist(template_info$aires_de_sante),
-                              startRow = 4, startCol = "D")
+          openxlsx::writeData(template_file,
+            sheet = 1,
+            unlist(template_info$aires_de_sante),
+            startRow = 4, startCol = "D"
+          )
 
-          openxlsx::writeData(template_file, sheet = 1,
-                              unlist(template_info$population_totale),
-                              startRow = 4, startCol = "H")
+          openxlsx::writeData(template_file,
+            sheet = 1,
+            unlist(template_info$population_totale),
+            startRow = 4, startCol = "H"
+          )
 
           file.remove(template_info$masque_path)
 
           openxlsx::saveWorkbook(template_file, template_info$masque_path,
-                                 overwrite = TRUE)
+            overwrite = TRUE
+          )
 
           invisible()
         }
         edit_zs_template(template_info[x, ])
-
-      }
-      )
-  }
-  )
+      })
+  })
 
   invisible()
 }
