@@ -12,12 +12,24 @@
 # Styles
 
 
-#' Main function
+#' Run the rdcAVS application
 #'
 #' @description
-#' This function gets called to run the app.
+#' The rdcAVS application deploys to the web browser locally. It consists of three
+#' tabs that creates a campaign, add geographic information, and set Google Drive
+#' permissions. Creating a campaign outputs a folder prefixed with "CAMPAGNE_",
+#' which contains a hierarchical structure, going from the largest geographic unit (Province)
+#' to the lowest geographic unit (Zone de Santé). Within the Zone de Santé folder, contains
+#' a template file.
 #'
-#' @param ... Optional parameters. Practically speaking, not used.
+#' @details
+#' The campaign creation tab takes valid input based on what is given in the geographic
+#' information tab. Likewise, entries in the permissions database also depend on the
+#' geographic information tab to ensure consistency, especially when non-global
+#' permissions are set.
+#'
+#' Both permissions and geographic information is stored locally in a user's machine.
+#'
 #'
 #' @returns None.
 #' @export
@@ -26,7 +38,7 @@
 #' \dontrun{
 #' campagneApp()
 #' }
-campagneApp <- function(...) {
+campagneApp <- function() {
   runApp(
     {
       checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
