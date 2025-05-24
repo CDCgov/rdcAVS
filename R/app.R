@@ -291,18 +291,12 @@ campagneApp <- function() {
       # Server ----
       server <- function(input, output, session) {
         ## Loading assets (pics) ----
-        showModal(modalDialog(
-          title = "Chargement",
-          "Veuillez patienter pendant que l'application se charge...",
-          footer = NULL,
-          size = "s",
-          easyClose = FALSE
-        ))
 
         ## Loading data ----
 
         ### Creating local data cache ----
         cache_dir <- user_data_dir("rdcAVS") # OS-specific user data dir
+        cli::cli_alert(paste0("Cache dir: ", cache_dir))
 
         if (!dir.exists(cache_dir)) {
           # First-time user: prompt for setup
@@ -424,7 +418,6 @@ campagneApp <- function() {
           }
         })
 
-
         output$selected_dir <- renderText({
           selected_dir()
         })
@@ -452,9 +445,6 @@ campagneApp <- function() {
             },
             deleteFile = FALSE
           )
-
-          removeModal()
-
 
           #### Geographic selection observers ----
           current_data <- geo_data_reactive()
