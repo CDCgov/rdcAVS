@@ -1,4 +1,6 @@
 ---
+title: rdcAVS
+author: Mervin Keith Cuadera
 output: github_document
 ---
 
@@ -13,7 +15,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-# rdcAVS
+```{r, echo = FALSE}
+shiny::img(src = "man/figures/logo.svg", 
+           style = "position:absolute; top:0; left:350px; padding:3px; height: 90px;")
+```
 
 <!-- badges: start -->
 <!-- badges: end -->

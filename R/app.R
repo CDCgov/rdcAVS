@@ -39,7 +39,10 @@ campagneApp <- function(...) {
 
     tags$div(
       style = "display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;",
-      tags$h2("Cr\u00e9ateur de Campagne", style = "margin: 0; text-align: right; flex-grow: 1;"),
+      tags$div(
+        style = "display: flex; gap: 15px;",
+        imageOutput("logo", height = "60px"),
+      ),
       tags$div(style = "flex-grow: 40;"),
       tags$div(
         style = "display: flex; gap: 15px;",
@@ -253,20 +256,20 @@ campagneApp <- function(...) {
     border-top: 1px solid #ddd;
     margin-top: 40px;
   ",
-      "Developed by the CDC Surveillance, Innovation, and Research Team (2025)"
+      "Developed by the CDC Polio Eradication Branch Surveillance, Innovation, and Research Team (2025)"
     ))
 
   # Server ----
   server <- function(input, output, session) {
 
-    ## Render images ----
-    output$drc_cdc_logo <- renderImage({
-      list(
-        src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
-        width = 160,
-        height = 80
-      )
-    }, deleteFile = FALSE)
+    ## Loading assets (pics) ----
+    showModal(modalDialog(
+      title = "Chargement",
+      "Veuillez patienter pendant que l'application se charge...",
+      footer = NULL,
+      size = "s",
+      easyClose = FALSE
+    ))
 
     ## Loading data ----
 
@@ -398,6 +401,26 @@ campagneApp <- function(...) {
 
     ### Observer ----
     observe({
+
+      #### Render images ----
+      output$drc_cdc_logo <- renderImage({
+        list(
+          src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
+          width = 200,
+          height = 80
+        )
+      }, deleteFile = FALSE)
+      output$logo <- renderImage({
+        list(
+          src = system.file("man", "figures", "logo.svg", package = "rdcAVS"),
+          width = 80,
+          height = 80
+        )
+      }, deleteFile = FALSE)
+
+      removeModal()
+
+
       #### Geographic selection observers ----
       current_data <- geo_data_reactive()
 

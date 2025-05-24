@@ -1,8 +1,9 @@
+rdcAVS
+================
+Mervin Keith Cuadera
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# rdcAVS
-
+<img src="man/figures/logo.svg" style="position:absolute; top:0; left:350px; padding:3px; height: 90px;"/>
 <!-- badges: start -->
 <!-- badges: end -->
 
