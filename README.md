@@ -1,12 +1,12 @@
 rdcAVS
 ================
-Mervin Keith Cuadera
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-<img src="man/figures/logo.svg" alt="" style = "position:absolute; top:0; left:50%; padding:5px; height: 90px;" />
-
+<img src="man/figures/logo.svg" alt="" style="position:absolute; top:0; left:50%; padding:5px; height: 90px;"/>
 <!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 The goal of rdcAVS is to streamline the process of creating SIA campaign
