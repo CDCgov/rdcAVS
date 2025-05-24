@@ -47,7 +47,9 @@ init_campaign <- function(start_date,
 
   # Check if the ZS masque template is in the campaign folder
   if (!file.exists(zs_masque)) {
-    print(zs_masque)
+    if (zs_masque == "") {
+      cli::cli("data not found in package.")
+    }
     cli::cli_abort(paste0(
       "Please add the zone de sante template file in the ",
       "campaign folder."
