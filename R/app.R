@@ -155,6 +155,12 @@ campagneApp <- function(...) {
                   "Autorisations de T\u00e9l\u00e9chargement CSV",
                   accept = ".csv"
                 )
+              ),
+              helpText(paste0(
+                'Si le niveau est "global", les zones g\u00e9ographiques sont facultatives.',
+                " Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux.\n\n",
+                'Par exemple, si le niveau est "zone de sante",',
+                ' incluez une valeur pour les colonnes "province", "antenne" et "zone de sante".'
               )),
               DT::DTOutput("permissions_table"),
               br(),
@@ -163,12 +169,6 @@ campagneApp <- function(...) {
                   8, actionButton("delete_permission", "Supprimer la S\u00e9lection", class = "btn-danger"),
                   actionButton("undo_perm", "Annuler", icon = icon("undo")),
                   actionButton("redo_perm", "R\u00e9tablir", icon = icon("redo"))
-                ),
-                helpText(paste0(
-                  'Si le niveau est "global", les zones g\u00e9ographiques sont facultatives.',
-                  " Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux.\n\n",
-                  'Par exemple, si le niveau est "zone de sante",',
-                  ' incluez une valeur pour les colonnes "province", "antenne" et "zone de sante".'
                 )),
                 br(), br()
               ), column(
