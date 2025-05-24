@@ -8,6 +8,13 @@
 \description{
 This app assists in creating campaigns and setting permissions for campaigns in google drive.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://mcuadera.github.io/rdcAVS/}
+}
+
+}
 \author{
 \strong{Maintainer}: Mervin Keith Cuadera \email{xrg9@cdc.com}
 

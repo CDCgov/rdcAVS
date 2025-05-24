@@ -2,7 +2,6 @@ rdcAVS
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<img src="man/figures/logo.svg" alt="" style="position:absolute; top:0; left:50%; padding:5px; height: 90px;"/>
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -10,11 +9,11 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 The goal of rdcAVS is to streamline the process of creating SIA campaign
-folders. The package is designed to be portable and secure. Data for the
-geographies and permissions are stored locally and are uploaded by the
-user directly. Currently, the package comes with the campaign template,
-but future versions will allow users to upload their own modified
-campaign template file.
+folders in the DRC. The package is designed to be portable and secure.
+Data for the geographies and permissions are stored locally and are
+uploaded by the user directly. Currently, the package comes with the
+campaign template, but future versions will allow users to upload their
+own modified campaign template file.
 
 ## Installation
 
