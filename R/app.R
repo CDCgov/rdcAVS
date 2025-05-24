@@ -559,7 +559,8 @@ campagneApp <- function(...) {
             antenne_target = input$selected_ant,
             zs_target = input$selected_zs,
             gdb = geo_data_reactive(),
-            zs_masque = file.path("inst", "extdata", "zs_masque_template.xlsx"),
+            zs_masque = system.file("inst", "extdata", "zs_masque_template.xlsx",
+                                    package = "rdcAVS"),
             output_folder = selected_dir()
           )
 
@@ -958,7 +959,7 @@ campagneApp <- function(...) {
           drive_files(files)
 
           removeModal()
-          showNotification("Fichiers Google Drive actualisés.", type = "message")
+          showNotification("Fichiers Google Drive actualis\u00e9s.", type = "message")
         }
 
         showModal(
