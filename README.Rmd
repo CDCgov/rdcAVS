@@ -6,6 +6,11 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+```{r, echo = FALSE}
+shiny::img(src = "man/figures/logo.svg", 
+           style = "position:absolute; top:0; left:49%; padding:5px; height: 90px;")
+```
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -13,11 +18,6 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
-```
-
-```{r, echo = FALSE}
-shiny::img(src = "man/figures/logo.svg", 
-           style = "position:absolute; top:0; left:350px; padding:3px; height: 90px;")
 ```
 
 <!-- badges: start -->
