@@ -23,13 +23,12 @@ Imports:
     googledrive,
     lubridate,
     openxlsx,
-    pkgload,
     progressr,
     purrr,
+    rappdirs,
     readr,
-    rstudioapi,
     shiny,
     shinyFiles,
     shinyjs,
-    stringr,
-    usethis
+    stringi,
+    stringr

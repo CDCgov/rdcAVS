@@ -3,9 +3,9 @@
 
 ## usethis namespace: start
 
+#'
 #' @import dplyr stringr readr
 #' @import googledrive openxlsx
-#' @import rstudioapi
 #' @import shiny shinyFiles
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_alert
@@ -24,15 +24,15 @@
 #' @importFrom fs path_home
 #' @importFrom future plan
 #' @importFrom lubridate as_date
-#' @importFrom pkgload load_all
 #' @importFrom progressr handlers
 #' @importFrom progressr progressor
 #' @importFrom progressr with_progress
 #' @importFrom purrr pwalk
 #' @importFrom purrr walk
+#' @importFrom rappdirs user_data_dir
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
-#' @importFrom usethis use_data
+#' @importFrom stringi stri_escape_unicode
 ## usethis namespace: end
 
 utils::globalVariables(c("aires_de_sante", "antenne", "antennes", "debut", "email",
