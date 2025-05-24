@@ -28,212 +28,245 @@
 #' }
 campagneApp <- function(...) {
   checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
-  checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white;"
+  checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white; padding-top: 3px;"
   gui <- fluidPage(
+    theme = bslib::bs_theme(
+      version = 5,
+      bootswatch = "yeti"
+    ),
+
     useShinyjs(),
-    titlePanel("Cr\u00e9ateur de Campagne (beta)"),
-    verticalLayout(sidebarPanel(
-      helpText(
-        "Enter a unique campaign name. This will also be the main folder name."
+
+    tags$div(
+      style = "display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;",
+      tags$h2("Créateur de Campagne (beta version)", style = "margin: 0; text-align: right; flex-grow: 1;"),
+      tags$div(style = "flex-grow: 120;"),
+      tags$div(
+        style = "display: flex; gap: 15px;",
+        imageOutput("drc_cdc_logo", height = "60px"),
       ),
-      width = 8
-    ), mainPanel(
-      tabsetPanel(
-        ## Campaign creation panel ----
-        tabPanel(
-          "Cr\u00e9er Une Campagne",
-          sidebarPanel(
-            textInput("campaign_name", "Nom de la Campagne"),
-            dateInput("start_date", "D\u00e9but", language = "fr", format = "dd/mm/yyyy"),
-            dateInput("end_date", "Fin", language = "fr", format = "dd/mm/yyyy"),
-            br(),
-            fluidRow(
-              column(
-                8,
-                actionLink("select_all_prov", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-                h4("Provinces"),
-                tags$div(style = checkbox_title_style, tags$div(
-                  style = checkbox_style,
-                  checkboxGroupInput("selected_provinces", NULL, choices = NULL)
-                ))
-              ),
-              column(
-                8,
-                actionLink("select_all_ant", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-                h4("Antennes"),
-                tags$div(style = checkbox_title_style, tags$div(
-                  style = checkbox_style,
-                  checkboxGroupInput("selected_ant", NULL, choices = NULL)
-                ))
-              ),
-              column(
-                8,
-                actionLink("select_all_zs", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-                h4("Zones de Sante"),
-                tags$div(style = checkbox_title_style, tags$div(
-                  style = checkbox_style, checkboxGroupInput("selected_zs", NULL, choices = NULL)
-                ))
-              )
-            ),
-            shinyDirButton(
-              "dir",
-              "S\u00e9lectionner le R\u00e9pertoire Cible",
-              "S\u00e9lectionner un Dossier"
-            ),
-            verbatimTextOutput("selected_dir"),
-            br(),
-            actionButton("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
-            width = 20
-          ),
-        ),
+    ),
+    tags$hr(),
 
-        ## Geo panel ----
-        tabPanel(
-          "G\u00e9ographiques",
-          fluidRow(
-            h4("Donn\u00e9es G\u00e9ographiques"),
-            fluidRow(column(8, fileInput("upload_geo", "T\u00e9l\u00e9charger Un Fichier CSV G\u00e9ographique",
-                                         accept = ".csv"
-            ))),
-            DTOutput("geo_table"),
-            br(),
-            fluidRow(column(
-              9, actionButton("delete_row", "Supprimer la s\u00e9lection", class = "btn-danger"),
-              actionButton("undo_geo", "Annuler", icon = icon("undo")),
-              actionButton("redo_geo", "R\u00e9tablir", icon = icon("redo"))
-            ), br(), br()),
-            actionButton("clear_geo", "Tout Effacer", icon = icon("trash"), class = "btn-danger"),
-            downloadButton("download_geo", "T\u00e9l\u00e9charger la base de donn\u00e9es g\u00e9ographique actuelle"),
-            fluidRow(
-              br(),
-              column(3, textInput("new_province", "Province")),
-              column(3, textInput("new_antenne", "Antenne")),
-              column(3, textInput("new_zs", "Zones de Sante")),
-              column(3, textInput("new_as", "Aires de Sante")),
-              column(3, numericInput("new_pop", "Population Totale", value = 0))
-            ),
-            fluidRow(column(3, actionButton("add_row", "Ajouter Une Entr\u00e9e", class = "btn-success"))),
-            br(),
-            br()
-          )
-        ),
+    tabsetPanel(type = "tabs",
+                ## Campaign creation panel ----
+                tabPanel(
+                  "Cr\u00e9er Une Campagne",
+                  sidebarPanel(
+                    textInput("campaign_name", "Nom de la Campagne"),
+                    dateInput("start_date", "D\u00e9but", language = "fr", format = "dd/mm/yyyy"),
+                    dateInput("end_date", "Fin", language = "fr", format = "dd/mm/yyyy"),
+                    br(),
+                    fluidRow(
+                      column(
+                        8,
+                        actionLink("select_all_prov", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
+                        h4("Provinces"),
+                        tags$div(style = checkbox_title_style, tags$div(
+                          style = checkbox_style,
+                          checkboxGroupInput("selected_provinces", NULL, choices = NULL)
+                        ))
+                      ),
+                      column(
+                        8,
+                        actionLink("select_all_ant", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
+                        h4("Antennes"),
+                        tags$div(style = checkbox_title_style, tags$div(
+                          style = checkbox_style,
+                          checkboxGroupInput("selected_ant", NULL, choices = NULL)
+                        ))
+                      ),
+                      column(
+                        8,
+                        actionLink("select_all_zs", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
+                        h4("Zones de Sante"),
+                        tags$div(style = checkbox_title_style, tags$div(
+                          style = checkbox_style, checkboxGroupInput("selected_zs", NULL, choices = NULL)
+                        ))
+                      )
+                    ),
+                    shinyDirButton(
+                      "dir",
+                      "S\u00e9lectionner le R\u00e9pertoire Cible",
+                      "S\u00e9lectionner un Dossier"
+                    ),
+                    verbatimTextOutput("selected_dir"),
+                    br(),
+                    actionButton("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
+                    width = 20
+                  ),
+                ),
 
-        ## Permission panel ----
-        tabPanel(
-          "G\u00e9rer les Autorisations",
-          fluidRow(
-            h4("G\u00e9rer les Niveaux d'Autorisation"),
-            fluidRow(column(
-              8,
-              fileInput(
-                "upload_permissions",
-                "Autorisations de T\u00e9l\u00e9chargement CSV",
-                accept = ".csv"
-              )
-            )),
-            DT::DTOutput("permissions_table"),
-            br(),
-            fluidRow(
-              column(
-                8, actionButton("delete_permission", "Supprimer la S\u00e9lection", class = "btn-danger"),
-                actionButton("undo_perm", "Annuler", icon = icon("undo")),
-                actionButton("redo_perm", "R\u00e9tablir", icon = icon("redo"))
-              ),
-              br(), br()
-            ),
-            actionButton(
-              "clear_perm",
-              "Tout Effacer",
-              icon = icon("trash"),
-              class = "btn-danger"
-            ),
-            downloadButton(
-              "download_permissions",
-              "T\u00e9l\u00e9charger les Autorisations Actuelles"
-            ),
-            br(),
-            br(),
-            fluidRow(
-              column(3, textInput("perm_name", "Name")),
-              column(3, textInput("perm_email", "Email")),
-              column(3, selectInput(
-                "perm_level",
-                "Level",
-                choices = c("global", "province", "antenne", "zone de sante")
-              )),
-              column(3, selectInput(
-                "perm_role", "Role",
-                choices = c("writer", "reader", "commenter")
-              )),
-            ),
-            fluidRow(
-              # Province options
-              conditionalPanel(condition = "input.perm_level == 'province' || input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
-                4,
-                selectizeInput(
-                  "perm_province",
-                  "Province",
-                  choices = NULL,
-                  options = list(placeholder = "S\u00e9lectionnez une province")
+                ## Geo panel ----
+                tabPanel(
+                  "G\u00e9ographiques",
+                  fluidRow(
+                    h4("Donn\u00e9es G\u00e9ographiques"),
+                    fluidRow(column(8, fileInput("upload_geo", "T\u00e9l\u00e9charger Un Fichier CSV G\u00e9ographique",
+                                                 accept = ".csv"
+                    ))),
+                    DTOutput("geo_table"),
+                    br(),
+                    fluidRow(column(
+                      9, actionButton("delete_row", "Supprimer la s\u00e9lection", class = "btn-danger"),
+                      actionButton("undo_geo", "Annuler", icon = icon("undo")),
+                      actionButton("redo_geo", "R\u00e9tablir", icon = icon("redo"))
+                    ), br(), br()),
+                    column(
+                      8,
+                      actionButton("clear_geo", "Tout Effacer", icon = icon("trash"), class = "btn-danger"),
+                      downloadButton("download_geo", "T\u00e9l\u00e9charger la base de donn\u00e9es g\u00e9ographique actuelle")
+                    ),
+                    fluidRow(
+                      br(),
+                      column(3, textInput("new_province", "Province")),
+                      column(3, textInput("new_antenne", "Antenne")),
+                      column(3, textInput("new_zs", "Zones de Sante")),
+                      column(3, textInput("new_as", "Aires de Sante")),
+                      column(3, numericInput("new_pop", "Population Totale", value = 0))
+                    ),
+                    fluidRow(column(3, actionButton("add_row", "Ajouter Une Entr\u00e9e", class = "btn-success"))),
+                    br(),
+                    br()
+                  )
+                ),
+
+                ## Permission panel ----
+                tabPanel(
+                  "G\u00e9rer les Autorisations",
+                  fluidRow(
+                    h4("G\u00e9rer les Niveaux d'Autorisation"),
+                    fluidRow(column(
+                      8,
+                      fileInput(
+                        "upload_permissions",
+                        "Autorisations de T\u00e9l\u00e9chargement CSV",
+                        accept = ".csv"
+                      )
+                    )),
+                    DT::DTOutput("permissions_table"),
+                    br(),
+                    fluidRow(
+                      column(
+                        8, actionButton("delete_permission", "Supprimer la S\u00e9lection", class = "btn-danger"),
+                        actionButton("undo_perm", "Annuler", icon = icon("undo")),
+                        actionButton("redo_perm", "R\u00e9tablir", icon = icon("redo"))
+                      ),
+                      br(), br()
+                    ), column(8,
+                              actionButton(
+                                "clear_perm",
+                                "Tout Effacer",
+                                icon = icon("trash"),
+                                class = "btn-danger"
+                              ),
+                              downloadButton(
+                                "download_permissions",
+                                "T\u00e9l\u00e9charger les Autorisations Actuelles"
+                              )),
+
+                    br(),
+                    br(),
+                    fluidRow(
+                      column(3, textInput("perm_name", "Name")),
+                      column(3, textInput("perm_email", "Email")),
+                      column(3, selectInput(
+                        "perm_level",
+                        "Level",
+                        choices = c("global", "province", "antenne", "zone de sante")
+                      )),
+                      column(3, selectInput(
+                        "perm_role", "Role",
+                        choices = c("writer", "reader", "commenter")
+                      )),
+                    ),
+                    fluidRow(
+                      # Province options
+                      conditionalPanel(condition = "input.perm_level == 'province' || input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
+                        4,
+                        selectizeInput(
+                          "perm_province",
+                          "Province",
+                          choices = NULL,
+                          options = list(placeholder = "S\u00e9lectionnez une province")
+                        )
+                      )),
+
+                      # Antenne options
+                      conditionalPanel(condition = "input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
+                        4,
+                        selectizeInput(
+                          "perm_antenne",
+                          "Antenne",
+                          choices = NULL,
+                          options = list(placeholder = "S\u00e9lectionnez une antenne")
+                        )
+                      )),
+
+                      # Zone de sante options
+                      conditionalPanel(condition = "input.perm_level == 'zone de sante'", column(
+                        4,
+                        selectizeInput(
+                          "perm_zs",
+                          "Zones de Sante",
+                          choices = NULL,
+                          options = list(placeholder = "S\u00e9lectionnez une zone de sant\u00e9")
+                        )
+                      ))
+                    ),
+                    fluidRow(column(
+                      3,
+                      actionButton("add_permission", "Add Entry", class = "btn-success")
+                    )),
+                    br(),
+                    br(),
+                    fluidRow(column(
+                      8,
+                      h4("Authentifiez-vous avec Google Drive"),
+                      actionButton("auth_drive", "Authentifier", class = "btn-success"),
+                      actionButton(
+                        "refresh_drive",
+                        "Actualiser",
+                        class = "btn-primary",
+                        style = "display: none;"
+                      ),
+                      verbatimTextOutput("auth_status"),
+                      br()
+                    ))
+                  ),
+                  fluidRow(column(
+                    8,
+                    h4("S\u00e9lection de Campagne"),
+                    uiOutput("campaign_drive_picker"),
+                    actionButton("set_permissions_btn", "Set Permissions", class = "btn-primary"),
+                    br(),
+                    br()
+                  ))
                 )
-              )),
-
-              # Antenne options
-              conditionalPanel(condition = "input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
-                4,
-                selectizeInput(
-                  "perm_antenne",
-                  "Antenne",
-                  choices = NULL,
-                  options = list(placeholder = "S\u00e9lectionnez une antenne")
-                )
-              )),
-
-              # Zone de sante options
-              conditionalPanel(condition = "input.perm_level == 'zone de sante'", column(
-                4,
-                selectizeInput(
-                  "perm_zs",
-                  "Zones de Sante",
-                  choices = NULL,
-                  options = list(placeholder = "S\u00e9lectionnez une zone de sant\u00e9")
-                )
-              ))
-            ),
-            fluidRow(column(
-              3,
-              actionButton("add_permission", "Add Entry", class = "btn-success")
-            )),
-            br(),
-            br(),
-            fluidRow(column(
-              8,
-              h4("Authentifiez-vous avec Google Drive"),
-              actionButton("auth_drive", "Authentifier", class = "btn-success"),
-              actionButton(
-                "refresh_drive",
-                "Actualiser",
-                class = "btn-primary",
-                style = "display: none;"
-              ),
-              verbatimTextOutput("auth_status"),
-              br()
-            ))
-          ),
-          fluidRow(
-            h4("S\u00e9lection de Campagne"),
-            uiOutput("campaign_drive_picker"),
-            actionButton("set_permissions_btn", "Set Permissions", class = "btn-primary"),
-            br(),
-            br()
-          )
-        )
-      )
+    ),
+    tags$footer(
+      style = "
+    text-align: center;
+    padding: 1em;
+    font-size: 0.9em;
+    color: #888;
+    border-top: 1px solid #ddd;
+    margin-top: 40px;
+  ",
+      "Developed by the CDC Surveillance, Innovation, and Research Team (2025)"
     ))
-  )
 
   # Server ----
   server <- function(input, output, session) {
+
+    ## Render images ----
+    output$drc_cdc_logo <- renderImage({
+      list(
+        src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
+        width = 160,
+        height = 80
+      )
+    }, deleteFile = FALSE)
 
     ## Loading data ----
 
