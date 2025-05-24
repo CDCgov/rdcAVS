@@ -13,7 +13,7 @@ init_campaign(
   antenne_target = NULL,
   zs_target = NULL,
   gdb = NULL,
-  zs_masque = file.path(campaign_folder, "data", "zs_masque_template.xlsx"),
+  zs_masque = system.file("extdata", "zs_masque_template.xlsx", package = "rdcAVS"),
   output_folder = campaign_folder
 )
 }

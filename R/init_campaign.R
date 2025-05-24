@@ -34,7 +34,8 @@ init_campaign <- function(start_date,
                           antenne_target = NULL,
                           zs_target = NULL,
                           gdb = NULL,
-                          zs_masque = file.path(campaign_folder, "data", "zs_masque_template.xlsx"),
+                          zs_masque = system.file("extdata", "zs_masque_template.xlsx",
+                                                  package = "rdcAVS"),
                           output_folder = campaign_folder) {
   #start
   start_time <- Sys.time()
@@ -46,6 +47,7 @@ init_campaign <- function(start_date,
 
   # Check if the ZS masque template is in the campaign folder
   if (!file.exists(zs_masque)) {
+    print(zs_masque)
     cli::cli_abort(paste0(
       "Please add the zone de sante template file in the ",
       "campaign folder."
