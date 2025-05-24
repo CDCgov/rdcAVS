@@ -7,10 +7,11 @@
 <!-- badges: end -->
 
 The goal of rdcAVS is to streamline the process of creating SIA campaign
-folders. The package is designed to be portable, thanks to the use of
-`renv`. By default, the `.Renviron` file loads the library contained
-within the package. This ensures minimal set-up is required for building
-the app.
+folders. The package is designed to be portable and secure. Data for the
+geographies and permissions are stored locally and are uploaded by the
+user directly. Currently, the package comes with the template Excel file
+but in future versions will allow users to upload their own modified
+campaign template file.
 
 ## Installation
 

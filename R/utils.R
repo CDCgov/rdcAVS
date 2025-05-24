@@ -23,7 +23,7 @@ escape_non_ascii_only <- function(line) {
   chars <- strsplit(line, "")[[1]]
   escaped <- vapply(chars, function(char) {
     if (!is_ascii_char(char) && !(char %in% c('"', "'"))) {
-      stri_escape_unicode(char)
+      stringi::stri_escape_unicode(char)
     } else {
       char
     }
