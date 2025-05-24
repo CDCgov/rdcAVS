@@ -558,7 +558,7 @@ campagneApp <- function(...) {
             prov_target = input$selected_provinces,
             antenne_target = input$selected_ant,
             zs_target = input$selected_zs,
-            gdb = geo_data,
+            gdb = geo_data_reactive(),
             zs_masque = file.path("inst", "extdata", "zs_masque_template.xlsx"),
             output_folder = selected_dir()
           )
@@ -880,9 +880,21 @@ campagneApp <- function(...) {
     campaign_drive_folders <- reactiveVal(NULL)
     auth_status <- reactiveVal("Non authentifi\u00e9")
 
+    if (drive_has_token()) {
+      query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
+      folders <- googledrive::drive_find(q = query)
+      campaign_drive_folders(folders)
+      auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
+      show("refresh_drive")
+    }
+
     observeEvent(input$auth_drive, {
-      drive_auth(email = NA) # Will open browser to authenticate
-      if (drive_has_token()) {
+
+      if (!drive_has_token()) {
+        drive_auth(email = NA) # Will open browser to authenticate
+      }
+
+      tryCatch({
         showModal(
           modalDialog(
             title = "R\u00e9cup\u00e9ration des informations de Google Drive",
@@ -894,11 +906,7 @@ campagneApp <- function(...) {
 
         query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
         folders <- googledrive::drive_find(q = query)
-        files <- purrr::map(folders$id,
-                            \(x) googledrive::drive_ls(googledrive::as_id(x),
-                                                       recursive = TRUE))
-        files <- dplyr::bind_rows(files)
-        files <- googledrive::drive_reveal(files, what = "path")
+        campaign_drive_folders(folders)
 
         showModal(
           modalDialog(
@@ -909,14 +917,11 @@ campagneApp <- function(...) {
             style = "background-color: #ecfae8;"
           )
         )
-
-        drive_files(files)
-        campaign_drive_folders(folders)
         auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
         show("refresh_drive")
-      } else {
+      }, error = \(e) {
         auth_status("\u274c \u00c9chec de l'authentification.")
-      }
+      })
     })
 
     output$auth_status <- renderText({
@@ -938,11 +943,23 @@ campagneApp <- function(...) {
 
         query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
         folders <- googledrive::drive_find(q = query)
-        files <- purrr::map(folders$id,
-                            \(x) googledrive::drive_ls(googledrive::as_id(x),
-                                                       recursive = TRUE))
-        files <- dplyr::bind_rows(files)
-        files <- googledrive::drive_reveal(files, what = "path")
+        campaign_drive_folders(folders)
+
+        files <- drive_files()
+
+        if (!is.null(files)) {
+          folders <- campaign_drive_folders()
+          files <- purrr::map(folders$id, \(x) {
+            googledrive::drive_ls(googledrive::as_id(x), recursive = TRUE)
+          }) |>
+            dplyr::bind_rows() |>
+            googledrive::drive_reveal(what = "path")
+
+          drive_files(files)
+
+          removeModal()
+          showNotification("Fichiers Google Drive actualisés.", type = "message")
+        }
 
         showModal(
           modalDialog(
@@ -954,8 +971,6 @@ campagneApp <- function(...) {
           )
         )
 
-        drive_files(files)
-        campaign_drive_folders(folders)
       }
     }
 
@@ -1272,6 +1287,23 @@ campagneApp <- function(...) {
           style = "background-color: #faf3e8;"
         )
       )
+
+      folders <- campaign_drive_folders()
+      files <- drive_files()
+
+      if(is.null(files)) {
+        files <- purrr::map(folders$id,
+                            \(x) googledrive::drive_ls(googledrive::as_id(x),
+                                                       recursive = TRUE))
+        files <- dplyr::bind_rows(files)
+        drive_files(files)
+      }
+
+      files <- drive_files()
+      if (!"path" %in% names(files)) {
+        files <- googledrive::drive_reveal(files, what = "path")
+        drive_files(files)
+      }
 
       tryCatch(
         {

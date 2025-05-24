@@ -76,18 +76,10 @@ set_permissions <- function(campaign_name,
     ))) |>
     dplyr::filter(!is.na(path))
 
-  cli::cli_process_start("Fetching relevant dribbles")
-  dribbles_filtered <- dribble_files |>
-    filter(
-      stringr::str_starts(path, paste0("~/", campaign_name)) |
-        stringr::str_starts(path, campaign_name),
-      mime_type == "application/vnd.google-apps.folder"
-    ) |>
+  dribble_files <- dribble_files |>
     mutate(path = stringr::str_replace_all(path, "~/", ""))
-  cli::cli_process_done()
-
   # Join back the full permission table
-  dribbles_with_permission <- dplyr::left_join(full_permission, dribbles_filtered)
+  dribbles_with_permission <- dplyr::left_join(full_permission, dribble_files)
 
   # Parallel setting of permissions
   if (nrow(dribbles_with_permission) > 0) {
