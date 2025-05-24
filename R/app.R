@@ -39,8 +39,8 @@ campagneApp <- function(...) {
 
     tags$div(
       style = "display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;",
-      tags$h2("Créateur de Campagne (beta version)", style = "margin: 0; text-align: right; flex-grow: 1;"),
-      tags$div(style = "flex-grow: 120;"),
+      tags$h2("Cr\u00e9ateur de Campagne", style = "margin: 0; text-align: right; flex-grow: 1;"),
+      tags$div(style = "flex-grow: 40;"),
       tags$div(
         style = "display: flex; gap: 15px;",
         imageOutput("drc_cdc_logo", height = "60px"),
