@@ -412,7 +412,7 @@ campagneApp <- function(...) {
       }, deleteFile = FALSE)
       output$logo <- renderImage({
         list(
-          src = system.file("man", "figures", "logo.svg", package = "rdcAVS"),
+          src = system.file("www", "logo.svg", package = "rdcAVS"),
           width = 80,
           height = 80
         )
