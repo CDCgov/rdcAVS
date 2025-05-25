@@ -36,3 +36,11 @@ library(rdcAVS)
 
 campagneApp()
 ```
+
+## Demonstration
+
+Displayed below is a mock app of what you can expect the app to look
+like once launched.
+
+<iframe src="https://mcuadera.shinyapps.io/rdcAVS/?showcase=0" width="100%" height="400px" data-external="1">
+</iframe>

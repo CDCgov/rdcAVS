@@ -42,4 +42,10 @@ library(rdcAVS)
 campagneApp()
 ```
 
+## Demonstration
+Displayed below is a mock app of what you can expect the app to look like once launched.
+
+```{r, echo = FALSE}
+knitr::include_app("https://mcuadera.shinyapps.io/rdcAVS/")
+```
 
