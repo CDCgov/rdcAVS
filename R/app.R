@@ -198,6 +198,8 @@ campagneApp <- function() {
               br(),
               fluidRow(
                 column(3, textInput("perm_name", "Name")),
+                column(3, textInput("perm_phone", "Phone")),
+                column(3, textInput("perm_notes", "Notes", placeholder = "affiliation, job title, etc...")),
                 column(3, textInput("perm_email", "Email")),
                 column(3, selectInput(
                   "perm_level",
@@ -340,6 +342,8 @@ campagneApp <- function() {
         if (!file.exists(perm_cache_path)) {
           perm_data <- tibble(
             name = character(),
+            phone = character(),
+            notes = character(),
             email = character(),
             level = character(),
             role = character(),
@@ -351,6 +355,7 @@ campagneApp <- function() {
         } else {
           load(perm_cache_path)
         }
+
         perm_data <- arrange(perm_data)
         perm_values <- reactiveValues(data = perm_data)
         perm_data_reactive <- reactive({
@@ -1102,6 +1107,8 @@ campagneApp <- function() {
               # Validate columns exist
               required_cols <- c(
                 "name",
+                "phone",
+                "notes",
                 "email",
                 "level",
                 "role",
@@ -1292,6 +1299,8 @@ campagneApp <- function() {
 
           # Convert to uppercase, strip whitespace
           name <- stringr::str_to_title(input$perm_name)
+          phone <- stringr::str_trim(input$perm_phone)
+          notes <- input$perm_notes
           email <- tolower(trimws(input$perm_email))
           level <- tolower(input$perm_level)
           role <- tolower(input$perm_role)
@@ -1319,6 +1328,8 @@ campagneApp <- function() {
           # Ensure unique entries by checking if a row already exists
           new_row <- data.frame(
             name = name,
+            phone = phone,
+            notes = notes,
             email = email,
             level = level,
             role = role,
@@ -1514,6 +1525,8 @@ campagneApp <- function() {
             editable = TRUE,
             colnames = c(
               "Name",
+              "Phone",
+              "Notes",
               "Email",
               "Level",
               "Role",
