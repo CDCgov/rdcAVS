@@ -39,8 +39,6 @@
 #' campagneApp()
 #' }
 campagneApp <- function() {
-  runApp(
-    {
       checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
       checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white; padding-top: 3px;"
       gui <- fluidPage(
@@ -1528,8 +1526,5 @@ campagneApp <- function() {
         })
       }
 
-      shinyApp(gui, server)
-    },
-    launch.browser = TRUE
-  )
+      shinyApp(gui, server, options = list(launch.browser = TRUE))
 }

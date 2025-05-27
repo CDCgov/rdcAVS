@@ -43,9 +43,5 @@ campagneApp()
 ```
 
 ## Demonstration
-Displayed below is a mock app of what you can expect the app to look like once launched.
 
-```{r, echo = FALSE}
-knitr::include_app("https://mcuadera.shinyapps.io/rdcAVS/")
-```
-
+An example of the app deployed can be viewed [here]("https://mcuadera.shinyapps.io/rdcAVS/").
