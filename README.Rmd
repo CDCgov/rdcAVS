@@ -44,4 +44,4 @@ campagneApp()
 
 ## Demonstration
 
-An example of the app deployed can be viewed [here]("https://mcuadera.shinyapps.io/rdcAVS/").
+An example of the app deployed can be viewed [here](https://mcuadera.shinyapps.io/rdcAVS/).
