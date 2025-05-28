@@ -1184,7 +1184,7 @@ campagneApp <- function() {
                   }
                   if (!(is.na(row["zone_de_sante"]) ||
                     row["zone_de_sante"] == "" ||
-                    row["city"] %in% valid_zs)) {
+                    row["zone_de_sante"] %in% valid_zs)) {
                     reasons <- c(reasons, "Invalid zone de sante")
                   }
                   paste(reasons, collapse = "; ")
