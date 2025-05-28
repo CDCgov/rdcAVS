@@ -35,18 +35,15 @@ init_campaign <- function(start_date,
                           zs_target = NULL,
                           gdb = NULL,
                           zs_masque = system.file("extdata", "zs_masque_template.xlsx",
-                            package = "rdcAVS"
+                                                  package = "rdcAVS"
                           ),
                           output_folder = campaign_folder) {
-  # start
   start_time <- Sys.time()
 
-  # Format the start and end dates
   start_date <- lubridate::as_date(start_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
   end_date <- lubridate::as_date(end_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
   campaign_name <- paste0("CAMPAGNE_", campaign_name)
 
-  # Check if the ZS masque template is in the campaign folder
   if (!file.exists(zs_masque)) {
     if (zs_masque == "") {
       cli::cli_abort("data not found in package.")
@@ -59,36 +56,23 @@ init_campaign <- function(start_date,
     cli::cli_alert_success("zone de sante template file found!")
   }
 
-  # Standardize geographic inputs
   if (!is.null(prov_target)) {
     prov_target <- stringr::str_trim(stringr::str_to_upper(prov_target))
-  }
-
-  if (!is.null(zs_target)) {
-    zs_target <- stringr::str_trim(stringr::str_to_upper(zs_target))
-  }
-
-  if (!is.null(antenne_target)) {
-    antenne_target <- stringr::str_trim(stringr::str_to_upper(antenne_target))
-  }
-
-  # Validate entries
-  if (!is.null(prov_target)) {
     validate_geography(gdb, prov_target, "prov")
   }
 
   if (!is.null(antenne_target)) {
+    antenne_target <- stringr::str_trim(stringr::str_to_upper(antenne_target))
     validate_geography(gdb, antenne_target, "ant")
   }
 
   if (!is.null(zs_target)) {
+    zs_target <- stringr::str_trim(stringr::str_to_upper(zs_target))
     validate_geography(gdb, zs_target, "zs")
   }
 
-  # Creating the folder structure
-
-  # Create filtering query to the geographic database
   staged_folder <- gdb
+
   if (!is.null(prov_target)) {
     staged_folder <- staged_folder |>
       dplyr::filter(provinces %in% prov_target)
@@ -99,54 +83,66 @@ init_campaign <- function(start_date,
       dplyr::filter(antennes %in% antenne_target)
   }
 
+  base_structure <- staged_folder |>
+    dplyr::distinct(provinces, antennes)
+
+  zs_filtered <- staged_folder
   if (!is.null(zs_target)) {
-    staged_folder <- staged_folder |>
+    zs_filtered <- zs_filtered |>
       dplyr::filter(zones_de_sante %in% zs_target)
   }
 
-  # Alert user for how many ZS folders will be created
-  cli::cli_alert_info(paste0(length(unique(
-    staged_folder$zones_de_sante
-  )), " unique zone de santes identified"))
+  folder_structure <- dplyr::bind_rows(
+    zs_filtered |> dplyr::select(provinces, antennes, zones_de_sante),
+    base_structure |>
+      dplyr::anti_join(zs_filtered |>
+                         dplyr::select(provinces, antennes), by = c("provinces", "antennes")) |>
+      dplyr::mutate(zones_de_sante = NA_character_)
+  ) |> dplyr::distinct()
 
-  # Create folder hierarchy
+  cli::cli_alert_info(paste0(length(unique(folder_structure$zones_de_sante[!is.na(folder_structure$zones_de_sante)])),
+                             " unique zone de santes identified"))
+
   cli::cli_process_start("Creating folder hierarchy locally")
-  folder_structure <- staged_folder |>
-    dplyr::select(provinces, zones_de_sante, antennes) |>
-    dplyr::distinct() |>
+
+  folder_structure <- folder_structure |>
     dplyr::mutate(
       local_path = file.path(
         output_folder,
         campaign_name,
         provinces,
         antennes,
-        zones_de_sante
+        ifelse(is.na(zones_de_sante), "", zones_de_sante)
       ),
-      masque_names = paste0(
-        campaign_name,
-        "_PROV_",
-        provinces,
-        "_AN_",
-        antennes,
-        "_ZS_",
-        zones_de_sante,
-        ".xlsx"
+      masque_names = ifelse(
+        is.na(zones_de_sante),
+        NA_character_,
+        paste0(
+          campaign_name,
+          "_PROV_", provinces,
+          "_AN_", antennes,
+          "_ZS_", zones_de_sante,
+          ".xlsx"
+        )
       ),
-      masque_path = file.path(local_path, masque_names),
+      masque_path = ifelse(
+        is.na(zones_de_sante),
+        NA_character_,
+        file.path(local_path, masque_names)
+      ),
       debut = strftime(start_date, "%d/%m/%Y"),
       fin = strftime(end_date, "%d/%m/%Y"),
       period = paste0("Du ", debut, " au ", fin)
     )
 
-  # Add the aires de santes
   folder_structure <- dplyr::left_join(
     folder_structure,
-    staged_folder |>
-      dplyr::group_by(provinces, zones_de_sante) |>
-      dplyr::summarize(
-        aires_de_sante = list(aires_de_sante),
-        population_totale = list(population_totale)
-      )
+    staged_folder |> dplyr::group_by(provinces, zones_de_sante) |> dplyr::summarize(
+      aires_de_sante = list(aires_de_sante),
+      population_totale = list(population_totale),
+      .groups = "drop"
+    ),
+    by = c("provinces", "zones_de_sante")
   )
 
   purrr::walk(
@@ -157,20 +153,17 @@ init_campaign <- function(start_date,
 
   cli::cli_process_done()
 
-  # Add the masques to each folder
   cli::cli_process_start("Creating template files")
-  purrr::walk(folder_structure$masque_path,
-    \(x) file.copy(zs_masque, x),
-    .progress = TRUE
+  purrr::walk(folder_structure$masque_path[!is.na(folder_structure$masque_path)],
+              \(x) file.copy(zs_masque, x),
+              .progress = TRUE
   )
   cli::cli_process_done()
 
-  # Edit the masques and add information
   cli::cli_process_start("Prefilling information for each template file")
-  edit_zs_template_parallel(folder_structure)
+  edit_zs_template_parallel(folder_structure[!is.na(folder_structure$masque_path), ])
   cli::cli_process_done()
 
-  # Check folder size
   cli::cli_alert_info(paste0(
     "NOTE: the size of this campaign folder is ",
     round(check_folder_size(
@@ -181,13 +174,11 @@ init_campaign <- function(start_date,
 
   cli::cli_alert_success(paste0(
     "Campaign successfully initialized in ",
-    round(difftime(Sys.time(),
-      start_time,
-      units = "mins"
-    ), 2), " mins!"
+    round(difftime(Sys.time(), start_time, units = "mins"), 2), " mins!"
   ))
   invisible()
 }
+
 
 # Private functions ----
 
