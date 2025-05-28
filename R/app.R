@@ -1304,7 +1304,7 @@ campagneApp <- function() {
                      input$perm_email,
                      input$perm_level,
                      input$perm_role,
-                     input$perm_prov
+                     input$perm_province
                    )
                    },
                  "antenne" = {
@@ -1312,7 +1312,7 @@ campagneApp <- function() {
                      input$perm_email,
                      input$perm_level,
                      input$perm_role,
-                     input$perm_prov,
+                     input$perm_province,
                      input$perm_antenne
                    )
                    },
@@ -1321,7 +1321,7 @@ campagneApp <- function() {
                      input$perm_email,
                      input$perm_level,
                      input$perm_role,
-                     input$perm_prov,
+                     input$perm_province,
                      input$perm_antenne,
                      input$perm_zs
                    )
