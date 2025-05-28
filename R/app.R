@@ -683,7 +683,8 @@ campagneApp <- function() {
           uploaded_geo <- read_csv(
             input$upload_geo$datapath,
             show_col_types = FALSE,
-            na = c("", "NA")
+            na = c("", "NA"),
+            col_types = "ccccn"
           )
           uploaded_geo <- uploaded_geo |>
             mutate(across(any_of(
@@ -1081,7 +1082,8 @@ campagneApp <- function() {
           uploaded_permissions <- read_csv(
             input$upload_permissions$datapath,
             show_col_types = FALSE,
-            na = c("", "NA")
+            na = c("", "NA"),
+            col_types = "ccccccccc"
           )
           uploaded_permissions <- uploaded_permissions |>
             mutate(across(any_of(
