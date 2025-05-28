@@ -1580,7 +1580,9 @@ campagneApp <- function() {
               "Aires de sant\u00e9",
               "Population Totale"
             ),
-            options = list(pageLength = 10, language = "fr")
+            options = list(pageLength = 10, language = "fr",
+                           searchHighlight = TRUE),
+            filter = "top"
           )
         })
 
@@ -1602,7 +1604,9 @@ campagneApp <- function() {
               "Antennes",
               "Zones de sant\u00e9"
             ),
-            options = list(scrollX = TRUE, pageLength = 10)
+            options = list(scrollX = TRUE, pageLength = 10,
+                           searchHighlight = TRUE),
+            filter = "top"
           )
         })
       }
