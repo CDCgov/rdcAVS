@@ -1291,6 +1291,44 @@ campagneApp <- function() {
           perm_stack$redo <- list()
 
           level <- tolower(input$perm_level)
+          # Check for required fields
+          missing_fields <- c()
+          if (input$perm_email == "") {
+            missing_fields <- c(missing_fields, "Email")
+            }
+          if (input$perm_role == "") {
+            missing_fields <- c(missing_fields, "Role")
+            }
+
+          if (level == "province" && input$perm_province == "") {
+            missing_fields <- c(missing_fields, "Province")
+          }
+
+          if (level == "antenne" && (input$perm_province == "" || input$perm_antenne == "")) {
+            if (input$perm_province == "") {
+              missing_fields <- c(missing_fields, "Province")
+            }
+
+            if (input$perm_antenne == "") {
+              missing_fields <- c(missing_fields, "Antenne")
+            }
+
+          }
+
+          if (level == "zone de sante" && (input$perm_province == "" || input$perm_antenne == "" || input$perm_zs == "")) {
+            if (input$perm_province == "") {missing_fields <- c(missing_fields, "Province")}
+            if (input$perm_antenne == "") {missing_fields <- c(missing_fields, "Antenne")}
+            if (input$perm_zs == "") {missing_fields <- c(missing_fields, "Zone de Santé")}
+          }
+
+          if (length(missing_fields) > 0) {
+            showNotification(
+              paste("Veuillez remplir les champs obligatoires :", paste(unique(missing_fields), collapse = ", ")),
+              type = "error"
+            )
+            return()
+          }
+
           switch(level,
                  "global" = {
                    req(
