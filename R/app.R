@@ -1290,37 +1290,62 @@ campagneApp <- function() {
           perm_stack$undo <- c(list(perm_values$data), perm_stack$undo)
           perm_stack$redo <- list()
 
-          # Validate required fields
-          req(
-            input$perm_name,
-            input$perm_email,
-            input$perm_level,
-            input$perm_role
-          )
+          level <- tolower(input$perm_level)
+          switch(level,
+                 "global" = {
+                   req(
+                     input$perm_email,
+                     input$perm_level,
+                     input$perm_role
+                   )
+                 },
+                 "province" = {
+                   req(
+                     input$perm_email,
+                     input$perm_level,
+                     input$perm_role,
+                     input$perm_prov
+                   )
+                   },
+                 "antenne" = {
+                   req(
+                     input$perm_email,
+                     input$perm_level,
+                     input$perm_role,
+                     input$perm_prov,
+                     input$perm_antenne
+                   )
+                   },
+                 "zone de sante" = {
+                   req(
+                     input$perm_email,
+                     input$perm_level,
+                     input$perm_role,
+                     input$perm_prov,
+                     input$perm_antenne,
+                     input$perm_zs
+                   )
+                 })
 
           # Convert to uppercase, strip whitespace
           name <- stringr::str_to_title(input$perm_name)
           phone <- stringr::str_trim(input$perm_phone)
           notes <- input$perm_notes
           email <- tolower(trimws(input$perm_email))
-          level <- tolower(input$perm_level)
           role <- tolower(input$perm_role)
 
           # Optional fields based on level
-          province <- if (level %in% c("province", "antenne") &&
-            length(input$perm_province) > 0) {
+          province <- if (length(input$perm_province) > 0) {
             input$perm_province
           } else {
             NA_character_
           }
-          antenne <- if (level == "antenne" &&
-            length(input$perm_antenne) > 0) {
+          antenne <- if (length(input$perm_antenne) > 0) {
             input$perm_antenne
           } else {
             NA_character_
           }
-          zone_de_sante <- if (level == "zone de sante" &&
-            length(input$perm_zs) > 0) {
+          zone_de_sante <- if (length(input$perm_zs) > 0) {
             input$perm_zs
           } else {
             NA_character_
