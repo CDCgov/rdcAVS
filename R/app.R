@@ -290,7 +290,6 @@ campagneApp <- function() {
 
       # Server ----
       server <- function(input, output, session) {
-        ## Loading assets (pics) ----
 
         ## Loading data ----
 
@@ -432,7 +431,7 @@ campagneApp <- function() {
             {
               list(
                 src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
-                width = 200,
+                width = 180,
                 height = 80
               )
             },

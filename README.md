@@ -22,8 +22,8 @@ You can install the development version of rdcAVS from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("mcuadera/rdcAVS")
+# install.packages("devtools")
+devtools::install_github("mcuadera/rdcAVS")
 ```
 
 ## Example
@@ -32,9 +32,7 @@ There is only one function in this package. To deploy the app locally,
 simply run the following code:
 
 ``` r
-library(rdcAVS)
-
-campagneApp()
+rdcAVS::campagneApp()
 ```
 
 ## Demonstration
