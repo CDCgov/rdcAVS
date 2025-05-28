@@ -648,6 +648,7 @@ campagneApp <- function() {
                 output_folder = selected_dir()
               )
 
+              removeModal()
               showModal(
                 modalDialog(
                   title = "Succ\u00e8s",
@@ -662,6 +663,7 @@ campagneApp <- function() {
               )
             },
             error = function(e) {
+              removeModal()
               showModal(
                 modalDialog(
                   title = "Erreur",
@@ -1473,6 +1475,7 @@ campagneApp <- function() {
                 drive_files()
               )
 
+              removeModal()
               showModal(
                 modalDialog(
                   title = "Succ\u00e8s",
@@ -1484,6 +1487,7 @@ campagneApp <- function() {
               )
             },
             error = function(e) {
+              removeModal()
               showModal(
                 modalDialog(
                   title = "Erreur",
