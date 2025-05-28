@@ -90,16 +90,18 @@ init_campaign <- function(start_date,
   # Create filtering query to the geographic database
   staged_folder <- gdb
   if (!is.null(prov_target)) {
-    staged_folder <- staged_folder |> dplyr::filter(provinces %in% prov_target)
+    staged_folder <- staged_folder |>
+      dplyr::filter(provinces %in% prov_target)
   }
 
   if (!is.null(antenne_target)) {
-    staged_folder <- staged_folder |> dplyr::filter(antennes %in% antenne_target)
+    staged_folder <- staged_folder |>
+      dplyr::filter(antennes %in% antenne_target)
   }
 
   if (!is.null(zs_target)) {
-    staged_folder <- staged_folder |> dplyr::filter(zones_de_sante %in% zs_target |
-      antennes %in% antenne_target)
+    staged_folder <- staged_folder |>
+      dplyr::filter(zones_de_sante %in% zs_target)
   }
 
   # Alert user for how many ZS folders will be created
@@ -124,6 +126,8 @@ init_campaign <- function(start_date,
         campaign_name,
         "_PROV_",
         provinces,
+        "_AN_",
+        antennes,
         "_ZS_",
         zones_de_sante,
         ".xlsx"
