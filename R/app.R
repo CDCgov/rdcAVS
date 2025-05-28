@@ -19,7 +19,7 @@
 #' tabs that creates a campaign, add geographic information, and set Google Drive
 #' permissions. Creating a campaign outputs a folder prefixed with "CAMPAGNE_",
 #' which contains a hierarchical structure, going from the largest geographic unit (Province)
-#' to the lowest geographic unit (Zone de Santé). Within the Zone de Santé folder, contains
+#' to the lowest geographic unit (Zone de Sant\u00e9). Within the Zone de Sant\u00e9 folder, contains
 #' a template file.
 #'
 #' @details
@@ -315,6 +315,8 @@ campagneApp <- function() {
         geo_cache_path <- file.path(cache_dir, "geo_data.rda")
         perm_cache_path <- file.path(cache_dir, "perm_data.rda")
         template_path <- file.path(cache_dir, "zs_masque_template.xlsx")
+
+        invalid_rows <- NULL
 
         ### Geographic data ----
 
@@ -1211,8 +1213,21 @@ campagneApp <- function() {
                     )
                   }),
                   easyClose = TRUE,
-                  footer = NULL
+                  footer = tagList(
+                    downloadButton("download_invalid", "T\u00e9l\u00e9charger les entr\u00e9es invalides"),
+                    modalButton("Close"))
                 ))
+
+                ####### Download invalid permission entries ----
+
+                output$download_invalid <- downloadHandler(
+                  filename = function() {
+                    paste("invalid_entries_", Sys.Date(), ".csv", sep = "")
+                  },
+                  content = function(file) {
+                    write.csv(invalid_rows, file, row.names = FALSE)
+                  }
+                )
 
                 valid_permissions <- anti_join(
                   uploaded_permissions |>
@@ -1246,6 +1261,17 @@ campagneApp <- function() {
             }
           )
         })
+
+        ####### Download invalid permission entries ----
+
+        output$download_invalid <- downloadHandler(
+          filename = function() {
+            paste("invalid_entries_", Sys.Date(), ".csv", sep = "")
+          },
+          content = function(file) {
+            write.csv(invalid_rows, file, row.names = FALSE)
+          }
+        )
 
         ####### Download current permissions table ----
         output$download_permissions <- downloadHandler(
@@ -1320,7 +1346,7 @@ campagneApp <- function() {
           if (level == "zone de sante" && (input$perm_province == "" || input$perm_antenne == "" || input$perm_zs == "")) {
             if (input$perm_province == "") {missing_fields <- c(missing_fields, "Province")}
             if (input$perm_antenne == "") {missing_fields <- c(missing_fields, "Antenne")}
-            if (input$perm_zs == "") {missing_fields <- c(missing_fields, "Zone de Santé")}
+            if (input$perm_zs == "") {missing_fields <- c(missing_fields, "Zone de Sant\u00e9")}
           }
 
           if (length(missing_fields) > 0) {
