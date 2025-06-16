@@ -5,7 +5,7 @@
 
 #'
 #' @import dplyr stringr readr
-#' @import googledrive openxlsx
+#' @import googledrive
 #' @import shiny shinyFiles
 #' @importFrom bslib bs_theme
 #' @importFrom cli cli_abort
@@ -24,6 +24,7 @@
 #' @importFrom foreach foreach
 #' @importFrom fs path_home
 #' @importFrom future plan
+#' @importFrom googlesheets4 range_write
 #' @importFrom lubridate as_date
 #' @importFrom progressr handlers
 #' @importFrom progressr progressor
