@@ -11,13 +11,11 @@
 #' @param gdb `rda` rda file for the Geo database.
 #' @param campaign_name `str` The name of the SIA campaign. Defaults to the
 #' date ran.
-#' @param campaign_folder `str` Path to the campaign folder. Defaults to [getwd()].
 #' @param prov_target `str` A province or a vector of province names.
 #' @param antenne_target `str` Antenne or a vector of antenne.
 #' @param start_date `str` Start date of the campaign.
 #' @param end_date `str` End date of the campaign.
-#' @param zs_masque `str` Path to the masque template.
-#' @param output_folder `str` Where to output the campaign.
+#' @param zs_masque `str` Dribble of the masque template.
 #'
 #' @returns Success message
 #' @keywords internal
@@ -29,15 +27,11 @@
 drive_init_campaign <- function(start_date,
                           end_date,
                           campaign_name = Sys.Date(),
-                          campaign_folder = "~",
                           prov_target = NULL,
                           antenne_target = NULL,
                           zs_target = NULL,
                           gdb = NULL,
-                          zs_masque = system.file("extdata", "zs_masque_template.xlsx",
-                                                  package = "rdcAVS"
-                          ),
-                          output_folder = campaign_folder) {
+                          zs_masque) {
   start_time <- Sys.time()
 
   start_date <- lubridate::as_date(start_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
@@ -103,14 +97,14 @@ drive_init_campaign <- function(start_date,
   cli::cli_alert_info(paste0(length(unique(folder_structure$zones_de_sante[!is.na(folder_structure$zones_de_sante)])),
                              " unique zone de santes identified"))
 
-  cli::cli_process_start("Creating folder hierarchy locally")
+  cli::cli_process_start("Creating folder hierarchy in Google Drive")
 
   folder_structure <- folder_structure |>
     dplyr::mutate(
-      local_path = file.path(
-        output_folder,
-        campaign_name,
-        provinces,
+      prov_path = file.path(provinces),
+      antenne_path = file.path(provinces,
+                               antennes),
+      zs_path = file.path(provinces,
         antennes,
         ifelse(is.na(zones_de_sante), "", zones_de_sante)
       ),
@@ -121,14 +115,13 @@ drive_init_campaign <- function(start_date,
           campaign_name,
           "_PROV_", provinces,
           "_AN_", antennes,
-          "_ZS_", zones_de_sante,
-          ".xlsx"
+          "_ZS_", zones_de_sante
         )
       ),
       masque_path = ifelse(
         is.na(zones_de_sante),
         NA_character_,
-        file.path(local_path, masque_names)
+        file.path(zs_path, masque_names)
       ),
       debut = strftime(start_date, "%d/%m/%Y"),
       fin = strftime(end_date, "%d/%m/%Y"),
@@ -145,32 +138,73 @@ drive_init_campaign <- function(start_date,
     by = c("provinces", "zones_de_sante")
   )
 
-  purrr::walk(
-    folder_structure$local_path,
-    \(x) dir.create(x, showWarnings = FALSE, recursive = TRUE),
-    .progress = TRUE
-  )
+  # Make campaign folder
+  campaign_drive_folder <- googledrive::drive_mkdir(campaign_name,
+                                                    path = "~")
+
+  # Make provinces
+  cli::cli_process_start("Making province folders")
+  prov_drive_folders <- drive_mkdir_parallel(folder_structure$prov_path |>
+                                               unique(),
+                                             campaign_drive_folder)
+  cli::cli_process_done()
+
+  # There are rate limits to the API (12K/min)
+  # To reduce the likelihood of exceeding rate limits, need to wait
+
+  cli::cli_process_start("Making antenne folders")
+
+  antenne_drive_folders <- purrr::map(1:nrow(prov_drive_folders), \(i) {
+    prov_name <- prov_drive_folders$name[i]
+    relevant_antennes <- folder_structure |>
+      dplyr::filter(provinces %in% prov_name) |>
+      pull(antennes) |>
+      unique()
+
+    drive_mkdir_parallel(relevant_antennes, prov_drive_folders[i, ])
+  }, .progress = TRUE)
+
+  antenne_drive_folders <- dplyr::bind_rows(antenne_drive_folders)
+
+  cli::cli_process_done()
+
+  # Make zs folders in parallel
+  cli::cli_process_start("Making zones de sante folders")
+
+  zs_drive_folders <- purrr::map(1:nrow(antenne_drive_folders), \(i) {
+
+    antenne_name <- antenne_drive_folders$name[i]
+    prov_name <- googledrive::drive_get(as_id(drive_reveal(antenne_drive_folders[i, ],
+                                             what = "parents")$parents |>
+                                  purrr::pluck(1,1))) |>
+      pull(name)
+
+    relevant_zs <- folder_structure |>
+      dplyr::filter(provinces %in% prov_name,
+                    antennes %in% antenne_name) |>
+      pull(zones_de_sante) |>
+      unique()
+
+    zs_drive_folders <- drive_mkdir_parallel(relevant_zs, antenne_drive_folders[i, ])
+    zs_drive_folders <- zs_drive_folders |>
+      dplyr::mutate(provinces = prov_name,
+                    antennes = antenne_name)
+  }, .progress = TRUE)
+
+  zs_drive_folders <- dplyr::bind_rows(zs_drive_folders)
 
   cli::cli_process_done()
 
   cli::cli_process_start("Creating template files")
-  purrr::walk(folder_structure$masque_path[!is.na(folder_structure$masque_path)],
-              \(x) file.copy(zs_masque, x),
-              .progress = TRUE
-  )
-  cli::cli_process_done()
+  zs_drive_folders <- dplyr::left_join(zs_drive_folders, folder_structure |>
+                             dplyr::select(provinces, antennes,
+                                           name = zones_de_sante, masque_names,
+                                           aires_de_sante, population_totale,
+                                           debut, fin, period) |>
+                             dplyr::distinct())
 
-  cli::cli_process_start("Prefilling information for each template file")
-  edit_zs_template_parallel(folder_structure[!is.na(folder_structure$masque_path), ])
+  zs_template_dribbles <- drive_cp_zs_template_parallel(zs_masque, zs_drive_folders)
   cli::cli_process_done()
-
-  cli::cli_alert_info(paste0(
-    "NOTE: the size of this campaign folder is ",
-    round(check_folder_size(
-      file.path(output_folder, campaign_name)
-    ), 0),
-    "MB"
-  ))
 
   cli::cli_alert_success(paste0(
     "Campaign successfully initialized in ",
@@ -182,7 +216,15 @@ drive_init_campaign <- function(start_date,
 
 # Private functions ----
 
-edit_zs_template_parallel <- function(template_info) {
+#' Create Drive folders into another folder in parallel
+#'
+#' @param names `list` A list of folder names.
+#' @param target_folder `dribble` Dribble of the target folder.
+#'
+#' @returns `dribble` A dribble of the recently created folders.
+#' @keywords internal
+#'
+drive_mkdir_parallel <- function(names, target_folder) {
   doFuture::registerDoFuture()
 
   if (stringr::str_starts(Sys.getenv("SF_PARTNER"), "posit_workbench")) {
@@ -192,79 +234,109 @@ edit_zs_template_parallel <- function(template_info) {
   }
 
   options(doFuture.rng.onMisuse = "ignore")
-  xs <- 1:nrow(template_info)
+  idx <- 1:length(names)
 
   progressr::handlers("cli")
   progressr::with_progress({
-    p <- progressr::progressor(along = xs)
-    y <-
+    p <- progressr::progressor(along = idx)
+    dir_dribbles <-
       foreach::`%dopar%`(foreach::foreach(
-        x = xs,
-        .packages = c("openxlsx"),
-        .export = "template_info"
+        x = idx,
+        .packages = "googledrive"
       ), {
         p()
+        tryCatch({
+          googledrive::with_drive_quiet(googledrive::drive_mkdir(names[x], path = target_folder,
+                                                                 overwrite = TRUE))
+        }, error = \(x) {
+          cli::cli_alert_info(paste0("Folder for ", names[x], " already exists."))
+          })
+        })
+  })
 
-        edit_zs_template <- function(template_info) {
-          template_file <- openxlsx::loadWorkbook(template_info$masque_path)
+  return(dplyr::bind_rows(dir_dribbles))
 
-          openxlsx::writeData(template_file,
-                              sheet = 1, template_info$debut,
-                              startRow = 2, startCol = "B"
-          )
-          openxlsx::writeData(template_file,
-                              sheet = 1, template_info$fin,
-                              startRow = 2, startCol = "D"
-          )
-          openxlsx::writeData(template_file,
-                              sheet = 1, template_info$period,
-                              startRow = 1, startCol = "B"
-          )
+  }
 
-          if ("provinces" %in% names(template_info)) {
-            openxlsx::writeData(template_file,
-                                sheet = 1, template_info$provinces,
-                                startRow = 1, startCol = "K"
-            )
-          }
+#' Copy template folder to the ZS folder
+#'
+#' @param template_dribble `dribble` A dribble object for the template sheet.
+#' @param zs_drive_folders `dribble` A dribble of zones de sante folders.
+#'
+#' @returns `dribble` A dribble containing the template files of a campaign.
+#' @keywords internal
+#'
+drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
+  doFuture::registerDoFuture()
 
-          if ("antennes" %in% names(template_info)) {
-            openxlsx::writeData(template_file,
-                                sheet = 1, template_info$antennes,
-                                startRow = 1, startCol = "P"
-            )
-          }
+  if (stringr::str_starts(Sys.getenv("SF_PARTNER"), "posit_workbench")) {
+    future::plan(future::multicore)
+  } else {
+    future::plan(future::multisession)
+  }
 
-          if ("zones_de_sante" %in% names(template_info)) {
-            openxlsx::writeData(template_file,
-                                sheet = 1, template_info$zones_de_sante,
-                                startRow = 1, startCol = "V"
-            )
-          }
+  options(doFuture.rng.onMisuse = "ignore")
+  idx <- 1:nrow(zs_drive_folders)
 
-          openxlsx::writeData(template_file,
-                              sheet = 1,
-                              unlist(template_info$aires_de_sante),
-                              startRow = 4, startCol = "D"
-          )
+  progressr::handlers("cli")
+  progressr::with_progress({
+    p <- progressr::progressor(along = idx)
+    dir_dribbles <-
+      foreach::`%dopar%`(foreach::foreach(
+        x = idx,
+        .packages = "googledrive"
+      ), {
+        p()
+        zs_template <- googledrive::drive_cp(template_dribble,
+                                             path = zs_drive_folders[x, ],
+                              name = zs_drive_folders[x, ] |>
+                                dplyr::pull(masque_names),
+                              overwrite = TRUE)
 
-          openxlsx::writeData(template_file,
-                              sheet = 1,
-                              unlist(template_info$population_totale),
-                              startRow = 4, startCol = "H"
-          )
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |>
+                                     dplyr::select(period),
+                                   sheet = 1,
+                                   range = "B1",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
 
-          file.remove(template_info$masque_path)
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |> dplyr::select(debut),
+                                   sheet = 1,
+                                   range = "B2",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
 
-          openxlsx::saveWorkbook(template_file, template_info$masque_path,
-                                 overwrite = TRUE
-          )
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |> dplyr::select(fin),
+                                   sheet = 1,
+                                   range = "D2",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
 
-          invisible()
-        }
-        edit_zs_template(template_info[x, ])
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |>
+                                     dplyr::pull(aires_de_sante) |>
+                                     purrr::pluck(1) |>
+                                     dplyr::as_tibble(),
+                                   sheet = 1,
+                                   range = "D4",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
+
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |>
+                                     dplyr::pull(population_totale) |>
+                                     purrr::pluck(1) |>
+                                     dplyr::as_tibble(),
+                                   sheet = 1,
+                                   range = "H4",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
+
       })
   })
 
-  invisible()
+  return(dplyr::bind_rows(dir_dribbles))
 }
