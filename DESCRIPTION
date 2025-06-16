@@ -1,6 +1,6 @@
 Package: rdcAVS
 Title: SIA Campaign Builder for DRC
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("Mervin Keith", "Cuadera", , "xrg9@cdc.com", role = c("aut", "cre"))
 Description: This app assists in creating campaigns and setting permissions for 
