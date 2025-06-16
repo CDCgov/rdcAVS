@@ -71,6 +71,13 @@ campagneApp <- function() {
           ## Campaign creation panel ----
           tabPanel(
             "Cr\u00e9er Une Campagne",
+            fluidRow(column(
+              8,
+              h4("Authentifiez-vous avec Google Drive"),
+              actionButton("auth_drive", "Authentifier", class = "btn-success"),
+              verbatimTextOutput("auth_status"),
+              br()
+            )),
             sidebarPanel(
               textInput("campaign_name", "Nom de la Campagne"),
               dateInput("start_date", "D\u00e9but", language = "fr", format = "dd/mm/yyyy"),
@@ -102,14 +109,8 @@ campagneApp <- function() {
                   tags$div(style = checkbox_title_style, tags$div(
                     style = checkbox_style, checkboxGroupInput("selected_zs", NULL, choices = NULL)
                   ))
-                )
-              ),
-              shinyDirButton(
-                "dir",
-                "S\u00e9lectionner le R\u00e9pertoire Cible",
-                "S\u00e9lectionner un Dossier"
-              ),
-              verbatimTextOutput("selected_dir"),
+                ),
+                column(8, textInput("zs_template_url", "Adresse URL de mod\u00e8le de masque"))),
               br(),
               actionButton("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
               width = 20
@@ -250,26 +251,19 @@ campagneApp <- function() {
                 actionButton("add_permission", "Add Entry", class = "btn-success")
               )),
               br(),
-              br(),
-              fluidRow(column(
-                8,
-                h4("Authentifiez-vous avec Google Drive"),
-                actionButton("auth_drive", "Authentifier", class = "btn-success"),
-                actionButton(
-                  "refresh_drive",
-                  "Actualiser",
-                  class = "btn-primary",
-                  style = "display: none;"
-                ),
-                verbatimTextOutput("auth_status"),
-                br()
-              ))
+              br()
             ),
             fluidRow(column(
               8,
               h4("S\u00e9lection de Campagne"),
               uiOutput("campaign_drive_picker"),
               actionButton("set_permissions_btn", "Set Permissions", class = "btn-primary"),
+              actionButton(
+                "refresh_drive",
+                "Actualiser",
+                class = "btn-secondary",
+                style = "display: none;"
+              ),
               br(),
               br()
             ))
@@ -615,7 +609,7 @@ campagneApp <- function() {
             input$campaign_name,
             input$start_date,
             input$end_date,
-            selected_dir()
+            input$zs_template_url
           )
           req(
             input$selected_provinces,
@@ -635,29 +629,23 @@ campagneApp <- function() {
 
           tryCatch(
             {
-              init_campaign(
+              zs_masque_dribble <- googledrive::drive_get(stringr::str_trim(input$zs_template_url))
+              drive_init_campaign(
                 start_date = input$start_date,
                 end_date = input$end_date,
                 campaign_name = input$campaign_name,
-                campaign_folder = getwd(),
                 prov_target = input$selected_provinces,
                 antenne_target = input$selected_ant,
                 zs_target = input$selected_zs,
                 gdb = geo_data_reactive(),
-                zs_masque = system.file("extdata", "zs_masque_template.xlsx",
-                  package = "rdcAVS"
-                ),
-                output_folder = selected_dir()
+                zs_masque = zs_masque_dribble
               )
 
               removeModal()
               showModal(
                 modalDialog(
                   title = "Succ\u00e8s",
-                  paste(
-                    "Dossiers de campagne cr\u00e9\u00e9s \u00e0 :",
-                    file.path(selected_dir(), input$campaign_name)
-                  ),
+                  "Campagne initialis\u00e9e avec succ\u00e8s",
                   easyClose = TRUE,
                   footer = NULL,
                   style = "background-color: #ecfae8;"
@@ -998,6 +986,7 @@ campagneApp <- function() {
               folders <- googledrive::drive_find(q = query)
               campaign_drive_folders(folders)
 
+              removeModal()
               showModal(
                 modalDialog(
                   title = "Succ\u00e8s",
@@ -1053,6 +1042,7 @@ campagneApp <- function() {
               showNotification("Fichiers Google Drive actualis\u00e9s.", type = "message")
             }
 
+            removeModal()
             showModal(
               modalDialog(
                 title = "Succ\u00e8s",
@@ -1062,6 +1052,7 @@ campagneApp <- function() {
                 style = "background-color: #ecfae8;"
               )
             )
+            removeModal()
           }
         }
 

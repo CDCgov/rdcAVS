@@ -32,23 +32,16 @@ drive_init_campaign <- function(start_date,
                           zs_target = NULL,
                           gdb = NULL,
                           zs_masque) {
+
   start_time <- Sys.time()
+
+  if (is.null(campaign_name) | campaign_name  == "") {
+    campaign_name <- Sys.Date()
+  }
 
   start_date <- lubridate::as_date(start_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
   end_date <- lubridate::as_date(end_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
   campaign_name <- paste0("CAMPAGNE_", campaign_name)
-
-  if (!file.exists(zs_masque)) {
-    if (zs_masque == "") {
-      cli::cli_abort("data not found in package.")
-    }
-    cli::cli_abort(paste0(
-      "Please add the zone de sante template file in the ",
-      "campaign folder."
-    ))
-  } else {
-    cli::cli_alert_success("zone de sante template file found!")
-  }
 
   if (!is.null(prov_target)) {
     prov_target <- stringr::str_trim(stringr::str_to_upper(prov_target))
@@ -138,11 +131,12 @@ drive_init_campaign <- function(start_date,
     by = c("provinces", "zones_de_sante")
   )
 
-  # Make campaign folder
-  campaign_drive_folder <- googledrive::drive_mkdir(campaign_name,
-                                                    path = "~")
+  cli::cli_process_done()
 
-  # Make provinces
+  campaign_drive_folder <- googledrive::drive_mkdir(campaign_name,
+                                                      path = "~",
+                                                    overwrite = TRUE)
+
   cli::cli_process_start("Making province folders")
   prov_drive_folders <- drive_mkdir_parallel(folder_structure$prov_path |>
                                                unique(),
@@ -177,7 +171,7 @@ drive_init_campaign <- function(start_date,
     prov_name <- googledrive::drive_get(as_id(drive_reveal(antenne_drive_folders[i, ],
                                              what = "parents")$parents |>
                                   purrr::pluck(1,1))) |>
-      pull(name)
+      dplyr::pull(name)
 
     relevant_zs <- folder_structure |>
       dplyr::filter(provinces %in% prov_name,
@@ -203,7 +197,8 @@ drive_init_campaign <- function(start_date,
                                            debut, fin, period) |>
                              dplyr::distinct())
 
-  zs_template_dribbles <- drive_cp_zs_template_parallel(zs_masque, zs_drive_folders)
+  drive_cp_zs_template_parallel(zs_masque, zs_drive_folders)
+
   cli::cli_process_done()
 
   cli::cli_alert_success(paste0(
@@ -245,12 +240,8 @@ drive_mkdir_parallel <- function(names, target_folder) {
         .packages = "googledrive"
       ), {
         p()
-        tryCatch({
           googledrive::with_drive_quiet(googledrive::drive_mkdir(names[x], path = target_folder,
                                                                  overwrite = TRUE))
-        }, error = \(x) {
-          cli::cli_alert_info(paste0("Folder for ", names[x], " already exists."))
-          })
         })
   })
 
@@ -284,9 +275,12 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
     dir_dribbles <-
       foreach::`%dopar%`(foreach::foreach(
         x = idx,
-        .packages = "googledrive"
+        .packages = c("googledrive", "googlesheets4")
       ), {
         p()
+
+        googlesheets4::gs4_auth(TRUE)
+
         zs_template <- googledrive::drive_cp(template_dribble,
                                              path = zs_drive_folders[x, ],
                               name = zs_drive_folders[x, ] |>
@@ -338,5 +332,5 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
       })
   })
 
-  return(dplyr::bind_rows(dir_dribbles))
+  return(invisible())
 }
