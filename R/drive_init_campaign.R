@@ -279,8 +279,6 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
       ), {
         p()
 
-        googlesheets4::gs4_auth(TRUE)
-
         zs_template <- googledrive::drive_cp(template_dribble,
                                              path = zs_drive_folders[x, ],
                               name = zs_drive_folders[x, ] |>
