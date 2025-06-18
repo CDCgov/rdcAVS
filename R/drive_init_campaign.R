@@ -286,6 +286,27 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
                               overwrite = TRUE)
 
         googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |> dplyr::select(provinces),
+                                   sheet = 1,
+                                   range = "K1",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
+
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |> dplyr::select(antennes),
+                                   sheet = 1,
+                                   range = "P1",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
+
+        googlesheets4::range_write(zs_template,
+                                   zs_drive_folders[x, ] |> dplyr::select(zones_de_sante),
+                                   sheet = 1,
+                                   range = "V1",
+                                   col_names = FALSE,
+                                   reformat = FALSE)
+
+        googlesheets4::range_write(zs_template,
                                    zs_drive_folders[x, ] |>
                                      dplyr::select(period),
                                    sheet = 1,
