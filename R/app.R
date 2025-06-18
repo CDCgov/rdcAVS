@@ -968,7 +968,7 @@ campagneApp <- function() {
 
         observeEvent(input$auth_drive, {
           if (!drive_has_token()) {
-            drive_auth(email = NA) # Will open browser to authenticate
+            drive_auth(email = FALSE) # Will open browser to authenticate
           }
 
           tryCatch(
