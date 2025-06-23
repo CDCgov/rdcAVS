@@ -977,7 +977,7 @@ campagneApp <- function() {
                 modalDialog(
                   title = "R\u00e9cup\u00e9ration des informations de Google Drive",
                   "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
-                  easyClose = FALSE,
+                  easyClose = TRUE,
                   footer = NULL
                 )
               )
@@ -996,6 +996,7 @@ campagneApp <- function() {
                   style = "background-color: #ecfae8;"
                 )
               )
+              removeModal()
               auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
               show("refresh_drive")
             },
@@ -1052,7 +1053,6 @@ campagneApp <- function() {
                 style = "background-color: #ecfae8;"
               )
             )
-            removeModal()
           }
         }
 
@@ -1206,7 +1206,7 @@ campagneApp <- function() {
                   easyClose = TRUE,
                   footer = tagList(
                     downloadButton("download_invalid", "T\u00e9l\u00e9charger les entr\u00e9es invalides"),
-                    modalButton("Close"))
+                    modalButton("Fermer"))
                 ))
 
                 ####### Download invalid permission entries ----
@@ -1502,6 +1502,7 @@ campagneApp <- function() {
                   style = "background-color: #ecfae8;"
                 )
               )
+              removeModal()
             },
             error = function(e) {
               removeModal()
@@ -1514,6 +1515,7 @@ campagneApp <- function() {
                   style = "background-color: #fae8e8;"
                 )
               )
+              removeModal()
             }
           )
         })
