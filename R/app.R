@@ -977,7 +977,7 @@ campagneApp <- function() {
                 modalDialog(
                   title = "R\u00e9cup\u00e9ration des informations de Google Drive",
                   "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
-                  easyClose = TRUE,
+                  easyClose = FALSE,
                   footer = NULL
                 )
               )
