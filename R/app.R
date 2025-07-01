@@ -973,20 +973,10 @@ campagneApp <- function() {
 
           tryCatch(
             {
-              showModal(
-                modalDialog(
-                  title = "R\u00e9cup\u00e9ration des informations de Google Drive",
-                  "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
-                  easyClose = FALSE,
-                  footer = NULL
-                )
-              )
-
               query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
               folders <- googledrive::drive_find(q = query)
               campaign_drive_folders(folders)
 
-              removeModal()
               showModal(
                 modalDialog(
                   title = "Succ\u00e8s",
@@ -996,7 +986,7 @@ campagneApp <- function() {
                   style = "background-color: #ecfae8;"
                 )
               )
-              removeModal()
+
               auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
               show("refresh_drive")
             },
