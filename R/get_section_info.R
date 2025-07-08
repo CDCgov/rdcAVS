@@ -167,7 +167,7 @@ get_names_from_sheet <- function(sheet = NULL) {
       "LOCALISATION DES POPULATIONS SPECIALES",
       "Nombre de ménages dénombrés",
       "Populations spéciales (Nombre de personnes selon le Statut)",
-      "Effectifs des Populations spéciales recensées",
+      "Effectifs des Populations spéciales recensées"
     )
 
   } else if (sheet %in% 2:4) {
