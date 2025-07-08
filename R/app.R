@@ -282,6 +282,9 @@ campagneApp <- function() {
         )
       )
 
+      ## Monitoring panel ----
+
+
       # Server ----
       server <- function(input, output, session) {
 
