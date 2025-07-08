@@ -60,7 +60,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
       section_info <- ss_range[, range]
 
       # Obtain % emptiness of the range
-      empty_info <- sum(is.na(section_info))
+      empty_info <- sum(!is.na(section_info))
       val_counts <- length(section_info) * nrow(section_info)
       prop_empty <- scales::percent(empty_info / val_counts)
 
@@ -70,7 +70,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
         section = name[x],
         empty_cells = empty_info,
         total_cells = val_counts,
-        missingness = prop_empty
+        completeness = prop_empty
       )
     })
     sections <- bind_rows(sections)
