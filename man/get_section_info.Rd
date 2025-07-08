@@ -4,7 +4,7 @@
 \alias{get_section_info}
 \title{Get information on the completeness of a section}
 \usage{
-get_section_info(dribble, sheet = NULL, name = NULL)
+get_section_info(dribble, sheet = NULL, name = NULL, ss_max_row = NULL)
 }
 \arguments{
 \item{dribble}{\code{dribble} A dribble object identifying a specific Google Sheet.}
@@ -12,6 +12,8 @@ get_section_info(dribble, sheet = NULL, name = NULL)
 \item{sheet}{\code{str} or \code{int} Specify sheet ("tab") either by name or position.}
 
 \item{name}{\code{str} Name of the section.}
+
+\item{ss_max_row}{\code{int} How many rows to read.}
 }
 \value{
 \code{dribble} A dribble with section information on completeness.
