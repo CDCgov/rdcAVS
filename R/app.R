@@ -267,6 +267,23 @@ campagneApp <- function() {
               br(),
               br()
             ))
+          ),
+          ## Monitoring panel ----
+          tabPanel(
+            "Surveillance",
+            fluidRow(column(
+              8,
+              h4("S\u00e9lection de Campagne"),
+              uiOutput("campaign_surveillance"),
+              actionButton("monitor_campaign_btn", "Sélectionner une campagne", class = "btn-primary"),
+              br(),
+              br()
+            ),
+            column(
+              8,
+              h4("Refresh data"),
+              verbatimTextOutput("refresh_date"),
+            ))
           )
         ),
         tags$footer(
@@ -281,9 +298,6 @@ campagneApp <- function() {
           "Developed by the CDC Polio Eradication Branch Surveillance, Innovation, and Research Team (2025)"
         )
       )
-
-      ## Monitoring panel ----
-
 
       # Server ----
       server <- function(input, output, session) {
@@ -960,6 +974,7 @@ campagneApp <- function() {
         drive_files <- reactiveVal(NULL)
         campaign_drive_folders <- reactiveVal(NULL)
         auth_status <- reactiveVal("Non authentifi\u00e9")
+        refresh_status <- reactiveVal("Not refreshed")
 
         if (drive_has_token()) {
           query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
@@ -967,6 +982,7 @@ campagneApp <- function() {
           campaign_drive_folders(folders)
           auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
           show("refresh_drive")
+          show("refresh_campaign")
         }
 
         observeEvent(input$auth_drive, {
@@ -1061,6 +1077,20 @@ campagneApp <- function() {
             "S\u00e9lectionnez le dossier de campagne dans Google Drive",
             choices = folders$name
           )
+        })
+
+        campaign_surveillance_folders <- reactiveVal(NULL)
+        campaign_surveillance_folders(campaign_drive_folders(folders))
+        output$campaign_surveillance <- renderUI({
+          folders <- campaign_drive_folders()
+          selectInput(
+            "selected_campaign_drive_folder",
+            "S\u00e9lectionnez le dossier de campagne dans Google Drive",
+            choices = folders$name
+          )
+        })
+        output$refresh_date <- renderText({
+          refresh_status()
         })
 
         ###### Upload option for permissions table ----
