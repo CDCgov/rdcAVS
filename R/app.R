@@ -283,7 +283,10 @@ campagneApp <- function() {
               8,
               h4("Refresh data"),
               verbatimTextOutput("refresh_date"),
-            ))
+            )),
+            fluidRow(
+              DT::DTOutput("campaign_info_table")
+            )
           )
         ),
         tags$footer(
@@ -1079,14 +1082,12 @@ campagneApp <- function() {
           )
         })
 
-        campaign_surveillance_folders <- reactiveVal(NULL)
-        campaign_surveillance_folders(campaign_drive_folders(folders))
+        ###### Display available campaigns in the surveillance tab ----
         output$campaign_surveillance <- renderUI({
-          folders <- campaign_drive_folders()
           selectInput(
-            "selected_campaign_drive_folder",
+            "selected_surveillance_drive_folder",
             "S\u00e9lectionnez le dossier de campagne dans Google Drive",
-            choices = folders$name
+            choices = campaign_drive_folders()$name
           )
         })
         output$refresh_date <- renderText({
@@ -1584,6 +1585,18 @@ campagneApp <- function() {
           showNotification("Toutes les autorisations ont \u00e9t\u00e9 effac\u00e9es", type = "warning")
         })
 
+        #### Monitoring table ----
+        surveillance_summary <- reactiveVal(NULL)
+        observeEvent(input$monitor_campaign_btn, {
+          req(input$selected_surveillance_drive_folder)
+
+          surveillance_folder <- campaign_drive_folders() |>
+            dplyr::filter(name == input$selected_surveillance_drive_folder)
+
+          surveillance_summary(surveillance_folder)
+
+        })
+
         #### End session ----
         observeEvent(input$end_session, {
           showModal(
@@ -1651,7 +1664,13 @@ campagneApp <- function() {
             filter = "top"
           )
         })
-      }
 
+        #### Surveillance table ----
+        output$campaign_info_table <- DT::renderDT(
+          DT::datatable(
+            surveillance_summary()
+          )
+        )
+      }
       shinyApp(gui, server, options = list(launch.browser = TRUE))
 }
