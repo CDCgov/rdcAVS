@@ -290,17 +290,14 @@ campagneApp <- function() {
               actionButton("monitor_campaign_btn", "Sélectionner une campagne", class = "btn-primary"),
               br(),
               br()
-            ),
-            column(
-              8,
-              h4("Refresh data"),
-              verbatimTextOutput("refresh_date"),
             )),
             fluidRow(
+              verbatimTextOutput("refresh_date"),
               DT::DTOutput("campaign_info_table")
             ),
             downloadButton("download_data_quality_monitoring",
-                           "T\u00e9l\u00e9charger")
+                           "T\u00e9l\u00e9charger",
+                           style = "display: none;")
           )
         ),
         tags$footer(
@@ -394,13 +391,15 @@ campagneApp <- function() {
 
         ### Monitoring data ----
         surveillance_summary <- reactiveVal(NULL)
-        refresh_status <- reactiveVal("Not refreshed")
+        refresh_status <- reactiveVal("No data selected")
         if (file.exists(data_quality_path)) {
           refresh_file_info <- file.info(data_quality_path)
           refresh_status(paste0("Last updated on: ",
                                    refresh_file_info$mtime))
           load(data_quality_path)
           surveillance_summary(data_quality_info)
+          show("refresh_date")
+          show("download_data_quality_monitoring")
         }
 
         ### Data stacks for undo/redo ----
@@ -1610,7 +1609,7 @@ campagneApp <- function() {
           showNotification("Toutes les autorisations ont \u00e9t\u00e9 effac\u00e9es", type = "warning")
         })
 
-        #### Monitoring table ----
+        #### Surveillance table ----
         observeEvent(input$monitor_campaign_btn, {
           req(input$selected_surveillance_drive_folder,
               input$data_quality_sheet_selection)
@@ -1635,9 +1634,12 @@ campagneApp <- function() {
             easyClose = TRUE,
             style = "background-color: #ecfae8;"
           ))
-          refresh_status(Sys.time())
+          refresh_status(paste0("Last updated on: ",
+                                as.character(Sys.time())))
           data_quality_info <- surveillance_summary()
           save(data_quality_info, file = data_quality_path)
+          show("refresh_date")
+          show("download_data_quality_monitoring")
         })
 
         ##### Download current data quality monitoring table ----
