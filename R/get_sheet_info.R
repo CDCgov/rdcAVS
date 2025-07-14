@@ -20,6 +20,18 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
   googlesheets4::gs4_auth(TRUE)
 
   ## Functions ----
+  sheet_num_to_name <- function(num) {
+    switch(num,
+      "1" = "Donnees de base",
+      "2" = "J(-3)",
+      "3" = "J(-2)",
+      "4" = "J(-1)",
+      "5" = "Jour1",
+      "6" = "Jour2",
+      "7" = "Jour3",
+      "8" = "Jour4")
+  }
+
   get_sheet_info_single <- function(dribble, sheet = NULL) {
 
     # Get only the max row based on aires de sante column
@@ -153,6 +165,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
 
     }
   }
+
   get_names_from_sheet <- function(sheet = NULL) {
     if (sheet == 1) {
       c(

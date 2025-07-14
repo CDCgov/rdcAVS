@@ -275,6 +275,18 @@ campagneApp <- function() {
               8,
               h4("S\u00e9lection de Campagne"),
               uiOutput("campaign_surveillance"),
+              selectInput("data_quality_sheet_selection",
+                                 "Sections",
+                                 list(
+                                   "Donnees de base" = 1,
+                                   "J(-3)" = 2,
+                                   "J(-2)" = 3,
+                                   "J(-1)" = 4,
+                                   "Jour1" = 5,
+                                   "Jour2" = 6,
+                                   "Jour3" = 7,
+                                   "Jour4" = 8),
+                          multiple = TRUE),
               actionButton("monitor_campaign_btn", "Sélectionner une campagne", class = "btn-primary"),
               br(),
               br()
@@ -286,7 +298,9 @@ campagneApp <- function() {
             )),
             fluidRow(
               DT::DTOutput("campaign_info_table")
-            )
+            ),
+            downloadButton("download_data_quality_monitoring",
+                           "T\u00e9l\u00e9charger")
           )
         ),
         tags$footer(
@@ -1588,7 +1602,8 @@ campagneApp <- function() {
         #### Monitoring table ----
         surveillance_summary <- reactiveVal(NULL)
         observeEvent(input$monitor_campaign_btn, {
-          req(input$selected_surveillance_drive_folder)
+          req(input$selected_surveillance_drive_folder,
+              input$data_quality_sheet_selection)
 
           surveillance_folder <- campaign_drive_folders() |>
             dplyr::filter(name == input$selected_surveillance_drive_folder)
@@ -1600,7 +1615,8 @@ campagneApp <- function() {
             footer = NULL
           ))
           surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
-          surveillance_summary(get_sheet_info(surveillance_folder_sheets, 8))
+          surveillance_summary(get_sheet_info(surveillance_folder_sheets,
+                                              as.numeric(input$data_quality_sheet_selection)))
           #surveillance_summary(surveillance_folder_sheets)
           removeModal()
           showModal(modalDialog(
@@ -1610,6 +1626,16 @@ campagneApp <- function() {
             style = "background-color: #ecfae8;"
           ))
         })
+
+        ##### Download current data quality monitoring table ----
+        output$download_data_quality_monitoring <- downloadHandler(
+          filename = function() {
+            paste0("data_quality_table_", Sys.Date(), ".csv")
+          },
+          content = function(file) {
+            readr::write_csv(surveillance_summary(), file, na = "")
+          }
+        )
 
         #### End session ----
         observeEvent(input$end_session, {
