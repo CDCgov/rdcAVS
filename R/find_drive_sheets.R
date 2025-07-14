@@ -46,6 +46,7 @@ find_drive_sheets <- function(folder_dribble) {
           p()
           tryCatch(
             {
+              googledrive::drive_auth(TRUE)
               files <- googledrive::drive_ls(sub_folders[x, ], recursive = TRUE)
               spreadsheets <- googledrive::drive_reveal(files, what = "mimeType") |>
                 dplyr::filter(mime_type == "application/vnd.google-apps.spreadsheet")

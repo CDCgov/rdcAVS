@@ -17,6 +17,8 @@
 #' }
 get_sheet_info <- function(dribble, sheets = 1:8) {
 
+  googlesheets4::gs4_auth(TRUE)
+
   ## Functions ----
   get_sheet_info_single <- function(dribble, sheet = NULL) {
 
@@ -41,7 +43,6 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
 
   }
   get_section_info <- function(dribble, sheet= NULL, name = NULL, ss_max_row = NULL) {
-
     # Check that what is passed is a single dribble
     if (nrow(dribble) > 1) {
       cli::cli_abort("Please pass only a one-row dribble.")
@@ -253,7 +254,6 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
         .export = "template_info"
       ), {
         p()
-
         sheet_info <- purrr::map(sheets, \(i) get_sheet_info_single(dribble[x, ], i))
         sheet_info <- sheet_info |> dplyr::bind_rows()
       })

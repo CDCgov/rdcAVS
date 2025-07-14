@@ -1593,8 +1593,22 @@ campagneApp <- function() {
           surveillance_folder <- campaign_drive_folders() |>
             dplyr::filter(name == input$selected_surveillance_drive_folder)
 
-          surveillance_summary(surveillance_folder)
-
+          showModal(modalDialog(
+            title = "Processing",
+            "Please wait while campaign data is being processed",
+            easyClose = FALSE,
+            footer = NULL
+          ))
+          surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
+          surveillance_summary(get_sheet_info(surveillance_folder_sheets, 8))
+          #surveillance_summary(surveillance_folder_sheets)
+          removeModal()
+          showModal(modalDialog(
+            title = "Success",
+            "Campaign information processed",
+            easyClose = TRUE,
+            style = "background-color: #ecfae8;"
+          ))
         })
 
         #### End session ----
@@ -1668,7 +1682,10 @@ campagneApp <- function() {
         #### Surveillance table ----
         output$campaign_info_table <- DT::renderDT(
           DT::datatable(
-            surveillance_summary()
+            surveillance_summary(),
+            options = list(scrollX = TRUE, pageLength = 10,
+                           searchHighlight = TRUE),
+            filter = "top"
           )
         )
       }
