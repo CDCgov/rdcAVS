@@ -342,6 +342,7 @@ campagneApp <- function() {
 
         geo_cache_path <- file.path(cache_dir, "geo_data.rda")
         perm_cache_path <- file.path(cache_dir, "perm_data.rda")
+        data_quality_path <- file.path(cache_dir, "data_quality_info.rda")
         template_path <- file.path(cache_dir, "zs_masque_template.xlsx")
 
         invalid_rows <- NULL
@@ -390,6 +391,17 @@ campagneApp <- function() {
         perm_data_reactive <- reactive({
           arrange(perm_values$data)
         })
+
+        ### Monitoring data ----
+        surveillance_summary <- reactiveVal(NULL)
+        refresh_status <- reactiveVal("Not refreshed")
+        if (file.exists(data_quality_path)) {
+          refresh_file_info <- file.info(data_quality_path)
+          refresh_status(paste0("Last updated on: ",
+                                   refresh_file_info$mtime))
+          load(data_quality_path)
+          surveillance_summary(data_quality_info)
+        }
 
         ### Data stacks for undo/redo ----
         geo_stack <- reactiveValues(undo = list(), redo = list())
@@ -991,7 +1003,6 @@ campagneApp <- function() {
         drive_files <- reactiveVal(NULL)
         campaign_drive_folders <- reactiveVal(NULL)
         auth_status <- reactiveVal("Non authentifi\u00e9")
-        refresh_status <- reactiveVal("Not refreshed")
 
         if (drive_has_token()) {
           query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
@@ -1600,7 +1611,6 @@ campagneApp <- function() {
         })
 
         #### Monitoring table ----
-        surveillance_summary <- reactiveVal(NULL)
         observeEvent(input$monitor_campaign_btn, {
           req(input$selected_surveillance_drive_folder,
               input$data_quality_sheet_selection)
@@ -1625,6 +1635,9 @@ campagneApp <- function() {
             easyClose = TRUE,
             style = "background-color: #ecfae8;"
           ))
+          refresh_status(Sys.time())
+          data_quality_info <- surveillance_summary()
+          save(data_quality_info, file = data_quality_path)
         })
 
         ##### Download current data quality monitoring table ----
