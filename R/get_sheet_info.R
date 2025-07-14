@@ -20,17 +20,6 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
   googlesheets4::gs4_auth(TRUE)
 
   ## Functions ----
-  sheet_num_to_name <- function(num) {
-    switch(num,
-      "1" = "Donnees de base",
-      "2" = "J(-3)",
-      "3" = "J(-2)",
-      "4" = "J(-1)",
-      "5" = "Jour1",
-      "6" = "Jour2",
-      "7" = "Jour3",
-      "8" = "Jour4")
-  }
 
   get_sheet_info_single <- function(dribble, sheet = NULL) {
 
@@ -78,7 +67,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
       prop_empty <- scales::percent(empty_info / val_counts)
 
       # Create a tibble
-      dplyr::tibble(
+      info <- dplyr::tibble(
         range = get_range_from_name(sheet, name[x]),
         section = name[x],
         empty_cells = empty_info,
@@ -96,7 +85,18 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
       dplyr::mutate(dplyr::across(dplyr::any_of(c("prov", "antenne", "zone_de_sante")),
                                   \(x) dplyr::if_else(stringr::str_detect(x, "CAMPAGNE"), NA, x)))
     dribble_summary <- dplyr::cross_join(dribble_summary, sections) |>
-      dplyr::mutate(days_since_last_modified = as.numeric(Sys.Date() - as.Date(dribble_info$modified_time)))
+      dplyr::mutate(days_since_last_modified = as.numeric(Sys.Date() - as.Date(dribble_info$modified_time)),
+                    date_ran = Sys.Date(),
+                    sheet = dplyr::case_when(sheet == 1 ~ "Donnees de base",
+                                             sheet == 2 ~ "J(-3)",
+                                             sheet == 3 ~ "J(-2)",
+                                             sheet == 4 ~ "J(-1)",
+                                             sheet == 5 ~ "Jour1",
+                                             sheet == 6 ~ "Jour2",
+                                             sheet == 7 ~ "Jour3",
+                                             sheet == 8 ~ "Jour4",
+                                             .default = as.character(sheet))
+                    )
 
     return(dribble_summary)
   }
