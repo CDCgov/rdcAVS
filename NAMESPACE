@@ -2,6 +2,7 @@
 
 export(campagneApp)
 export(find_drive_sheets)
+export(get_campaign_progress)
 export(get_sheet_info)
 import(dplyr)
 import(googledrive)
@@ -37,3 +38,4 @@ importFrom(rappdirs,user_data_dir)
 importFrom(shinyjs,disable)
 importFrom(shinyjs,show)
 importFrom(shinyjs,useShinyjs)
+importFrom(tidyr,pivot_longer)

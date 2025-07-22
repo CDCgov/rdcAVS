@@ -31,7 +31,8 @@ Imports:
     shiny,
     shinyFiles,
     shinyjs,
-    stringr
+    stringr,
+    tidyr
 Suggests:
     stringi
 URL: https://mcuadera.github.io/rdcAVS/

@@ -35,6 +35,7 @@
 #' @importFrom shinyjs disable
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
+#' @importFrom tidyr pivot_longer
 ## usethis namespace: end
 
 utils::globalVariables(c(
