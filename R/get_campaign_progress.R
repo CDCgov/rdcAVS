@@ -16,6 +16,8 @@
 #' summary <- get_campaign_progress(dribble)
 #' }
 get_campaign_progress <- function(dribble, sheets = 5:8) {
+  googlesheets4::gs4_auth(TRUE)
+  googledrive::drive_auth(TRUE)
 
   get_campaign_progress_single <- function(dribble, sheet) {
 
@@ -111,5 +113,12 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
       })
   })
 
-  return(dplyr::bind_rows(y))
+  final_summary <- dplyr::bind_rows(y) |>
+    dplyr::group_by(province, antenne, zone_de_sante, aire_de_sante) |>
+    dplyr::arrange(jour) |>
+    dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct)) |>
+    dplyr::arrange(aire_de_sante) |>
+    dplyr::ungroup()
+
+  return(final_summary)
 }
