@@ -294,11 +294,20 @@ campagneApp <- function() {
             fluidRow(
               h5("Completeness information"),
               verbatimTextOutput("refresh_date"),
-              DT::DTOutput("campaign_info_table")
+              DT::DTOutput("campaign_info_table"),
+              column(width = 4,
+                     downloadButton("download_data_quality_monitoring",
+                             "T\u00e9l\u00e9charger",
+                             style = "display: none;"))
             ),
-            downloadButton("download_data_quality_monitoring",
-                           "T\u00e9l\u00e9charger",
-                           style = "display: none;")
+            fluidRow(
+              h5("Campaign progress report"),
+              DT::DTOutput("campaign_progress_table"),
+              column(width = 4,
+                     downloadButton("download_campaign_quality_monitoring",
+                                    "T\u00e9l\u00e9charger",
+                                    style = "display: none;"))
+            )
           )
         ),
         tags$footer(
@@ -341,6 +350,7 @@ campagneApp <- function() {
         geo_cache_path <- file.path(cache_dir, "geo_data.rda")
         perm_cache_path <- file.path(cache_dir, "perm_data.rda")
         data_quality_path <- file.path(cache_dir, "data_quality_info.rda")
+        campaign_quality_path <- file.path(cache_dir, "campaign_quality_info.rda")
         template_path <- file.path(cache_dir, "zs_masque_template.xlsx")
 
         invalid_rows <- NULL
@@ -392,15 +402,25 @@ campagneApp <- function() {
 
         ### Monitoring data ----
         surveillance_summary <- reactiveVal(NULL)
+        campaign_quality <- reactiveVal(NULL)
         refresh_status <- reactiveVal("No data selected")
         if (file.exists(data_quality_path)) {
           refresh_file_info <- file.info(data_quality_path)
           refresh_status(paste0("Last updated on: ",
                                    refresh_file_info$mtime))
           load(data_quality_path)
+
           surveillance_summary(data_quality_info)
+
           show("refresh_date")
           show("download_data_quality_monitoring")
+
+        }
+
+        if (file.exists(campaign_quality_path)) {
+          load(campaign_quality_path)
+          campaign_quality(campaign_quality_info)
+          show("download_campaign_quality_monitoring")
         }
 
         ### Data stacks for undo/redo ----
@@ -1627,6 +1647,8 @@ campagneApp <- function() {
           surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
           surveillance_summary(get_sheet_info(surveillance_folder_sheets,
                                               as.numeric(input$data_quality_sheet_selection)))
+          campaign_quality(get_campaign_progress(surveillance_folder_sheets,
+                                                 5:8))
           #surveillance_summary(surveillance_folder_sheets)
           removeModal()
           showModal(modalDialog(
@@ -1638,9 +1660,14 @@ campagneApp <- function() {
           refresh_status(paste0("Last updated on: ",
                                 as.character(Sys.time())))
           data_quality_info <- surveillance_summary()
+          campaign_quality_info <- campaign_quality()
+
           save(data_quality_info, file = data_quality_path)
+          save(campaign_quality_info, file = campaign_quality_path)
+
           show("refresh_date")
           show("download_data_quality_monitoring")
+          show("download_campaign_quality_monitoring")
         })
 
         ##### Download current data quality monitoring table ----
@@ -1650,6 +1677,15 @@ campagneApp <- function() {
           },
           content = function(file) {
             readr::write_csv(surveillance_summary(), file, na = "")
+          }
+        )
+
+        output$download_campaign_quality_monitoring <- downloadHandler(
+          filename = function() {
+            paste0("campaign_quality_table_", Sys.Date(), ".csv")
+          },
+          content = function(file) {
+            readr::write_csv(campaign_quality(), file, na = "")
           }
         )
 
@@ -1733,6 +1769,7 @@ campagneApp <- function() {
               "Antenne",
               "Zone de Sante",
               "Sheet",
+              "Spreadsheet Name",
               "Range",
               "Section",
               "Cellules Remplies",
@@ -1743,6 +1780,17 @@ campagneApp <- function() {
             )
           )
         )
+
+        output$campaign_progress_table <- DT::renderDT(
+          DT::datatable(
+            campaign_quality(),
+            options = list(scrollX = TRUE, pageLength = 10,
+                           searchHighlight = TRUE),
+            filter = "top"
+          )
+        )
       }
+
+
       shinyApp(gui, server, options = list(launch.browser = TRUE))
 }
