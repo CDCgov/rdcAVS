@@ -292,6 +292,7 @@ campagneApp <- function() {
               br()
             )),
             fluidRow(
+              h5("Completeness information"),
               verbatimTextOutput("refresh_date"),
               DT::DTOutput("campaign_info_table")
             ),
@@ -1726,7 +1727,20 @@ campagneApp <- function() {
             surveillance_summary(),
             options = list(scrollX = TRUE, pageLength = 10,
                            searchHighlight = TRUE),
-            filter = "top"
+            filter = "top",
+            colnames = c(
+              "Province",
+              "Antenne",
+              "Zone de Sante",
+              "Sheet",
+              "Range",
+              "Section",
+              "Cellules Remplies",
+              "Cellules Totales",
+              "Exhaustivité",
+              "Jours Depuis la Dernière Modification",
+              "Date d'Exécution"
+            )
           )
         )
       }
