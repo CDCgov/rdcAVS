@@ -68,9 +68,10 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
 
       # Create a tibble
       info <- dplyr::tibble(
+        sheet_name = dribble_info$name,
         range = get_range_from_name(sheet, name[x]),
         section = name[x],
-        empty_cells = empty_info,
+        filled_cells = empty_info,
         total_cells = val_counts,
         completeness = prop_empty
       )
