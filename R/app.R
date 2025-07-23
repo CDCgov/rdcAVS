@@ -306,7 +306,15 @@ campagneApp <- function() {
               column(width = 4,
                      downloadButton("download_campaign_quality_monitoring",
                                     "T\u00e9l\u00e9charger",
-                                    style = "display: none;"))
+                                    style = "display: none;")),
+              selectInput("prov_selector_campaign_completeness",
+                          "Select province below:",
+                          choices = NULL),
+              selectInput("zs_selector_campaign_completeness",
+                          "Select zone de sante below:",
+                          choices = NULL),
+
+              plotOutput("campaign_completeness_plot")
             )
           )
         ),
@@ -621,6 +629,26 @@ campagneApp <- function() {
             "perm_zs",
             choices = sort(unique(filtered_zs_p)),
             selected = input$perm_zs
+          )
+
+
+          # Selected provinces
+          campaign_completeness <- campaign_quality()
+          prov_campaign_completeness <- campaign_completeness |>
+            dplyr::pull(province)
+          zs_campaign_completeness <- campaign_completeness |>
+            dplyr::pull(zone_de_sante)
+
+          updateSelectInput(
+            session,
+            "prov_selector_campaign_completeness",
+            choices = sort(unique(prov_campaign_completeness))
+          )
+
+          updateSelectInput(
+            session,
+            "zs_selector_campaign_completeness",
+            choices = sort(unique(zs_campaign_completeness))
           )
         })
 
@@ -1789,8 +1817,17 @@ campagneApp <- function() {
             filter = "top"
           )
         )
-      }
 
+        #### Plots ----
+        output$campaign_completeness_plot <- renderPlot(
+          {
+            create_campaign_progress_heatmap(campaign_quality() |>
+                              dplyr::filter(province == input$prov_selector_campaign_completeness,
+                                            zone_de_sante == input$zs_selector_campaign_completeness))
+
+          }
+        )
+      }
 
       shinyApp(gui, server, options = list(launch.browser = TRUE))
 }
