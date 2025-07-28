@@ -40,11 +40,14 @@
 #' }
 campagneApp <- function() {
       gui <- fluidPage(
+
         theme = bslib::bs_theme(
           version = 5,
           bootswatch = "yeti"
         ),
         useShinyjs(),
+
+        # Header
         tags$div(
           style = "display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;",
           tags$div(
@@ -68,219 +71,15 @@ campagneApp <- function() {
           type = "tabs",
           ## Campaign creation panel ----
           ui_campaign_creation(),
-
           ## Geo panel ----
-          tabPanel(
-            "G\u00e9ographiques",
-            fluidRow(
-              h4("Donn\u00e9es G\u00e9ographiques"),
-              fluidRow(
-                column(8, fileInput("upload_geo", "T\u00e9l\u00e9charger Un Fichier CSV G\u00e9ographique",
-                  accept = ".csv"
-                )),
-                helpText("Veuillez inclure les colonnes suivantes lors du t\u00e9l\u00e9chargement : provinces, antennes, zones_de_sante, aires_de_sante, population_totale")
-              ),
-              DTOutput("geo_table"),
-              br(),
-              fluidRow(column(
-                9, actionButton("delete_row", "Supprimer la s\u00e9lection", class = "btn-danger"),
-                actionButton("undo_geo", "Annuler", icon = icon("undo")),
-                actionButton("redo_geo", "R\u00e9tablir", icon = icon("redo"))
-              ), br(), br()),
-              column(
-                8,
-                actionButton("clear_geo", "Tout Effacer", icon = icon("trash"), class = "btn-danger"),
-                downloadButton("download_geo", "T\u00e9l\u00e9charger la base de donn\u00e9es g\u00e9ographique actuelle")
-              ),
-              fluidRow(
-                br(),
-                column(3, textInput("new_province", "Provinces")),
-                column(3, textInput("new_antenne", "Antennes")),
-                column(3, textInput("new_zs", "Zones de sant\u00e9")),
-                column(3, textInput("new_as", "Aires de sant\u00e9")),
-                column(3, numericInput("new_pop", "Population Totale", value = 0))
-              ),
-              fluidRow(column(3, actionButton("add_row", "Ajouter Une Entr\u00e9e", class = "btn-success"))),
-              br(),
-              br()
-            )
-          ),
-
+          ui_geodatabase(),
           ## Permission panel ----
-          tabPanel(
-            "G\u00e9rer les Autorisations",
-            fluidRow(
-              h4("G\u00e9rer les Niveaux d'Autorisation"),
-              fluidRow(column(
-                8,
-                fileInput(
-                  "upload_permissions",
-                  "Autorisations de T\u00e9l\u00e9chargement CSV",
-                  accept = ".csv"
-                )
-              ),
-              helpText(paste0(
-                'Si le niveau est "global", les zones g\u00e9ographiques sont facultatives.',
-                " Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux.\n\n",
-                'Par exemple, si le niveau est "zone de sante",',
-                ' incluez une valeur pour les colonnes "province", "antenne" et "zone de sante".'
-              )),
-              DT::DTOutput("permissions_table"),
-              br(),
-              fluidRow(
-                column(
-                  8, actionButton("delete_permission", "Supprimer la S\u00e9lection", class = "btn-danger"),
-                  actionButton("undo_perm", "Annuler", icon = icon("undo")),
-                  actionButton("redo_perm", "R\u00e9tablir", icon = icon("redo"))
-                )),
-                br(), br()
-              ), column(
-                8,
-                actionButton(
-                  "clear_perm",
-                  "Tout Effacer",
-                  icon = icon("trash"),
-                  class = "btn-danger"
-                ),
-                downloadButton(
-                  "download_permissions",
-                  "T\u00e9l\u00e9charger les Autorisations Actuelles"
-                )
-              ),
-              br(),
-              br(),
-              fluidRow(
-                column(3, textInput("perm_name", "Name")),
-                column(3, textInput("perm_phone", "Phone")),
-                column(3, textInput("perm_notes", "Notes", placeholder = "affiliation, job title, etc...")),
-                column(3, textInput("perm_email", "Email")),
-                column(3, selectInput(
-                  "perm_level",
-                  "Level",
-                  choices = c("global", "province", "antenne", "zone de sante")
-                )),
-                column(3, selectInput(
-                  "perm_role", "Role",
-                  choices = c("writer", "reader", "commenter")
-                )),
-              ),
-              fluidRow(
-                # Province options
-                conditionalPanel(condition = "input.perm_level == 'province' || input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
-                  4,
-                  selectizeInput(
-                    "perm_province",
-                    "Province",
-                    choices = NULL,
-                    options = list(placeholder = "S\u00e9lectionnez une province")
-                  )
-                )),
-
-                # Antenne options
-                conditionalPanel(condition = "input.perm_level == 'antenne' || input.perm_level == 'zone de sante'", column(
-                  4,
-                  selectizeInput(
-                    "perm_antenne",
-                    "Antenne",
-                    choices = NULL,
-                    options = list(placeholder = "S\u00e9lectionnez une antenne")
-                  )
-                )),
-
-                # Zone de sante options
-                conditionalPanel(condition = "input.perm_level == 'zone de sante'", column(
-                  4,
-                  selectizeInput(
-                    "perm_zs",
-                    "Zones de Sante",
-                    choices = NULL,
-                    options = list(placeholder = "S\u00e9lectionnez une zone de sant\u00e9")
-                  )
-                ))
-              ),
-              fluidRow(column(
-                3,
-                actionButton("add_permission", "Add Entry", class = "btn-success")
-              )),
-              br(),
-              br()
-            ),
-            fluidRow(column(
-              8,
-              h4("S\u00e9lection de Campagne"),
-              uiOutput("campaign_drive_picker"),
-              actionButton("set_permissions_btn", "Set Permissions", class = "btn-primary"),
-              actionButton(
-                "refresh_drive",
-                "Actualiser",
-                class = "btn-secondary",
-                style = "display: none;"
-              ),
-              br(),
-              br()
-            ))
-          ),
+          ui_perm_table(),
           ## Monitoring panel ----
-          tabPanel(
-            "Surveillance",
-            fluidRow(column(
-              8,
-              h4("S\u00e9lection de Campagne"),
-              uiOutput("campaign_surveillance"),
-              selectInput("data_quality_sheet_selection",
-                                 "Sections",
-                                 list(
-                                   "Donnees de base" = 1,
-                                   "J(-3)" = 2,
-                                   "J(-2)" = 3,
-                                   "J(-1)" = 4,
-                                   "Jour1" = 5,
-                                   "Jour2" = 6,
-                                   "Jour3" = 7,
-                                   "Jour4" = 8),
-                          multiple = TRUE),
-              actionButton("monitor_campaign_btn", "Sélectionner une campagne", class = "btn-primary"),
-              br(),
-              br()
-            )),
-            fluidRow(
-              h5("Completeness information"),
-              verbatimTextOutput("refresh_date"),
-              DT::DTOutput("campaign_info_table"),
-              column(width = 4,
-                     downloadButton("download_data_quality_monitoring",
-                             "T\u00e9l\u00e9charger",
-                             style = "display: none;"))
-            ),
-            fluidRow(
-              h5("Campaign progress report"),
-              DT::DTOutput("campaign_progress_table"),
-              column(width = 4,
-                     downloadButton("download_campaign_quality_monitoring",
-                                    "T\u00e9l\u00e9charger",
-                                    style = "display: none;")),
-              selectInput("prov_selector_campaign_completeness",
-                          "Select province below:",
-                          choices = NULL),
-              selectInput("zs_selector_campaign_completeness",
-                          "Select zone de sante below:",
-                          choices = NULL),
-
-              plotOutput("campaign_completeness_plot")
-            )
-          )
+          ui_monitoring()
         ),
-        tags$footer(
-          style = "
-    text-align: center;
-    padding: 1em;
-    font-size: 0.9em;
-    color: #888;
-    border-top: 1px solid #ddd;
-    margin-top: 40px;
-  ",
-          "Developed by the CDC Polio Eradication Branch Surveillance, Innovation, and Research Team (2025)"
-        )
+        # Footer
+        ui_footer()
       )
 
       # Server ----
