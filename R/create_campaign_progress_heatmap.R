@@ -16,8 +16,8 @@ create_campaign_progress_heatmap <- function(summary) {
                     mutate(aire_de_sante = str_to_title(aire_de_sante),
                            aire_de_sante = factor(aire_de_sante, levels = c(sort(unique(aire_de_sante), decreasing = TRUE))),
                            cat = case_when(
-                             couverture_campaign_cumulative >= 30 & jour == "Jour 1" ~ "Bien",
-                             couverture_campaign_cumulative >= 25 & couverture_campaign_cumulative < 30 & jour == "Jour 1" ~ "Risque",
+                             couverture_campaign_cumulative >= 40 & jour == "Jour 1" ~ "Bien",
+                             couverture_campaign_cumulative >= 35 & couverture_campaign_cumulative < 40 & jour == "Jour 1" ~ "Risque",
                              couverture_campaign_cumulative >= 70 & jour == "Jour 2" ~ "Bien",
                              couverture_campaign_cumulative >= 65 & couverture_campaign_cumulative < 70 & jour == "Jour 2" ~ "Risque",
                              couverture_campaign_cumulative >= 100 & jour == "Jour 3" ~ "Bien",
