@@ -52,8 +52,16 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
     target <- googlesheets4::range_read(dribble_info, sheet, range=paste0("CO3:CO", ss_max_row + 3))
     coverage <- googlesheets4::range_read(dribble_info, sheet, range=paste0("DZ3:DZ", ss_max_row + 3))
     completeness <- googlesheets4::range_read(dribble_info, sheet, range=paste0("CL3:CM", ss_max_row + 3))
+    rural_urban <- googlesheets4::range_read(dribble_info, sheet, range = paste0("EF3:EI", ss_max_row + 3))
+    rural_urban <- rural_urban |>
+      dplyr::select(2,4)
+    recoveries_0_11 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("GL3:GL", ss_max_row + 3))
+    recoveries_12_23 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("HT3:HT", ss_max_row + 3))
+    recoveries_24_59 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("JB3:JB", ss_max_row + 3))
 
-    summary <- dplyr::bind_cols(geo_info, target, coverage, completeness) |>
+    summary <- dplyr::bind_cols(geo_info, target, coverage, completeness,
+                                rural_urban,
+                                recoveries_0_11, recoveries_12_23, recoveries_24_59) |>
       dplyr::rename(
         "province" = "Province",
         "antenne" = "Antenne",
@@ -62,7 +70,12 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "rapports_de_vaccination_attendus" = "Attendus",
         "rapports_de_vaccination_recus" = "Recus",
         "cible_0_59_mois" = "Cible 0-59 mois",
-        "vaccination_0_59_mois" = "Total"
+        "vaccination_0_59_mois" = "Total",
+        "avg_vax_rural" = "Nb moyen d'enfants vaccinés/équipe (ref 100 enfants)",
+        "avg_vax_urban" = "Nb moyen d'enfants vaccinés/équipe (ref 200 enfants)",
+        "recovery_0_11" = "# Récupérations 0-11 mois",
+        "recovery_12_23" = "# Récupérations 12-23 mois",
+        "recovery_24_59" = "# Récupérations 24-59 mois"
       ) |>
       dplyr::mutate(cible_0_59_mois = round(cible_0_59_mois, 0),
                     rapport_completude_pct = round(rapports_de_vaccination_recus / rapports_de_vaccination_attendus * 100, 0),
@@ -79,7 +92,12 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "rapport_completude_pct",
         "cible_0_59_mois",
         "vaccination_0_59_mois",
-        "couverture_campagne_pct"
+        "couverture_campagne_pct",
+        "avg_vax_rural",
+        "avg_vax_urban",
+        "recovery_0_11",
+        "recovery_12_23",
+        "recovery_24_59"
       )))
 
     return(summary)
@@ -118,7 +136,28 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
     dplyr::arrange(jour) |>
     dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct)) |>
     dplyr::arrange(aire_de_sante) |>
-    dplyr::ungroup()
+    dplyr::ungroup() |>
+    dplyr::select(
+      dplyr::any_of(c(
+        "province",
+        "antenne",
+        "zone_de_sante",
+        "aire_de_sante",
+        "jour",
+        #"rapports_de_vaccination_attendus",
+        #"rapports_de_vaccination_recus",
+        "rapport_completude_pct",
+        #"cible_0_59_mois",
+        #"vaccination_0_59_mois",
+        #"couverture_campagne_pct",
+        "couverture_campaign_cumulative",
+        "avg_vax_rural",
+        "avg_vax_urban",
+        "recovery_0_11",
+        "recovery_12_23",
+        "recovery_24_59"
+      ))
+    )
 
   return(final_summary)
 }
