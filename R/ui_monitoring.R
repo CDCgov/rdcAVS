@@ -1,5 +1,5 @@
 ui_monitoring <- function() {
-  tabPanel(
+  nav_panel(
     "Surveillance",
     fluidRow(column(
       8,

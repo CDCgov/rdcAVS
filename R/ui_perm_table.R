@@ -1,5 +1,5 @@
 ui_perm_table <- function() {
-  tabPanel(
+  nav_panel(
     "G\u00e9rer les Autorisations",
     fluidRow(
       h4("G\u00e9rer les Niveaux d'Autorisation"),

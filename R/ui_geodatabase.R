@@ -1,5 +1,5 @@
 ui_geodatabase <- function() {
-  tabPanel(
+  nav_panel(
     "G\u00e9ographiques",
     fluidRow(
       h4("Donn\u00e9es G\u00e9ographiques"),

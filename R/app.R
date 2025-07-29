@@ -39,7 +39,7 @@
 #' campagneApp()
 #' }
 campagneApp <- function() {
-      gui <- fluidPage(
+      gui <- page_fluid(
 
         theme = bslib::bs_theme(
           version = 5,
@@ -67,15 +67,10 @@ campagneApp <- function() {
             actionButton("end_session", label = tagList(icon("sign-out-alt"), "Quitter l'application"), class = "btn btn-danger")
           )
         ),
-        tabsetPanel(
-          type = "tabs",
-          ## Campaign creation panel ----
-          ui_campaign_creation(),
-          ## Geo panel ----
+        navset_tab(
           ui_geodatabase(),
-          ## Permission panel ----
+          ui_campaign_creation(),
           ui_perm_table(),
-          ## Monitoring panel ----
           ui_monitoring()
         ),
         # Footer

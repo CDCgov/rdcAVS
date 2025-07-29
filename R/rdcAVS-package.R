@@ -7,7 +7,7 @@
 #' @import dplyr stringr readr
 #' @import googledrive
 #' @import shiny shinyFiles
-#' @importFrom bslib bs_theme
+#' @import bslib
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_alert
 #' @importFrom cli cli_alert_info
