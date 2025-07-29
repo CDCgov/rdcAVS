@@ -6,8 +6,8 @@ ui_campaign_creation <- function() {
   nav_panel(
     "Cr\u00e9er Une Campagne",
       h4("Authentifiez-vous avec Google Drive"),
-      actionButton("auth_drive", "Authentifier", class = "btn-success"),
-      layout_columns(verbatimTextOutput("auth_status"), br(), br()),
+      layout_columns(actionButton("auth_drive", "Authentifier", class = "btn-success"),
+                     verbatimTextOutput("auth_status"), col_widths = c(2, 4)),
       h4("Informations sur la Campagne"),
       layout_columns(card(textInput("campaign_name", h6("Nom de la Campagne"))),
                       card(dateInput("start_date", h6("D\u00e9but"),

@@ -35,6 +35,6 @@ create_campaign_progress_heatmap <- function(summary) {
     ggplot2::ylab("Aire De Sante") +
     ggplot2::xlab("") +
     ggplot2::labs(title = "Couverture Campaign (%)",
-                  subtitle = paste0("Objectif: Jour 1: 30%, Jour 2: 70%, Jour 3: 100%, Jour 4: 100%\n",
+                  subtitle = paste0("Objectif: Jour 1: 40%, Jour 2: 70%, Jour 3: 100%, Jour 4: 100%\n",
                                     "A risque si à moins de 5 % et en échec si à plus de 5 % de l'objectif"))
 }
