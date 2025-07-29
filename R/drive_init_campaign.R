@@ -205,7 +205,11 @@ drive_init_campaign <- function(start_date,
     "Campaign successfully initialized in ",
     round(difftime(Sys.time(), start_time, units = "mins"), 2), " mins!"
   ))
-  invisible()
+
+  return(drive_reveal(campaign_drive_folder,
+                      what = "webViewLink") |>
+           pull(web_view_link)
+         )
 }
 
 
@@ -300,7 +304,7 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
                                    reformat = FALSE)
 
         googlesheets4::range_write(zs_template,
-                                   zs_drive_folders[x, ] |> dplyr::select(zones_de_sante),
+                                   zs_drive_folders[x, ] |> dplyr::select(name),
                                    sheet = 1,
                                    range = "V1",
                                    col_names = FALSE,

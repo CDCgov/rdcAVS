@@ -41,6 +41,7 @@ ui_campaign_creation <- function() {
         ),
         br()),
       textInput("zs_template_url", h6("Adresse URL de mod\u00e8le de masque")),
-      actionButton("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
+      input_task_button("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary"),
+    layout_columns(uiOutput("campagne_folder_url"))
     )
 }

@@ -16,9 +16,9 @@ ui_monitoring <- function() {
                                  "Jour4" = 8),
                                multiple = TRUE), br(), br(), br(), br()),
 
-    layout_columns(actionButton("monitor_campaign_btn",
-                                "Sélectionner une campagne",
-                                class = "btn-primary"), col_widths = 2),
+    layout_columns(input_task_button("monitor_campaign_btn",
+                                     "Sélectionner une campagne",
+                                     label_busy = "Traitement..."), col_widths = 2),
     layout_columns(verbatimTextOutput("refresh_date"), col_widths = 3),
     accordion(
       open = "Graphiques",

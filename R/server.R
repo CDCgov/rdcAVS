@@ -3,19 +3,31 @@ server <- function(input, output, session) {
   ## Loading data ----
 
   ### Creating local data cache ----
-  server_cache_creation()
-
-
+  cache_dir <- user_data_dir("rdcAVS") # OS-specific user data dir
   geo_cache_path <- file.path(cache_dir, "geo_data.rda")
   perm_cache_path <- file.path(cache_dir, "perm_data.rda")
   data_quality_path <- file.path(cache_dir, "data_quality_info.rda")
   campaign_quality_path <- file.path(cache_dir, "campaign_quality_info.rda")
-  template_path <- file.path(cache_dir, "zs_masque_template.xlsx")
-
   invalid_rows <- NULL
 
-  ### Geographic data ----
+  cli::cli_alert(paste0("Cache dir: ", cache_dir))
 
+  if (!dir.exists(cache_dir)) {
+    # First-time user: prompt for setup
+    showModal(modalDialog(
+      title = "Initialisation des Donn\u00e9es",
+      paste0(
+        "Ceci est la premi\u00e8re fois que vous ex\u00e9cutez l'application. Les donn\u00e9es g\u00e9ographiques et les autorisations seront initialis\u00e9es.",
+        "\n Vous pouvez trouver les dossiers ici: ", cache_dir
+      ),
+      easyClose = TRUE,
+      footer = modalButton("OK")
+    ))
+
+    dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+  }
+
+  # Geographic cache ----
   if (!file.exists(geo_cache_path)) {
     geo_data <- tibble(
       provinces = character(),
@@ -29,13 +41,7 @@ server <- function(input, output, session) {
     load(geo_cache_path)
   }
 
-  geo_data <- arrange(geo_data)
-  geo_values <- reactiveValues(data = geo_data)
-  geo_data_reactive <- reactive({
-    arrange(geo_values$data)
-  })
-
-  ### Permissions data ----
+  # Permissions cache ----
   if (!file.exists(perm_cache_path)) {
     perm_data <- tibble(
       name = character(),
@@ -52,6 +58,14 @@ server <- function(input, output, session) {
   } else {
     load(perm_cache_path)
   }
+
+  ### Cache reactive values ----
+
+  geo_data <- arrange(geo_data)
+  geo_values <- reactiveValues(data = geo_data)
+  geo_data_reactive <- reactive({
+    arrange(geo_values$data)
+  })
 
   perm_data <- arrange(perm_data)
   perm_values <- reactiveValues(data = perm_data)
@@ -362,20 +376,13 @@ server <- function(input, output, session) {
       input$selected_zs
     )
 
-    showModal(
-      modalDialog(
-        title = "Cr\u00e9ation d'une campagne",
-        "Veuillez patienter pendant la cr\u00e9ation de la campagne...",
-        easyClose = FALSE,
-        footer = NULL,
-        style = "background-color: #faf3e8;"
-      )
-    )
+    showNotification("Veuillez patienter pendant la cr\u00e9ation de la campagne...",
+                     type = "message")
 
     tryCatch(
       {
         zs_masque_dribble <- googledrive::drive_get(stringr::str_trim(input$zs_template_url))
-        drive_init_campaign(
+        campagne_folder_url <- drive_init_campaign(
           start_date = input$start_date,
           end_date = input$end_date,
           campaign_name = input$campaign_name,
@@ -386,28 +393,15 @@ server <- function(input, output, session) {
           zs_masque = zs_masque_dribble
         )
 
-        removeModal()
-        showModal(
-          modalDialog(
-            title = "Succ\u00e8s",
-            "Campagne initialis\u00e9e avec succ\u00e8s",
-            easyClose = TRUE,
-            footer = NULL,
-            style = "background-color: #ecfae8;"
-          )
-        )
+        showNotification("Campagne initialis\u00e9e avec succ\u00e8s",
+                         type = "message")
+        output$campagne_folder_url <- renderUI({tagList(a("Lien vers le dossier Campagne", href = campagne_folder_url))})
       },
       error = function(e) {
-        removeModal()
-        showModal(
-          modalDialog(
-            title = "Erreur",
-            paste("Quelque chose s'est mal pass\u00e9:", e$message),
-            easyClose = TRUE,
-            footer = NULL,
-            style = "background-color: #fae8e8;"
-          )
-        )
+        showNotification(paste("Erreur - " , "Quelque chose s'est mal pass\u00e9:", e$message),
+                         type = "error",
+                         duration = NULL)
+
       }
     )
   })
@@ -1202,15 +1196,9 @@ server <- function(input, output, session) {
   observeEvent(input$set_permissions_btn, {
     req(input$selected_campaign_drive_folder)
 
-    showModal(
-      modalDialog(
-        title = "D\u00e9finition des autorisations",
-        "Veuillez patienter pendant que les autorisations sont d\u00e9finies...",
-        easyClose = FALSE,
-        footer = NULL,
-        style = "background-color: #faf3e8;"
-      )
-    )
+    showNotification("Veuillez patienter pendant que les autorisations sont d\u00e9finies...",
+                     type = "message")
+
 
     folders <- campaign_drive_folders()
     files <- drive_files()
@@ -1240,30 +1228,14 @@ server <- function(input, output, session) {
           drive_files()
         )
 
-        removeModal()
-        showModal(
-          modalDialog(
-            title = "Succ\u00e8s",
-            "Autorisations d\u00e9finies",
-            easyClose = TRUE,
-            footer = NULL,
-            style = "background-color: #ecfae8;"
-          )
-        )
-        removeModal()
+        showNotification("Autorisations d\u00e9finies",
+                         type = "message")
       },
       error = function(e) {
-        removeModal()
-        showModal(
-          modalDialog(
-            title = "Erreur",
-            paste("Quelque chose s'est mal pass\u00e9:", e$message),
-            easyClose = TRUE,
-            footer = NULL,
-            style = "background-color: #fae8e8;"
-          )
-        )
-        removeModal()
+
+        showNotification(
+            paste("Erreur - Quelque chose s'est mal pass\u00e9:", e$message),
+            type = "error")
       }
     )
   })
@@ -1317,25 +1289,14 @@ server <- function(input, output, session) {
     surveillance_folder <- campaign_drive_folders() |>
       dplyr::filter(name == input$selected_surveillance_drive_folder)
 
-    showModal(modalDialog(
-      title = "Processing",
-      "Please wait while campaign data is being processed",
-      easyClose = FALSE,
-      footer = NULL
-    ))
+    showNotification("Veuillez patienter pendant que les données de la campagne sont en cours de traitement",
+                     type = "message")
     surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
     surveillance_summary(get_sheet_info(surveillance_folder_sheets,
                                         as.numeric(input$data_quality_sheet_selection)))
     campaign_quality(get_campaign_progress(surveillance_folder_sheets,
                                            5:8))
-    #surveillance_summary(surveillance_folder_sheets)
-    removeModal()
-    showModal(modalDialog(
-      title = "Success",
-      "Campaign information processed",
-      easyClose = TRUE,
-      style = "background-color: #ecfae8;"
-    ))
+    showNotification("Informations sur la campagne traitées", type = "message")
     refresh_status(paste0("Last updated on: ",
                           as.character(Sys.time())))
     data_quality_info <- surveillance_summary()

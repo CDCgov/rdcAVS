@@ -70,7 +70,7 @@ ui_perm_table <- function() {
     layout_columns(h4("S\u00e9lection de Campagne")),
     layout_columns(
       uiOutput("campaign_drive_picker"),
-      actionButton("set_permissions_btn", "Définir l'Autorisation", class = "btn-primary"),
+      input_task_button("set_permissions_btn", "Définir l'Autorisation", class = "btn-primary"),
       actionButton(
         "refresh_drive",
         "Actualiser",
