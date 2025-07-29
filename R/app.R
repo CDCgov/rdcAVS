@@ -896,7 +896,7 @@ campagneApp <- function() {
           folders <- campaign_drive_folders()
           selectInput(
             "selected_campaign_drive_folder",
-            "S\u00e9lectionnez le dossier de campagne dans Google Drive",
+            NULL,
             choices = folders$name
           )
         })
@@ -905,7 +905,7 @@ campagneApp <- function() {
         output$campaign_surveillance <- renderUI({
           selectInput(
             "selected_surveillance_drive_folder",
-            "S\u00e9lectionnez le dossier de campagne dans Google Drive",
+            NULL,
             choices = campaign_drive_folders()$name
           )
         })
