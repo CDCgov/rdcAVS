@@ -8,6 +8,7 @@
 #' @import googledrive
 #' @import shiny shinyFiles
 #' @import bslib
+#' @import bsicons
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_alert
 #' @importFrom cli cli_alert_info

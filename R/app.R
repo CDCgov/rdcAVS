@@ -905,7 +905,7 @@ campagneApp <- function() {
         output$campaign_surveillance <- renderUI({
           selectInput(
             "selected_surveillance_drive_folder",
-            NULL,
+            h6("Campagne"),
             choices = campaign_drive_folders()$name
           )
         })
