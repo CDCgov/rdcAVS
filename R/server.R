@@ -103,7 +103,7 @@ server <- function(input, output, session) {
   ## Campaign creation tab ----
 
   ### Geographic check box settings ----
-  updateGeoCheckboxes <- function() {
+  update_geo_checkboxes <- function() {
     updateCheckboxGroupInput(
       session,
       "selected_provinces",
@@ -600,7 +600,7 @@ server <- function(input, output, session) {
     showNotification("Donn\u00e9es g\u00e9ographiques mises \u00e0 jour et enregistr\u00e9es",
                      type = "message"
     )
-    updateGeoCheckboxes()
+    update_geo_checkboxes()
   })
 
   ###### Add geographic entry ----
@@ -621,7 +621,7 @@ server <- function(input, output, session) {
       geo_data <- geo_values$data
       save(geo_data, file = geo_cache_path)
       showNotification("Ligne ajout\u00e9e et enregistr\u00e9e.", type = "message")
-      updateGeoCheckboxes()
+      update_geo_checkboxes()
     } else {
       showNotification("Entr\u00e9e en double. Non ajout\u00e9e.", type = "error")
     }
@@ -637,7 +637,7 @@ server <- function(input, output, session) {
       geo_data <- geo_values$data
       save(geo_data, file = geo_cache_path)
       showNotification("Ligne supprim\u00e9e", type = "message")
-      updateGeoCheckboxes()
+      update_geo_checkboxes()
     }
   })
 
@@ -647,7 +647,7 @@ server <- function(input, output, session) {
       geo_stack$redo <- c(list(geo_values$data), geo_stack$redo)
       geo_values$data <- geo_stack$undo[[1]]
       geo_stack$undo <- geo_stack$undo[-1]
-      updateGeoCheckboxes()
+      update_geo_checkboxes()
     }
   })
 
@@ -656,7 +656,7 @@ server <- function(input, output, session) {
       geo_stack$undo <- c(list(geo_values$data), geo_stack$undo)
       geo_values$data <- geo_stack$redo[[1]]
       geo_stack$redo <- geo_stack$redo[-1]
-      updateGeoCheckboxes()
+      update_geo_checkboxes()
     }
   })
 
@@ -685,7 +685,7 @@ server <- function(input, output, session) {
     showNotification("Toutes les donn\u00e9es g\u00e9ographiques ont \u00e9t\u00e9 effac\u00e9es",
                      type = "warning"
     )
-    updateGeoCheckboxes()
+    update_geo_checkboxes()
   })
 
   ##### Setting permissions ----
@@ -717,15 +717,8 @@ server <- function(input, output, session) {
         folders <- googledrive::drive_find(q = query)
         campaign_drive_folders(folders)
 
-        showModal(
-          modalDialog(
-            title = "Succ\u00e8s",
-            "Donn\u00e9es Google Drive collect\u00e9es.",
-            easyClose = TRUE,
-            footer = NULL,
-            style = "background-color: #ecfae8;"
-          )
-        )
+        showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
+                         type = "message")
 
         auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
         show("refresh_drive")
@@ -742,15 +735,12 @@ server <- function(input, output, session) {
 
   ###### Refresh Google Drive ----
   # Function to update Google Drive files
-  updateDriveFiles <- function() {
+  update_drive_files <- function() {
     if (drive_has_token()) {
-      showModal(
-        modalDialog(
-          title = "R\u00e9cup\u00e9ration des informations de Google Drive",
-          "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es...",
-          easyClose = FALSE,
-          footer = NULL
-        )
+      showNotification(
+          paste0("R\u00e9cup\u00e9ration des informations de Google Drive. ",
+          "Veuillez patienter pendant que les donn\u00e9es sont collect\u00e9es..."),
+          type = "default"
       )
 
       query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
@@ -768,26 +758,17 @@ server <- function(input, output, session) {
           googledrive::drive_reveal(what = "path")
 
         drive_files(files)
-
-        removeModal()
         showNotification("Fichiers Google Drive actualis\u00e9s.", type = "message")
       }
 
-      removeModal()
-      showModal(
-        modalDialog(
-          title = "Succ\u00e8s",
-          "Donn\u00e9es Google Drive collect\u00e9es.",
-          easyClose = TRUE,
-          footer = NULL,
-          style = "background-color: #ecfae8;"
-        )
-      )
+      showNotification("Succ\u00e8s. Donn\u00e9es Google Drive collect\u00e9es.",
+                       type = "message")
+
     }
   }
 
   observeEvent(input$refresh_drive, {
-    updateDriveFiles() # Refresh the list of files
+    update_drive_files() # Refresh the list of files
   })
 
   ###### Display available campaigns ----
@@ -1043,7 +1024,7 @@ server <- function(input, output, session) {
     showNotification("Donn\u00e9es d'autorisation mises \u00e0 jour et enregistr\u00e9es",
                      type = "message"
     )
-    updateGeoCheckboxes()
+    update_geo_checkboxes()
   })
 
   ####### Add new permission entry ----
@@ -1134,17 +1115,17 @@ server <- function(input, output, session) {
     role <- tolower(input$perm_role)
 
     # Optional fields based on level
-    province <- if (length(input$perm_province) > 0) {
+    province <- if (length(input$perm_province) > 0 & level == "province") {
       input$perm_province
     } else {
       NA_character_
     }
-    antenne <- if (length(input$perm_antenne) > 0) {
+    antenne <- if (length(input$perm_antenne) > 0 & level == "antenne") {
       input$perm_antenne
     } else {
       NA_character_
     }
-    zone_de_sante <- if (length(input$perm_zs) > 0) {
+    zone_de_sante <- if (length(input$perm_zs) > 0 & level == "zone de sante") {
       input$perm_zs
     } else {
       NA_character_
