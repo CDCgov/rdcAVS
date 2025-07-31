@@ -317,7 +317,18 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
         .export = "template_info"
       ), {
         p()
-        sheet_info <- purrr::map(sheets, \(i) get_sheet_info_single(dribble[x, ], i))
+        sheet_info <- purrr::map(sheets, \(i) {
+          tryCatch(
+            {
+              get_sheet_info_single(dribble[x, ], i)
+              },
+            error = \(e) {
+              cli::cli_alert_info(paste0("Extraction failed for the following template: ",
+                                         dribble[x, ]$name, " Sheet number: ", i))
+              NULL
+            }
+          )
+          })
         sheet_info <- sheet_info |> dplyr::bind_rows()
       })
   })

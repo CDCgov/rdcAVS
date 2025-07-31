@@ -134,7 +134,11 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
   final_summary <- dplyr::bind_rows(y) |>
     dplyr::group_by(province, antenne, zone_de_sante, aire_de_sante) |>
     dplyr::arrange(jour) |>
-    dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct)) |>
+    dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct),
+                  recovery_0_11_cumulative = cumsum(recovery_0_11),
+                  recovery_12_23_cumulative = cumsum(recovery_12_23),
+                  recovery_24_59_cumulative = cumsum(recovery_24_59)
+                  ) |>
     dplyr::arrange(aire_de_sante) |>
     dplyr::ungroup() |>
     dplyr::select(
@@ -153,9 +157,12 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "couverture_campaign_cumulative",
         "avg_vax_rural",
         "avg_vax_urban",
-        "recovery_0_11",
-        "recovery_12_23",
-        "recovery_24_59"
+        #"recovery_0_11",
+        #"recovery_12_23",
+        #"recovery_24_59",
+        "recovery_0_11_cumulative",
+        "recovery_12_23_cumulative",
+        "recovery_24_59_cumulative"
       ))
     )
 

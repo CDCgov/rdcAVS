@@ -21,6 +21,7 @@ Imports:
     foreach,
     fs,
     future,
+    ggpubr,
     googledrive,
     googlesheets4,
     lubridate,

@@ -299,22 +299,30 @@ server <- function(input, output, session) {
 
     # Selected provinces
     campaign_completeness <- campaign_quality()
-    prov_campaign_completeness <- campaign_completeness |>
-      dplyr::pull(province)
-    zs_campaign_completeness <- campaign_completeness |>
-      dplyr::pull(zone_de_sante)
 
     updateSelectInput(
       session,
       "prov_selector_campaign_completeness",
-      choices = sort(unique(prov_campaign_completeness))
+      choices = sort(unique(campaign_completeness$province)),
+      selected = input$prov_selector_campaign_completeness
     )
+
+    selected_campaign_prov <- input$prov_selector_campaign_completeness
+    filtered_campaign_zs <- if (!is.null(selected_campaign_prov) &&
+                                length(selected_campaign_prov) > 0) {
+      campaign_completeness |>
+        dplyr::filter(province == selected_campaign_prov) |>
+        dplyr::pull(zone_de_sante) |>
+        unique() |>
+        sort()
+    } else {
+      unique(campaign_completeness$zone_de_sante)
+    }
 
     updateSelectInput(
       session,
       "zs_selector_campaign_completeness",
-      choices = sort(unique(zs_campaign_completeness))
-    )
+      choices = filtered_campaign_zs)
   })
 
   ### Triggered events ----
@@ -567,9 +575,7 @@ server <- function(input, output, session) {
 
   ###### Download current geo table ----
   output$download_geo <- downloadHandler(
-    filename = function() {
-      paste0("geo_table_", Sys.Date(), ".csv")
-    },
+    filename = paste0("geo_table_", Sys.Date(), ".csv"),
     content = function(file) {
       write_csv(geo_data_reactive(), file, na = "")
     }
@@ -935,9 +941,7 @@ server <- function(input, output, session) {
           ####### Download invalid permission entries ----
 
           output$download_invalid <- downloadHandler(
-            filename = function() {
-              paste("invalid_entries_", Sys.Date(), ".csv", sep = "")
-            },
+            filename = paste0("invalid_entries_", Sys.Date(), ".csv"),
             content = function(file) {
               write.csv(invalid_rows, file, row.names = FALSE)
             }
@@ -979,9 +983,7 @@ server <- function(input, output, session) {
   ####### Download invalid permission entries ----
 
   output$download_invalid <- downloadHandler(
-    filename = function() {
-      paste("invalid_entries_", Sys.Date(), ".csv", sep = "")
-    },
+    filename = paste0("invalid_entries_", Sys.Date(), ".csv"),
     content = function(file) {
       write.csv(invalid_rows, file, row.names = FALSE)
     }
@@ -989,9 +991,7 @@ server <- function(input, output, session) {
 
   ####### Download current permissions table ----
   output$download_permissions <- downloadHandler(
-    filename = function() {
-      paste0("permissions_table_", Sys.Date(), ".csv")
-    },
+    filename = paste0("permissions_table_", Sys.Date(), ".csv"),
     content = function(file) {
       write_csv(perm_data_reactive(), file, na = "")
     }
@@ -1293,18 +1293,14 @@ server <- function(input, output, session) {
 
   ##### Download current data quality monitoring table ----
   output$download_data_quality_monitoring <- downloadHandler(
-    filename = function() {
-      paste0("data_quality_table_", Sys.Date(), ".csv")
-    },
+    filename = paste0("data_quality_table_", Sys.Date(), ".csv"),
     content = function(file) {
       readr::write_csv(surveillance_summary(), file, na = "")
     }
   )
 
   output$download_campaign_quality_monitoring <- downloadHandler(
-    filename = function() {
-      paste0("campaign_quality_table_", Sys.Date(), ".csv")
-    },
+    filename = paste0("campaign_quality_table_", Sys.Date(), ".csv"),
     content = function(file) {
       readr::write_csv(campaign_quality(), file, na = "")
     }
@@ -1419,5 +1415,23 @@ server <- function(input, output, session) {
                                                        zone_de_sante == input$zs_selector_campaign_completeness))
 
     }
+  )
+  output$campaign_urban_rural_plot <- renderPlot(
+    {
+      create_urban_rural_heatmap(campaign_quality() |>
+                                         dplyr::filter(province == input$prov_selector_campaign_completeness,
+                                                       zone_de_sante == input$zs_selector_campaign_completeness))
+
+    }
+  )
+
+  output$campaign_recovery_plot <- renderPlot(
+    {
+      create_recovery_heatmap(campaign_quality() |>
+                                   dplyr::filter(province == input$prov_selector_campaign_completeness,
+                                                 zone_de_sante == input$zs_selector_campaign_completeness))
+
+    },
+
   )
 }

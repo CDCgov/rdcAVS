@@ -40,7 +40,6 @@
 #' }
 campagneApp <- function() {
       gui <- page_fluid(
-
         theme = bslib::bs_theme(
           version = 5,
           bootswatch = "yeti"
@@ -53,6 +52,7 @@ campagneApp <- function() {
           tags$div(
             style = "display: flex; gap: 15px;",
             imageOutput("logo", height = "60px"),
+            bslib::input_dark_mode(id = "mode")
           ),
           tags$div(style = "flex-grow: 40;"),
           tags$div(

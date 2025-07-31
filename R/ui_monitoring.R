@@ -43,14 +43,24 @@ ui_monitoring <- function() {
         icon = bsicons::bs_icon("bar-chart"),
         layout_columns(
           selectInput("prov_selector_campaign_completeness",
-                      "Select province below:",
+                      "Sélectionner une province:",
                       choices = NULL),
           selectInput("zs_selector_campaign_completeness",
-                      "Select zone de sante below:",
+                      "Sélectionner une zone de sante:",
                       choices = NULL),
           col_widths = c(3, 3)
         ),
-        plotOutput("campaign_completeness_plot")
+        card(navset_pill(
+          nav_panel(
+            "Couverture Campagne",
+            plotOutput("campaign_completeness_plot", height = "700px", width = "40%")
+            ),
+          nav_panel("Nb moyen d'enfants vaccinés/équipe",
+                    plotOutput("campaign_urban_rural_plot", height = "700px")
+                    ),
+          nav_panel("Récupérations",
+                    plotOutput("campaign_recovery_plot", height = "700px"))
+        ))
       )
     )
   )
