@@ -1403,7 +1403,21 @@ server <- function(input, output, session) {
       campaign_quality(),
       options = list(scrollX = TRUE, pageLength = 10,
                      searchHighlight = TRUE),
-      filter = "top"
+      filter = "top",
+      colnames = c(
+        "Province",
+        "Antenne",
+        "Zone de Sante",
+        "Aire de Sante",
+        "Jour",
+        "Rapport Completude (%)",
+        "Couverture (Cumulative)",
+        "Nb moyen d'enfants vaccinés/équipe (Rural)",
+        "Nb moyen d'enfants vaccinés/équipe (Urban)",
+        "Récupérations (0-11 mois, cumulative)",
+        "Récupérations (12-23 mois, cumulative)",
+        "Récupérations (24-59 mois, cumulative)"
+      )
     )
   )
 

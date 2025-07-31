@@ -54,7 +54,8 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
     completeness <- googlesheets4::range_read(dribble_info, sheet, range=paste0("CL3:CM", ss_max_row + 3))
     rural_urban <- googlesheets4::range_read(dribble_info, sheet, range = paste0("EF3:EI", ss_max_row + 3))
     rural_urban <- rural_urban |>
-      dplyr::select(2,4)
+      dplyr::select(2,4) |>
+      dplyr::mutate(dplyr::across(dplyr::everything(), \(x) round(x)))
     recoveries_0_11 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("GL3:GL", ss_max_row + 3))
     recoveries_12_23 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("HT3:HT", ss_max_row + 3))
     recoveries_24_59 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("JB3:JB", ss_max_row + 3))
