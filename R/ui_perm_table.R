@@ -71,11 +71,12 @@ ui_perm_table <- function() {
     layout_columns(
       uiOutput("campaign_drive_picker"),
       input_task_button("set_permissions_btn", "Définir l'Autorisation", class = "btn-primary"),
-      actionButton(
+      input_task_button(
         "refresh_drive",
         "Actualiser",
         class = "btn-secondary",
-        style = "display: none;"
+        style = "display: none;",
+        label_busy = "Traitement..."
       ),
       br(), br(), br(), br()
     )
