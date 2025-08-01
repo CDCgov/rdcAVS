@@ -385,7 +385,7 @@ server <- function(input, output, session) {
     )
 
     showNotification("Veuillez patienter pendant la cr\u00e9ation de la campagne...",
-                     type = "message")
+                     type = "default")
 
     tryCatch(
       {
@@ -1178,7 +1178,7 @@ server <- function(input, output, session) {
     req(input$selected_campaign_drive_folder)
 
     showNotification("Veuillez patienter pendant que les autorisations sont d\u00e9finies...",
-                     type = "message")
+                     type = "default")
 
 
     folders <- campaign_drive_folders()
@@ -1271,7 +1271,7 @@ server <- function(input, output, session) {
       dplyr::filter(name == input$selected_surveillance_drive_folder)
 
     showNotification("Veuillez patienter pendant que les données de la campagne sont en cours de traitement",
-                     type = "message")
+                     type = "default")
     surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
     surveillance_summary(get_sheet_info(surveillance_folder_sheets,
                                         as.numeric(input$data_quality_sheet_selection)))
