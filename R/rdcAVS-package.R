@@ -4,10 +4,11 @@
 ## usethis namespace: start
 
 #'
+#' @import bsicons
+#' @import bslib
 #' @import dplyr stringr readr
 #' @import googledrive
 #' @import shiny shinyFiles
-#' @importFrom bslib bs_theme
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_alert
 #' @importFrom cli cli_alert_info
@@ -24,6 +25,7 @@
 #' @importFrom foreach foreach
 #' @importFrom fs path_home
 #' @importFrom future plan
+#' @importFrom ggpubr ggarrange
 #' @importFrom googlesheets4 range_write
 #' @importFrom lubridate as_date
 #' @importFrom progressr handlers
@@ -35,6 +37,7 @@
 #' @importFrom shinyjs disable
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
+#' @importFrom tidyr pivot_longer
 ## usethis namespace: end
 
 utils::globalVariables(c(

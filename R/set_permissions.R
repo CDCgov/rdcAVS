@@ -79,6 +79,12 @@ set_permissions <- function(campaign_name,
   # Join back the full permission table
   dribbles_with_permission <- dplyr::left_join(full_permission, dribble_files)
 
+  # Add ID of the campaign folder for global users
+  global_id <- googledrive::drive_get(campaign_name)$id[1]
+
+  dribbles_with_permission <- dribbles_with_permission |>
+    dplyr::mutate(id = ifelse(level == "global", global_id, id))
+
   # Parallel setting of permissions
   if (nrow(dribbles_with_permission) > 0) {
     cli::cli_process_start("Setting permissions")
