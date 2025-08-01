@@ -52,7 +52,6 @@ campagneApp <- function() {
           tags$div(
             style = "display: flex; gap: 15px;",
             imageOutput("logo", height = "60px"),
-            bslib::input_dark_mode(id = "mode")
           ),
           tags$div(style = "flex-grow: 40;"),
           tags$div(
@@ -62,10 +61,11 @@ campagneApp <- function() {
         ),
         tags$hr(),
         fluidRow(
-          column(12,
-            align = "right",
+          layout_columns(
+            bslib::input_dark_mode(id = "mode"),
+            br(), br(), br(), br(),
             actionButton("end_session", label = tagList(icon("sign-out-alt"), "Quitter l'application"), class = "btn btn-danger")
-          )
+          ),
         ),
         navset_tab(
           ui_geodatabase(),
