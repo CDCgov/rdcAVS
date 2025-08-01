@@ -127,7 +127,21 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         .export = "template_info"
       ), {
         p()
-        sheet_info <- purrr::map(sheets, \(i) get_campaign_progress_single(dribble[x, ], i))
+
+        sheet_info <- purrr::map(sheets,
+                                 \(i) {
+                                   tryCatch(
+                                     {
+                                       get_campaign_progress_single(dribble[x, ], i)
+
+                                       },
+                                     error = \(e) {
+                                       cli::cli_alert_info(paste0("Extraction failed for the following template: ",
+                                                                  dribble[x, ]$name, " Sheet number: ", i))
+                                       NULL
+                                     }
+                                 )
+                                   })
         sheet_info <- sheet_info |> dplyr::bind_rows()
       })
   })
