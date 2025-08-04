@@ -1293,9 +1293,12 @@ server <- function(input, output, session) {
 
   observeEvent(input$compile_campaign_btn, {
     req(input$selected_surveillance_drive_folder)
+
+    showNotification("Veuillez patienter pendant que la demande est traitée")
     national_dribble_url <- compile_masques(input$selected_surveillance_drive_folder)
     output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
                                                       href = national_dribble_url))})
+    showNotification("Traitement terminé", type = "message")
   })
 
   ##### Download current data quality monitoring table ----

@@ -80,9 +80,6 @@ copy_template_tab <- function(zs_dribble, sheet) {
                                       range = googlesheets4::cell_rows(c(3, NA)),
                                       col_names = FALSE)
 
-    # Drop columns with all NA values
-    data <- data |>
-      dplyr::select(dplyr::where(\(x) !all(is.na(x))))
     #Drop the first row because it is also a heading
     data <- data[2:nrow(data), ]
     # Drop the last row because it is a total
