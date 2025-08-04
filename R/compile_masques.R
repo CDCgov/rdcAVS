@@ -1,3 +1,14 @@
+#' Compiles the zone de sante masques
+#'
+#' @param campaign_name `str` Name of the campaign.
+#'
+#' @returns `str` URL to the national compiled masque.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' compile_masques("CAMPAGNE_new_campaign") # must be a valid campaign folder
+#' }
 compile_masques <- function(campaign_name) {
 
   # Gather the right files
