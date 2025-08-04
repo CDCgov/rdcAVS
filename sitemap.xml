@@ -6,10 +6,15 @@
 <url><loc>https://mcuadera.github.io/rdcAVS/index.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/campagneApp.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/check_folder_size.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/compile_masques.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/create_campaign_progress_heatmap.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_cp_zs_template_parallel.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_init_campaign.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_mkdir_parallel.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/escape_non_ascii_only.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/find_drive_sheets.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/get_campaign_progress.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/get_sheet_info.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/index.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/init_campaign.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/is_ascii_char.html</loc></url>
