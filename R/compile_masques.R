@@ -1,17 +1,5 @@
 compile_masques <- function(campaign_name) {
 
-  # Helper function
-  a1_to_colnum <- function(col) {
-    col <- toupper(col)
-    chars <- strsplit(col, "")[[1]]
-    n <- length(chars)
-    col_num <- 0
-    for (i in 1:n) {
-      col_num <- col_num * 26 + (utf8ToInt(chars[i]) - utf8ToInt("A") + 1)
-    }
-    return(col_num)
-  }
-
   # Gather the right files
   query <- paste0("mimeType = 'application/vnd.google-apps.folder' and name contains '", campaign_name, "'")
   folders <- googledrive::drive_find(q = query)
@@ -26,9 +14,11 @@ compile_masques <- function(campaign_name) {
                         name = paste0(campaign_name, "_national_rdc"),
                         overwrite = TRUE)
 
+  # Delete graphiques sheet because not necessary and incompatible
+  googlesheets4::sheet_delete(national_dribble, "Graphiques")
+
   # Clear everything except for the header columns
   tab_names <- googlesheets4::sheet_names(national_dribble)
-  tab_names <- tab_names[tab_names != "Graphiques"]
   purrr::map(tab_names,
              \(x) {
                googlesheets4::range_clear(national_dribble,
