@@ -13,6 +13,7 @@ Depends:
     R (>= 4.1)
 LazyData: true
 Imports: 
+    bsicons,
     bslib,
     cli,
     doFuture,
