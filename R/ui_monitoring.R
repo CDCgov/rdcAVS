@@ -23,6 +23,15 @@ ui_monitoring <- function() {
     accordion(
       open = "Graphiques",
       accordion_panel(
+        title = "Compiler des masques",
+        icon = bsicons::bs_icon("arrow-down-circle-fill"),
+        layout_columns(input_task_button("compile_campaign_btn",
+                                         "Compiler",
+                                         label_busy = "Traitement..."),
+                       col_widths = 2),
+        layout_columns(uiOutput("campaign_template_url"))
+      ),
+      accordion_panel(
         title = "Completeness information",
         icon = bsicons::bs_icon("card-checklist"),
         DT::DTOutput("campaign_info_table"),
