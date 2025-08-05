@@ -2,35 +2,15 @@ ui_monitoring <- function() {
   nav_panel(
     "Surveillance",
     h4("Surveillance de Campagne"),
-    layout_columns(uiOutput("campaign_surveillance"),
-                   selectInput("data_quality_sheet_selection",
-                               h6("Sections"),
-                               list(
-                                 "Donnees de base" = 1,
-                                 "J(-3)" = 2,
-                                 "J(-2)" = 3,
-                                 "J(-1)" = 4,
-                                 "Jour1" = 5,
-                                 "Jour2" = 6,
-                                 "Jour3" = 7,
-                                 "Jour4" = 8),
-                               multiple = TRUE), br(), br(), br(), br()),
-
-    layout_columns(input_task_button("monitor_campaign_btn",
-                                     "Sélectionner une campagne",
-                                     label_busy = "Traitement..."), col_widths = 2),
+    layout_columns(uiOutput("campaign_surveillance")),
+    input_task_button("compile_campaign_btn",
+                      "Compiler des masques",
+                      label_busy = "Traitement..."),
+    layout_columns(uiOutput("campaign_template_url")),
+    col_widths = 2,
     layout_columns(verbatimTextOutput("refresh_date"), col_widths = 3),
     accordion(
-      open = "Graphiques",
-      accordion_panel(
-        title = "Compiler des masques",
-        icon = bsicons::bs_icon("arrow-down-circle-fill"),
-        layout_columns(input_task_button("compile_campaign_btn",
-                                         "Compiler",
-                                         label_busy = "Traitement..."),
-                       col_widths = 2),
-        layout_columns(uiOutput("campaign_template_url"))
-      ),
+      open = FALSE,
       accordion_panel(
         title = "Completeness information",
         icon = bsicons::bs_icon("card-checklist"),
