@@ -1263,18 +1263,27 @@ server <- function(input, output, session) {
   })
 
   #### Surveillance table ----
-  observeEvent(input$monitor_campaign_btn, {
-    req(input$selected_surveillance_drive_folder,
-        input$data_quality_sheet_selection)
+  observeEvent(input$compile_campaign_btn, {
+    req(input$selected_surveillance_drive_folder)
 
     surveillance_folder <- campaign_drive_folders() |>
       dplyr::filter(name == input$selected_surveillance_drive_folder)
 
-    showNotification("Veuillez patienter pendant que les données de la campagne sont en cours de traitement",
-                     type = "default")
+    # Compile all zs templates in the folder to the national template
+    showNotification("Veuillez patienter pendant que la demande est traitée")
+    national_dribble_url <- compile_masques(input$selected_surveillance_drive_folder)
+    output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
+                                                        href = national_dribble_url))})
+    showNotification("Traitement terminé", type = "message")
+
+    # Obtain completeness information
+
+
+    national_template_dribble <- googledrive::drive_get(national_dribble_url)
     surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
     surveillance_summary(get_sheet_info(surveillance_folder_sheets,
                                         as.numeric(input$data_quality_sheet_selection)))
+    # Obtain campaign quality information
     campaign_quality(get_campaign_progress(surveillance_folder_sheets,
                                            5:8))
     showNotification("Informations sur la campagne traitées", type = "message")
@@ -1289,16 +1298,6 @@ server <- function(input, output, session) {
     show("refresh_date")
     show("download_data_quality_monitoring")
     show("download_campaign_quality_monitoring")
-  })
-
-  observeEvent(input$compile_campaign_btn, {
-    req(input$selected_surveillance_drive_folder)
-
-    showNotification("Veuillez patienter pendant que la demande est traitée")
-    national_dribble_url <- compile_masques(input$selected_surveillance_drive_folder)
-    output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
-                                                      href = national_dribble_url))})
-    showNotification("Traitement terminé", type = "message")
   })
 
   ##### Download current data quality monitoring table ----
