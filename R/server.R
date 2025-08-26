@@ -77,6 +77,7 @@ server <- function(input, output, session) {
   surveillance_summary <- reactiveVal(NULL)
   campaign_quality <- reactiveVal(NULL)
   refresh_status <- reactiveVal("No data selected")
+
   if (file.exists(data_quality_path)) {
     refresh_file_info <- file.info(data_quality_path)
     refresh_status(paste0("Last updated on: ",
@@ -88,12 +89,45 @@ server <- function(input, output, session) {
     show("refresh_date")
     show("download_data_quality_monitoring")
 
+  } else {
+    data_quality_info <- dplyr::tibble(
+      prov = character(),
+      antenne = character(),
+      zone_de_sante = character(),
+      sheet = character(),
+      range = character(),
+      section = character(),
+      filled_cells = integer(),
+      total_cells = integer(),
+      completeness = character(),
+      days_since_last_modified = integer(),
+      date_ran = as.Date(character())
+    )
+    save(data_quality_info, file = data_quality_path)
+    surveillance_summary(data_quality_info)
   }
 
   if (file.exists(campaign_quality_path)) {
     load(campaign_quality_path)
     campaign_quality(campaign_quality_info)
     show("download_campaign_quality_monitoring")
+  } else {
+    campaign_quality_info <- dplyr::tibble(
+      province = character(),
+      antenne = character(),
+      zone_de_sante = character(),
+      aire_de_sante = character(),
+      jour = character(),
+      rapport_completude_pct = numeric(),
+      couverture_campaign_cumulative = numeric(),
+      avg_vax_rural = numeric(),
+      avg_vax_urban = numeric(),
+      recovery_0_11_cumulative = numeric(),
+      recovery_12_23_cumulative = numeric(),
+      recovery_24_59_cumulative = numeric(),
+    )
+    save(campaign_quality_info, file = campaign_quality_path)
+    campaign_quality(campaign_quality_info)
   }
 
   ### Data stacks for undo/redo ----
@@ -1281,8 +1315,7 @@ server <- function(input, output, session) {
 
     national_template_dribble <- googledrive::drive_get(national_dribble_url)
     surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
-    surveillance_summary(get_sheet_info(surveillance_folder_sheets,
-                                        as.numeric(input$data_quality_sheet_selection)))
+    surveillance_summary(get_sheet_info(surveillance_folder_sheets))
     # Obtain campaign quality information
     campaign_quality(get_campaign_progress(surveillance_folder_sheets,
                                            5:8))
@@ -1433,6 +1466,12 @@ server <- function(input, output, session) {
   #### Plots ----
   output$campaign_completeness_plot <- renderPlot(
     {
+
+      validate(
+        need(is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+      )
+
       create_campaign_progress_heatmap(campaign_quality() |>
                                          dplyr::filter(province == input$prov_selector_campaign_completeness,
                                                        zone_de_sante == input$zs_selector_campaign_completeness))
@@ -1441,6 +1480,11 @@ server <- function(input, output, session) {
   )
   output$campaign_urban_rural_plot <- renderPlot(
     {
+      validate(
+        need(is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+      )
+
       create_urban_rural_heatmap(campaign_quality() |>
                                          dplyr::filter(province == input$prov_selector_campaign_completeness,
                                                        zone_de_sante == input$zs_selector_campaign_completeness))
@@ -1450,6 +1494,10 @@ server <- function(input, output, session) {
 
   output$campaign_recovery_plot <- renderPlot(
     {
+      validate(
+        need(is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+      )
       create_recovery_heatmap(campaign_quality() |>
                                    dplyr::filter(province == input$prov_selector_campaign_completeness,
                                                  zone_de_sante == input$zs_selector_campaign_completeness))
