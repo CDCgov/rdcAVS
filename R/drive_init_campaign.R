@@ -34,6 +34,8 @@ drive_init_campaign <- function(start_date,
                           zs_masque) {
 
   start_time <- Sys.time()
+  googledrive::drive_auth(TRUE)
+  googlesheets4::gs4_auth(TRUE)
 
   if (is.null(campaign_name) | campaign_name  == "") {
     campaign_name <- Sys.Date()
@@ -282,6 +284,9 @@ drive_cp_zs_template_parallel <- function(template_dribble, zs_drive_folders) {
         .packages = c("googledrive", "googlesheets4")
       ), {
         p()
+
+        googledrive::drive_auth(TRUE)
+        googlesheets4::gs4_auth(TRUE)
 
         zs_template <- googledrive::drive_cp(template_dribble,
                                              path = zs_drive_folders[x, ],
