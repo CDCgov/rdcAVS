@@ -67,6 +67,9 @@ campagneApp <- function() {
             actionButton("end_session", label = tagList(icon("sign-out-alt"), "Quitter l'application"), class = "btn btn-danger")
           ),
         ),
+        fluidRow(h4("Authentifiez-vous avec Google Drive"),
+                 layout_columns(actionButton("auth_drive", "Authentifier", class = "btn-success"),
+                                      verbatimTextOutput("auth_status"), col_widths = c(1, 3))),
         navset_tab(
           ui_geodatabase(),
           ui_campaign_creation(),
