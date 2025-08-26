@@ -1468,8 +1468,8 @@ server <- function(input, output, session) {
     {
 
       validate(
-        need(is.null(campaign_quality()), "No campaign quality data."),
-        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+        need(!is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) > 0, "No campaign quality data.")
       )
 
       create_campaign_progress_heatmap(campaign_quality() |>
@@ -1481,8 +1481,8 @@ server <- function(input, output, session) {
   output$campaign_urban_rural_plot <- renderPlot(
     {
       validate(
-        need(is.null(campaign_quality()), "No campaign quality data."),
-        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+        need(!is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) > 0, "No campaign quality data.")
       )
 
       create_urban_rural_heatmap(campaign_quality() |>
@@ -1495,8 +1495,8 @@ server <- function(input, output, session) {
   output$campaign_recovery_plot <- renderPlot(
     {
       validate(
-        need(is.null(campaign_quality()), "No campaign quality data."),
-        need(nrow(campaign_quality()) == 0, "No campaign quality data.")
+        need(!is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) > 0, "No campaign quality data.")
       )
       create_recovery_heatmap(campaign_quality() |>
                                    dplyr::filter(province == input$prov_selector_campaign_completeness,
