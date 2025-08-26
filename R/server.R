@@ -1317,7 +1317,7 @@ server <- function(input, output, session) {
     surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
     surveillance_summary(get_sheet_info(surveillance_folder_sheets))
     # Obtain campaign quality information
-    campaign_quality(get_campaign_progress(surveillance_folder_sheets,
+    campaign_quality(get_campaign_progress(national_template_dribble,
                                            5:8))
     showNotification("Informations sur la campagne traitées", type = "message")
     refresh_status(paste0("Last updated on: ",
