@@ -23,6 +23,7 @@
 #' @importFrom DT renderDT
 #' @importFrom foreach %dopar%
 #' @importFrom foreach foreach
+#' @importFrom fs path_dir
 #' @importFrom fs path_home
 #' @importFrom future plan
 #' @importFrom ggpubr ggarrange
