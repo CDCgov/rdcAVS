@@ -1149,17 +1149,17 @@ server <- function(input, output, session) {
     role <- tolower(input$perm_role)
 
     # Optional fields based on level
-    province <- if (length(input$perm_province) > 0 & level == "province") {
+    province <- if (length(input$perm_province) > 0 & level %in% c("province", "antenne", "zone de sante")) {
       input$perm_province
     } else {
       NA_character_
     }
-    antenne <- if (length(input$perm_antenne) > 0 & level == "antenne") {
+    antenne <- if (length(input$perm_antenne) > 0 & level %in% c("antenne", "zone de sante")) {
       input$perm_antenne
     } else {
       NA_character_
     }
-    zone_de_sante <- if (length(input$perm_zs) > 0 & level == "zone de sante") {
+    zone_de_sante <- if (length(input$perm_zs) > 0 & level %in% c("zone de sante")) {
       input$perm_zs
     } else {
       NA_character_
