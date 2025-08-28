@@ -51,12 +51,16 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
     }
 
     # Calculate max rows for each masque
-    ss_max_row <- googlesheets4::range_read(dribble, 1, range = googlesheets4::cell_cols("D"), col_names = FALSE) |>
-      dplyr::filter(!is.na(`...1`))
+    # Calculate max rows for each masque
+    ss_max_row <- googlesheets4::range_read(dribble, 1,
+                                            range = googlesheets4::cell_cols("D"),
+                                            col_names = FALSE) |>
+      dplyr::filter(!is.na(`...1`),
+                    `...1` != "NULL")
     # Get rid of totals
     ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
     # Get rid of counts, if they exist
-    ss_max_row <- ss_max_row[!grepl("[0-9]", ss_max_row[[1]]), ] |> nrow()
+    ss_max_row <- nrow(ss_max_row)
 
     # Obtain the modified time from a dribble object
     dribble_info <- googledrive::drive_reveal(dribble, what = "modifiedTime")

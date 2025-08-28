@@ -24,12 +24,16 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
   get_sheet_info_single <- function(dribble, sheet = NULL) {
 
     # Calculate max rows for each masque
-    ss_max_row <- googlesheets4::range_read(dribble, 1, range = googlesheets4::cell_cols("D"), col_names = FALSE) |>
-      dplyr::filter(!is.na(`...1`))
+    ss_max_row <- googlesheets4::range_read(dribble, 1,
+                                            range = googlesheets4::cell_cols("D"),
+                                            col_names = FALSE) |>
+      dplyr::filter(!is.na(`...1`),
+                    `...1` != "NULL")
+    ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
     # Get rid of totals
     ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
     # Get rid of counts, if they exist
-    ss_max_row <- ss_max_row[!grepl("[0-9]", ss_max_row[[1]]), ] |> nrow()
+    ss_max_row <- nrow(ss_max_row)
 
     # Obtain the section names of a sheet
     names <- get_names_from_sheet(sheet)

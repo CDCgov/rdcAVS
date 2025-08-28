@@ -25,6 +25,7 @@ Imports:
     ggpubr,
     googledrive,
     googlesheets4,
+    httr,
     lubridate,
     progressr,
     purrr,
