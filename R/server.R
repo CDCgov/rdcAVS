@@ -857,7 +857,7 @@ server <- function(input, output, session) {
         # Checking for valid inputs
         # Get valid geo options
         geo_lookup <- geo_data_reactive()
-        valid_levels <- c("global", "province", "antenne", "zone de sante")
+        valid_levels <- c("national", "province", "antenne", "zone de sante")
         valid_roles <- c("writer", "reader", "commenter")
         valid_provinces <- unique(geo_lookup$provinces)
         valid_antenne <- unique(geo_lookup$antennes)
@@ -1106,7 +1106,7 @@ server <- function(input, output, session) {
     }
 
     switch(level,
-           "global" = {
+           "national" = {
              req(
                input$perm_email,
                input$perm_level,

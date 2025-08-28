@@ -35,7 +35,7 @@ set_permissions <- function(campaign_name,
                                  antenne = NA,
                                  zone_de_sante = NA) {
     switch(level,
-      "global" = paste0(campaign_name, "/"),
+      "national" = paste0(campaign_name, "/"),
       "province" = paste0(campaign_name, "/", province, "/"),
       "antenne" = paste0(campaign_name, "/", province, "/", antenne, "/"),
       "zone de sante" = paste0(
@@ -83,7 +83,7 @@ set_permissions <- function(campaign_name,
   global_id <- googledrive::drive_get(campaign_name)$id[1]
 
   dribbles_with_permission <- dribbles_with_permission |>
-    dplyr::mutate(id = ifelse(level == "global", global_id, id))
+    dplyr::mutate(id = ifelse(level == "national", global_id, id))
 
   # Parallel setting of permissions
   if (nrow(dribbles_with_permission) > 0) {
