@@ -34,6 +34,7 @@
 #' @importFrom purrr pwalk
 #' @importFrom purrr walk
 #' @importFrom rappdirs user_data_dir
+#' @importFrom readr type_convert
 #' @importFrom shinyjs disable
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs

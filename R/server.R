@@ -1314,8 +1314,7 @@ server <- function(input, output, session) {
 
 
     national_template_dribble <- googledrive::drive_get(national_dribble_url)
-    surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
-    surveillance_summary(get_sheet_info(surveillance_folder_sheets))
+    surveillance_summary(get_sheet_info(national_template_dribble))
     # Obtain campaign quality information
     campaign_quality(get_campaign_progress(national_template_dribble,
                                            5:8))
