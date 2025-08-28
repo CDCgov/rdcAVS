@@ -81,7 +81,7 @@ compile_masques_national <- function(campaign_name) {
   # Set spreadsheet IDs
   ssId <- national_dribble$id[1]
 
-  showNotification("Obtaining required permissions", type = "message")
+  showNotification("Obtention des autorisations requises...")
   for (i in templates$id) {
     # Construct the URL
     url <- sprintf("https://docs.google.com/spreadsheets/d/%s/externaldata/addimportrangepermissions?donorDocId=%s", ssId, i)
@@ -94,6 +94,7 @@ compile_masques_national <- function(campaign_name) {
     )
     print(response)
   }
+  showNotification("Autorisations requises obtenues.", type = "message")
 
   # Compile all templates for one sheet at a time
   withProgress(message = "Compilation des données dans: ",
