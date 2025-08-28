@@ -15,6 +15,15 @@
 #' }
 compile_masques_national <- function(campaign_name) {
 
+  # First check if the masque has been created correctly, because if so
+  # can skip the compilation step on the next run since it will automatically
+  # update
+  national_url <- complete_compiled_masque(campaign_name)
+  if (!is.na(national_url)) {
+    showNotification("National masque refreshed", type = "message")
+    return(national_url)
+  }
+
   # Gather the right files
   query <- paste0("mimeType = 'application/vnd.google-apps.folder' and name contains '", campaign_name, "'")
   folders <- googledrive::drive_find(q = query)
@@ -149,4 +158,33 @@ num_to_col <- function(n) {
   }
 
   return(s)
+}
+
+complete_compiled_masque <- function(campaign_name) {
+  query <- paste0("mimeType = 'application/vnd.google-apps.spreadsheet' and name contains '",
+                  paste0(campaign_name, "_national_rdc"), "'")
+  national_masque <- googledrive::drive_find(q = query)
+
+
+  # Check number of rows are the same for first and last tabs
+  tabs <- googlesheets4::sheet_names(national_masque)
+  first_tab <- googlesheets4::read_sheet(national_masque,
+                                         sheet = tabs[1],
+                                         range = "A3:A",
+                                         col_names = FALSE) |> nrow()
+  last_tab <- googlesheets4::read_sheet(national_masque,
+                                        sheet = tabs[length(tabs)],
+                                        range = "A3:A",
+                                        col_names = FALSE) |> nrow()
+
+  if (first_tab == last_tab) {
+    cli::cli_alert_info("Masque already compiled successfully")
+    national_dribble_url <- googledrive::drive_reveal(national_masque, "webViewLink") |>
+      dplyr::pull(web_view_link)
+    return(national_dribble_url)
+  } else {
+    cli::cli_alert_warning("Masque needs to be recompiled")
+    return(NA)
+  }
+
 }
