@@ -1303,31 +1303,38 @@ server <- function(input, output, session) {
     surveillance_folder <- campaign_drive_folders() |>
       dplyr::filter(name == input$selected_surveillance_drive_folder)
 
-    # Compile all zs templates in the folder to the national template
-    showNotification("Veuillez patienter pendant que la demande est traitée")
-    national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
-    output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
-                                                        href = national_dribble_url))})
-    showNotification("Traitement terminé", type = "message")
+    withProgress(
+      {
+        # Compile all zs templates in the folder to the national template
+        showNotification("Veuillez patienter pendant que la demande est traitée")
 
-    # Obtain completeness information
-    national_template_dribble <- googledrive::drive_get(national_dribble_url)
-    surveillance_summary(get_sheet_info(national_template_dribble))
-    # Obtain campaign quality information
-    campaign_quality(get_campaign_progress(national_template_dribble,
-                                            5:8))
-    showNotification("Informations sur la campagne traitées", type = "message")
-    refresh_status(paste0("Last updated on: ",
-                          as.character(Sys.time())))
-    data_quality_info <- surveillance_summary()
-    save(data_quality_info, file = data_quality_path)
-    show("download_data_quality_monitoring")
+        incProgress(1/3, message = "Compilation de masques")
 
-    campaign_quality_info <- campaign_quality()
-    save(campaign_quality_info, file = campaign_quality_path)
-    show("download_campaign_quality_monitoring")
+        national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
+        output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
+                                                            href = national_dribble_url))})
 
-    show("refresh_date")
+        # Obtain completeness information
+        incProgress(1/3, message = "Analyse de la qualité des données")
+        national_template_dribble <- googledrive::drive_get(national_dribble_url)
+        surveillance_summary(get_sheet_info(national_template_dribble))
+        data_quality_info <- surveillance_summary()
+        save(data_quality_info, file = data_quality_path)
+        show("download_data_quality_monitoring")
+
+        # Obtain campaign quality information
+        incProgress(1/3, message = "Analyser la progression de la campagne")
+        campaign_quality(get_campaign_progress(national_template_dribble,
+                                               5:8))
+        campaign_quality_info <- campaign_quality()
+        save(campaign_quality_info, file = campaign_quality_path)
+        show("download_campaign_quality_monitoring")
+
+        refresh_status(paste0("Last updated on: ", as.character(Sys.time())))
+        show("refresh_date")
+        showNotification("Traitement terminé", type = "message")
+      }
+    )
   })
 
   ##### Download current data quality monitoring table ----
