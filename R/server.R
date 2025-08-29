@@ -1305,6 +1305,7 @@ server <- function(input, output, session) {
 
     withProgress(
       {
+        compile_start <- Sys.time()
         # Compile all zs templates in the folder to the national template
         incProgress(1/4, message = "Compilation de masques - province")
         compile_masques_province(input$selected_surveillance_drive_folder)
@@ -1329,7 +1330,11 @@ server <- function(input, output, session) {
         save(campaign_quality_info, file = campaign_quality_path)
         show("download_campaign_quality_monitoring")
 
-        refresh_status(paste0("Last updated on: ", as.character(Sys.time())))
+        compile_end <- difftime(Sys.time(), compile_start, units = "mins")
+
+        refresh_status(paste0("Last updated on: ",
+                              strftime(Sys.time(), format = "%d/%m/%Y %R", usetz = TRUE),
+                              "; Compiled in ", round(compile_end, 2), "mins"))
         show("refresh_date")
         showNotification("Traitement terminé", type = "message")
       }
