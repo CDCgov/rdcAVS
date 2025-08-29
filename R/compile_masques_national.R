@@ -80,12 +80,22 @@ num_to_col <- function(n) {
   return(s)
 }
 
-gather_data_templates_from_folder <- function(folders) {
+gather_data_templates_from_folder <- function(folders, level = "national") {
+
+  if (!level %in% c("national", "province")) {
+    cli::cli_abort("Invalid level. Please use either national or province.")
+  }
+
+  dribble_type <- switch(level,
+                         # national will only use the compiled province tibbles
+                         "national" = "_province_",
+                         "province" = "ZS")
+
   templates <- googledrive::drive_ls(folders, recursive = TRUE) |>
     googledrive::drive_reveal("mimeType") |>
     googledrive::drive_reveal("webViewLink") |>
     dplyr::filter(stringr::str_detect(mime_type, ".spreadsheet"),
-                  stringr::str_detect(name, "ZS")) |>
+                  stringr::str_detect(name, dribble_type)) |>
     dplyr::arrange(name)
 
   # Calculate the max row for each template
@@ -103,7 +113,10 @@ gather_data_templates_from_folder <- function(folders) {
                                               col_names = FALSE) |>
         dplyr::filter(!is.na(`...1`),
                       `...1` != "NULL")
-      ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
+
+      if (level == "province") {
+        ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
+      }
       # Get rid of totals
       ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
       # Get rid of counts, if they exist
@@ -136,12 +149,15 @@ create_masque_database <- function(folder, template_dribble, level) {
                                             name = paste0(campaign_name, file_suffix),
                                             overwrite = TRUE)
 
-  # Delete graphiques sheet because not necessary and incompatible
-  googlesheets4::sheet_delete(summary_dribble, "Graphiques")
-
   # Clear everything except for the header columns
   ss_info <- googlesheets4::gs4_get(summary_dribble)
   tab_names <- ss_info$sheets$name
+
+  if ("Graphiques" %in% tab_names) {
+    # Delete graphiques sheet because not necessary and incompatible
+    googlesheets4::sheet_delete(summary_dribble, "Graphiques")
+  }
+
   purrr::map(tab_names,
              \(x) {
                googlesheets4::range_clear(summary_dribble,

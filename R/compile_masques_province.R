@@ -16,7 +16,7 @@ compile_masques_province <- function(campaign_name) {
     } else {
       prov_url <- complete_compiled_masque(province_dribble)
       if (!is.na(prov_url)) {
-        showNotification(paste0(folders[i, ]$name, " masque refreshed", type = "message"))
+        showNotification(paste0(folders[i, ]$name, " masque refreshed"), type = "message")
         next
       } else {
         cli::cli_alert_warning(paste0(folders[i, ]$name, " masque needs to be recompiled"))
@@ -24,7 +24,7 @@ compile_masques_province <- function(campaign_name) {
     }
 
     # List masques dribbles for a specific province
-    templates <- gather_data_templates_from_folder(folders[i, ]) # make sure to uncomment the progress bars in this function after testing
+    templates <- gather_data_templates_from_folder(folders[i, ], level = "province")
 
     # Create province level dribble
     province_dribble <- create_masque_database(folders[i, ], templates[1, ], level = "province")

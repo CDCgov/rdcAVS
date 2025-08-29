@@ -1306,15 +1306,13 @@ server <- function(input, output, session) {
     withProgress(
       {
         # Compile all zs templates in the folder to the national template
-        showNotification("Veuillez patienter pendant que la demande est traitée")
+        incProgress(1/4, message = "Compilation de masques - province")
+        compile_masques_province(input$selected_surveillance_drive_folder)
 
         incProgress(1/4, message = "Compilation de masques - national")
-
         national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
         output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
                                                             href = national_dribble_url))})
-        incProgress(1/4, message = "Compilation de masques - province")
-        compile_masques_province(input$selected_surveillance_drive_folder)
         # Obtain completeness information
         incProgress(1/4, message = "Analyse de la qualité des données")
         national_template_dribble <- googledrive::drive_get(national_dribble_url)
