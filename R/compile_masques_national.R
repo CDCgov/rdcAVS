@@ -189,6 +189,7 @@ create_masque_database <- function(folder, template_dribble, level) {
   if ("Graphiques" %in% tab_names) {
     # Delete graphiques sheet because not necessary and incompatible
     googlesheets4::sheet_delete(summary_dribble, "Graphiques")
+    tab_names <- tab_names[tab_names != "Graphiques"]
   }
 
   purrr::map(tab_names,
@@ -293,7 +294,7 @@ complete_compiled_masque <- function(dribble) {
                                         range = "A3:A",
                                         col_names = FALSE) |> nrow()
 
-  if (first_tab == last_tab) {
+  if (first_tab == last_tab & (first_tab > 0)) {
     cli::cli_alert_info("Masque already compiled successfully")
     national_dribble_url <- googledrive::drive_reveal(dribble, "webViewLink") |>
       dplyr::pull(web_view_link)
