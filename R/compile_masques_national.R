@@ -27,82 +27,16 @@ compile_masques_national <- function(campaign_name) {
   # Gather the right files
   query <- paste0("mimeType = 'application/vnd.google-apps.folder' and name contains '", campaign_name, "'")
   folders <- googledrive::drive_find(q = query)
-  templates <- googledrive::drive_ls(folders, recursive = TRUE) |>
-    googledrive::drive_reveal("mimeType") |>
-    googledrive::drive_reveal("webViewLink") |>
-    dplyr::filter(stringr::str_detect(mime_type, ".spreadsheet"),
-                  stringr::str_detect(name, "ZS")) |>
-    dplyr::arrange(name)
-
-  # Calculate the max row for each template
-  template_rows <- dplyr::tibble(name = character(),
-                                 max_rows = integer())
-
-  withProgress(message = "Analyzing ", {
-    m <- nrow(templates)
-
-    for (i in 1:nrow(templates)) {
-      incProgress(1/m, detail = templates[i, ]$name)
-      # Calculate max rows for each masque
-      ss_max_row <- googlesheets4::range_read(templates[i, ], 1,
-                                              range = googlesheets4::cell_cols("D"),
-                                              col_names = FALSE) |>
-        dplyr::filter(!is.na(`...1`),
-                      `...1` != "NULL")
-      ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
-      # Get rid of totals
-      ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
-      # Get rid of counts, if they exist
-      ss_max_row <- nrow(ss_max_row)
-      template_rows <- template_rows |>
-        dplyr::add_row(name = templates[i, ]$name,
-                       max_rows = ss_max_row)
-    }
-
-  })
-
-  # Add column to templates
-  templates <- templates |>
-    dplyr::left_join(template_rows)
+  templates <- gather_data_templates_from_folder(folders)
 
   # Create a new template
-  national_dribble <- googledrive::drive_cp(templates[1, ], folders,
-                                            name = paste0(campaign_name, "_national_rdc"),
-                                            overwrite = TRUE)
-
-  # Delete graphiques sheet because not necessary and incompatible
-  googlesheets4::sheet_delete(national_dribble, "Graphiques")
-
-  # Clear everything except for the header columns
-  ss_info <- googlesheets4::gs4_get(national_dribble)
-  tab_names <- ss_info$sheets$name
-  purrr::map(tab_names,
-             \(x) {
-               googlesheets4::range_clear(national_dribble,
-                                          x,
-                                          range = googlesheets4::cell_rows(c(4, NA)))
-             })
+  national_dribble <- create_masque_database(folders, templates[1, ], level = "national")
+  # Get information
+  tab_names <- googlesheets4::sheet_names(national_dribble)
 
   # Grant permission for templates
-  # Obtain token
-  token <- googlesheets4::gs4_token()
-
-  # Set spreadsheet IDs
-  ssId <- national_dribble$id[1]
-
   showNotification("Obtention des autorisations requises...")
-  for (i in templates$id) {
-    # Construct the URL
-    url <- sprintf("https://docs.google.com/spreadsheets/d/%s/externaldata/addimportrangepermissions?donorDocId=%s", ssId, i)
-
-    # Make the POST request
-    response <- httr::POST(
-      url,
-      httr::add_headers(Authorization = paste("Bearer",
-                                              token$auth_token$credentials$access_token))
-    )
-    print(response)
-  }
+  grant_read_permission_from_masques(national_dribble, templates)
   showNotification("Autorisations requises obtenues.", type = "message")
 
   # Compile all templates for one sheet at a time
@@ -112,33 +46,9 @@ compile_masques_national <- function(campaign_name) {
                  for (i in 1:n) {
                    incProgress(1/n, detail = tab_names[i])
 
-                   templates <- templates |>
-                     dplyr::mutate(ss_function = paste0("=IMPORTRANGE(",
-                                                        '"',
-                                                        web_view_link,
-                                                        '", "',
-                                                        tab_names[i],
-                                                        "!",
-                                                        "A4:",
-                                                        num_to_col(ss_info$sheets[i, ]$grid_columns),
-                                                        max_rows + 3,
-                                                        '")'))
-
-                   # Set up structure
-                   sheet_functions <- dplyr::tibble(ss_function = character())
-                   for (j in 1:nrow(templates)) {
-                     sheet_functions <- sheet_functions |> dplyr::add_row(ss_function = templates[j, ]$ss_function)
-                     sheet_functions <- dplyr::bind_rows(sheet_functions,
-                                                         dplyr::tibble(ss_function = rep(NA, templates[j, ]$max_rows - 1)))
-                   }
-
-                   # Declare column as a Google Sheets formula column
-                   sheet_functions$ss_function <- googlesheets4::gs4_formula(sheet_functions$ss_function)
-
-                   # Append to the national template
-                   googlesheets4::sheet_append(national_dribble,
-                                               sheet_functions,
-                                               sheet = tab_names[i])
+                   copy_sheet_info_to_summary_masque(national_dribble,
+                                                     templates,
+                                                     tab_names[i])
                  }
                })
 
@@ -160,11 +70,141 @@ num_to_col <- function(n) {
   return(s)
 }
 
+gather_data_templates_from_folder <- function(folders) {
+  templates <- googledrive::drive_ls(folders, recursive = TRUE) |>
+    googledrive::drive_reveal("mimeType") |>
+    googledrive::drive_reveal("webViewLink") |>
+    dplyr::filter(stringr::str_detect(mime_type, ".spreadsheet"),
+                  stringr::str_detect(name, "ZS")) |>
+    dplyr::arrange(name)
+
+  # Calculate the max row for each template
+  template_rows <- dplyr::tibble(name = character(),
+                                 max_rows = integer())
+
+  #withProgress(message = "Analyzing ", {
+    m <- nrow(templates)
+
+    for (i in 1:nrow(templates)) {
+      #incProgress(1/m, detail = templates[i, ]$name)
+      # Calculate max rows for each masque
+      ss_max_row <- googlesheets4::range_read(templates[i, ], 1,
+                                              range = googlesheets4::cell_cols("D"),
+                                              col_names = FALSE) |>
+        dplyr::filter(!is.na(`...1`),
+                      `...1` != "NULL")
+      ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
+      # Get rid of totals
+      ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
+      # Get rid of counts, if they exist
+      ss_max_row <- nrow(ss_max_row)
+      template_rows <- template_rows |>
+        dplyr::add_row(name = templates[i, ]$name,
+                       max_rows = ss_max_row)
+    }
+
+  #})
+
+  # Add column to templates
+  templates <- templates |>
+    dplyr::left_join(template_rows)
+
+  return(templates)
+}
+
+create_masque_database <- function(folder, template_dribble, level) {
+  if (!level %in% c("national", "province")) {
+    cli::cli_abort("Invalid level. Accepted values are national and province")
+  }
+
+  file_suffix <- switch(level,
+                        "national" = "_national_rdc",
+                        "province" = paste0("_province_", folder$name))
+
+  # Create a new template
+  summary_dribble <- googledrive::drive_cp(template_dribble, folder,
+                                            name = paste0(campaign_name, file_suffix),
+                                            overwrite = TRUE)
+
+  # Delete graphiques sheet because not necessary and incompatible
+  googlesheets4::sheet_delete(summary_dribble, "Graphiques")
+
+  # Clear everything except for the header columns
+  ss_info <- googlesheets4::gs4_get(summary_dribble)
+  tab_names <- ss_info$sheets$name
+  purrr::map(tab_names,
+             \(x) {
+               googlesheets4::range_clear(summary_dribble,
+                                          x,
+                                          range = googlesheets4::cell_rows(c(4, NA)))
+             })
+
+  return(summary_dribble)
+}
+
+grant_read_permission_from_masques <- function(target_masque, source_masques,
+                                               token = googlesheets4::gs4_token()) {
+  # Set spreadsheet IDs
+  ss_id <- target_masque$id[1]
+
+  for (i in source_masques$id) {
+    # Construct the URL
+    url <- sprintf("https://docs.google.com/spreadsheets/d/%s/externaldata/addimportrangepermissions?donorDocId=%s", ss_id, i)
+
+    # Make the POST request
+    response <- httr::POST(
+      url,
+      httr::add_headers(Authorization = paste("Bearer",
+                                              token$auth_token$credentials$access_token))
+    )
+    print(response)
+  }
+
+}
+
+copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_name) {
+  ss_info <- googlesheets4::gs4_get(summary_masque)
+  templates <- templates |>
+    dplyr::mutate(ss_function = paste0("=IMPORTRANGE(",
+                                       '"',
+                                       web_view_link,
+                                       '", "',
+                                       sheet_name,
+                                       "!",
+                                       "A4:",
+                                       num_to_col(ss_info$sheets |>
+                                                    dplyr:: filter(name == sheet_name) |>
+                                                    dplyr::pull(grid_columns)),
+                                       max_rows + 3,
+                                       '")'))
+
+  # Set up structure
+  sheet_functions <- dplyr::tibble(ss_function = character())
+  for (j in 1:nrow(templates)) {
+    sheet_functions <- sheet_functions |>
+      dplyr::add_row(ss_function = templates[j, ]$ss_function)
+    sheet_functions <- dplyr::bind_rows(sheet_functions,
+                                        dplyr::tibble(ss_function = rep(NA, templates[j, ]$max_rows - 1)))
+  }
+
+  # Declare column as a Google Sheets formula column
+  sheet_functions$ss_function <- googlesheets4::gs4_formula(sheet_functions$ss_function)
+
+  # Append to the national template
+  googlesheets4::sheet_append(summary_masque,
+                              sheet_functions,
+                              sheet = sheet_name)
+}
+
 complete_compiled_masque <- function(campaign_name) {
   query <- paste0("mimeType = 'application/vnd.google-apps.spreadsheet' and name contains '",
                   paste0(campaign_name, "_national_rdc"), "'")
   national_masque <- googledrive::drive_find(q = query)
 
+  if (nrow(national_masque) == 0) {
+    cli::cli_alert_warning("Masque needs to be recompiled")
+    return(NA)
+  }
 
   # Check number of rows are the same for first and last tabs
   tabs <- googlesheets4::sheet_names(national_masque)
