@@ -23,10 +23,17 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
 
   get_sheet_info_single <- function(dribble, sheet = NULL) {
 
-    # Get only the max row based on aires de sante column
-    ss_max_row <- googlesheets4::range_read(dribble, 1, "D3:D48") |>
-      dplyr::filter(!is.na(`Aires de santé`)) |>
-      nrow()
+    # Calculate max rows for each masque
+    ss_max_row <- googlesheets4::range_read(dribble, 1,
+                                            range = googlesheets4::cell_cols("D"),
+                                            col_names = FALSE) |>
+      dplyr::filter(!is.na(`...1`),
+                    `...1` != "NULL")
+    ss_max_row <- ss_max_row[-nrow(ss_max_row), ]
+    # Get rid of totals
+    ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
+    # Get rid of counts, if they exist
+    ss_max_row <- nrow(ss_max_row)
 
     # Obtain the section names of a sheet
     names <- get_names_from_sheet(sheet)
@@ -43,6 +50,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
     return(dribble_info)
 
   }
+
   get_section_info <- function(dribble, sheet= NULL, name = NULL, ss_max_row = NULL) {
     # Check that what is passed is a single dribble
     if (nrow(dribble) > 1) {
@@ -58,34 +66,39 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
     sections <- lapply(1:length(name), \(x) {
       range <- get_range_from_name(sheet, name[x])
       range <- str_split(range, ":") |> unlist()
-      range <- a1_to_colnum(range[1]):a1_to_colnum(range[2])
-      section_info <- ss_range[, range]
+      start_range <-  a1_to_colnum(range[1])
+      end_range <- a1_to_colnum(range[2])
+      range <- start_range:end_range
+      section_info <- ss_range[, c(1:4, # geographic info
+                                   range)]
 
-      # Obtain % emptiness of the range
-      empty_info <- sum(!is.na(section_info))
-      val_counts <- length(section_info) * nrow(section_info)
-      prop_empty <- scales::percent(empty_info / val_counts)
-
-      # Create a tibble
-      info <- dplyr::tibble(
-        sheet_name = dribble_info$name,
-        range = get_range_from_name(sheet, name[x]),
-        section = name[x],
-        filled_cells = empty_info,
-        total_cells = val_counts,
-        completeness = prop_empty
-      )
+      info <- section_info |>
+        dplyr::group_by_at(1:3) |>
+        dplyr::summarize(
+          empty_cells = sum(is.na(dplyr::across(2:(ncol(section_info)-3)))),
+          filled_cells = sum(!is.na(dplyr::across(2:(ncol(section_info)-3))))
+        ) |>
+        dplyr::ungroup() |>
+        dplyr::rename(
+          "prov" = 1,
+          "antenne" = 2,
+          "zone_de_sante" = 3
+        ) |>
+        dplyr::mutate(
+          total_cells = empty_cells + filled_cells,
+          completeness = scales::percent(filled_cells / total_cells),
+          range = get_range_from_name(sheet, name[x]),
+          section = name[x],
+          sheet = sheet,
+        ) |>
+        dplyr::select(-empty_cells) |>
+        dplyr::select(prov, antenne, zone_de_sante, sheet, range, section,
+                      filled_cells, total_cells, completeness)
     })
-    sections <- bind_rows(sections)
+    sections <- dplyr::bind_rows(sections)
 
     # Join back to the dribble
-    dribble_summary <- dplyr::tibble(prov = sub(".*PROV_([^_]+).*", "\\1", dribble_info$name),
-                                     antenne = sub(".*AN_([^_]+).*", "\\1", dribble_info$name),
-                                     zone_de_sante = sub(".*ZS_([^_]+)$", "\\1", dribble_info$name),
-                                     sheet = sheet) |>
-      dplyr::mutate(dplyr::across(dplyr::any_of(c("prov", "antenne", "zone_de_sante")),
-                                  \(x) dplyr::if_else(stringr::str_detect(x, "CAMPAGNE"), NA, x)))
-    dribble_summary <- dplyr::cross_join(dribble_summary, sections) |>
+    dribble_summary <- sections |>
       dplyr::mutate(days_since_last_modified = as.numeric(Sys.Date() - as.Date(dribble_info$modified_time)),
                     date_ran = Sys.Date(),
                     sheet = dplyr::case_when(sheet == 1 ~ "Donnees de base",
@@ -101,6 +114,7 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
 
     return(dribble_summary)
   }
+
   get_range_from_name <- function(sheet, name) {
     if (sheet == 1) {
       switch(name,

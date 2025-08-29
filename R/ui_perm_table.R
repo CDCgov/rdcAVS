@@ -8,7 +8,7 @@ ui_perm_table <- function() {
         accept = ".csv"
       ),
     helpText(paste0(
-        'Si le niveau est "global", les zones g\u00e9ographiques sont facultatives.',
+        'Si le niveau est "national", les zones g\u00e9ographiques sont facultatives.',
         " Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux.\n\n",
         'Par exemple, si le niveau est "zone de sante",',
         ' incluez une valeur pour les colonnes "province", "antenne" et "zone de sante".'
@@ -29,7 +29,7 @@ ui_perm_table <- function() {
         selectInput(
           "perm_level",
           h6("Level"),
-          choices = c("global", "province", "antenne", "zone de sante")
+          choices = c("national", "province", "antenne", "zone de sante")
         ),
         selectInput(
           "perm_role", h6("Role"),

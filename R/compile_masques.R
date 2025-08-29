@@ -51,14 +51,23 @@ compile_masques <- function(campaign_name) {
                        incProgress(1/m, detail = templates[j, ]$name)
                        tryCatch(
                          {
-                           sheet_data <- dplyr::bind_rows(sheet_data, copy_template_tab(templates[j, ], sheet = tab_names[i]))
+                           zs_data <- copy_template_tab(templates[j, ], sheet = tab_names[i])
                          },
                          error = \(e) {
-                           showNotification(paste0("Erreur de copie: "), type = "error")
+                           showNotification(paste0("Erreur de copie: ", templates[j, ]$name), type = "error")
                          }
                        )
 
+                       tryCatch({
+                         sheet_data <- dplyr::bind_rows(sheet_data, zs_data)
+                       },
+                       error = \(e) {
+                         showNotification(paste0("Invalid structure: ", templates[j, ]$name), type = "error")
+                       })
+
                      }
+
+                     sheet_data <- sheet_data |> readr::type_convert()
 
                      # Append to the national template
                      googlesheets4::sheet_append(national_dribble, sheet_data, sheet = tab_names[i])
@@ -88,6 +97,18 @@ copy_template_tab <- function(zs_dribble, sheet) {
 
     # Filter to only include AZ with values
     data <- data[data[4] != "NULL", ]
+
+    # Filter to only include columns AZ without a number (signifies a row total)
+    data <- data[!grepl(data[4], "\\d")]
+
+    # Convert NULL values to NAs first because NULLs can't be represented in a vector
+    # Make sure to unlist list columns (initial mixed data types likely the reason)
+    data <- data |>
+      dplyr::mutate(dplyr::across(dplyr::everything(),
+                                  \(x) lapply(x, function(y) if (is.null(y)) NA else y))) |>
+      dplyr::mutate(dplyr::across(dplyr::everything(),
+                                  \(x) unlist(x))) |>
+      dplyr::mutate(dplyr::across(dplyr::everything(), as.character))
 
     return(data)
 

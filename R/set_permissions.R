@@ -35,7 +35,7 @@ set_permissions <- function(campaign_name,
                                  antenne = NA,
                                  zone_de_sante = NA) {
     switch(level,
-      "global" = paste0(campaign_name, "/"),
+      "national" = paste0(campaign_name, "/"),
       "province" = paste0(campaign_name, "/", province, "/"),
       "antenne" = paste0(campaign_name, "/", province, "/", antenne, "/"),
       "zone de sante" = paste0(
@@ -69,21 +69,45 @@ set_permissions <- function(campaign_name,
       antenne,
       zone_de_sante
     )) |>
-    dplyr::select(-dplyr::all_of(c(
-      "name", "province", "antenne", "zone_de_sante"
-    ))) |>
-    dplyr::filter(!is.na(path))
+    dplyr::rename(user_name = name) |>
+    dplyr::filter(!is.na(path)) |>
+    dplyr::mutate(path = stringr::str_to_upper(path))
+
+  # For those with editor access to the ZS masques,
+  # only set permissions to the masque and not the folder
+  zs_editors <- full_permission |>
+    dplyr::filter(role == "writer" & level == "zone de sante")
 
   dribble_files <- dribble_files |>
-    mutate(path = stringr::str_replace_all(path, "~/", ""))
+    dplyr::mutate(path = stringr::str_replace_all(path, "~/", ""))
+
+  dribble_files <- dribble_files |>
+    dplyr::mutate(dir_path = ifelse(stringr::str_ends(path, "/"), path, paste0(fs::path_dir(path), "/"))) |>
+    googledrive::drive_reveal("mimeType")
+  files_for_zs_editors <- dribble_files |>
+    dplyr::filter(str_ends(mime_type, "spreadsheet")) |>
+    dplyr::select(-"path") |>
+    dplyr::rename(path = dir_path) |>
+    dplyr::mutate(path = stringr::str_to_upper(path)) |>
+    dplyr::inner_join(zs_editors, by = "path")
+
   # Join back the full permission table
   dribbles_with_permission <- dplyr::left_join(full_permission, dribble_files)
+
+  # Filter out ZS editors
+  # necessary to add back the correct ID of the spreadsheet
+  dribbles_with_permission <- dribbles_with_permission |>
+    dplyr::filter(!email %in% files_for_zs_editors$email)
+  # Add back ZS editors
+  dribbles_with_permission <- dribbles_with_permission |>
+    dplyr::bind_rows(files_for_zs_editors)
 
   # Add ID of the campaign folder for global users
   global_id <- googledrive::drive_get(campaign_name)$id[1]
 
   dribbles_with_permission <- dribbles_with_permission |>
-    dplyr::mutate(id = ifelse(level == "global", global_id, id))
+    dplyr::mutate(id = ifelse(level == "national", global_id, id))
+
 
   # Parallel setting of permissions
   if (nrow(dribbles_with_permission) > 0) {
@@ -134,13 +158,14 @@ set_permissions_parallel <- function(dribble_permissions) {
         tryCatch(
           {
             purrr::pwalk(dribble_permissions[x, c("email", "id", "role")],
-              \(email, id, role) googledrive::with_drive_quiet(
+              \(email, id, role) {
+
+                googledrive::with_drive_quiet(
                 googledrive::drive_share(googledrive::as_id(id),
                   type = "user",
                   role = role,
-                  emailAddress = email
-                )
-              ),
+                  emailAddress = email))
+                },
               .progress = TRUE
             )
           },

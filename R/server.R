@@ -857,7 +857,7 @@ server <- function(input, output, session) {
         # Checking for valid inputs
         # Get valid geo options
         geo_lookup <- geo_data_reactive()
-        valid_levels <- c("global", "province", "antenne", "zone de sante")
+        valid_levels <- c("national", "province", "antenne", "zone de sante")
         valid_roles <- c("writer", "reader", "commenter")
         valid_provinces <- unique(geo_lookup$provinces)
         valid_antenne <- unique(geo_lookup$antennes)
@@ -1106,7 +1106,7 @@ server <- function(input, output, session) {
     }
 
     switch(level,
-           "global" = {
+           "national" = {
              req(
                input$perm_email,
                input$perm_level,
@@ -1149,17 +1149,17 @@ server <- function(input, output, session) {
     role <- tolower(input$perm_role)
 
     # Optional fields based on level
-    province <- if (length(input$perm_province) > 0 & level == "province") {
+    province <- if (length(input$perm_province) > 0 & level %in% c("province", "antenne", "zone de sante")) {
       input$perm_province
     } else {
       NA_character_
     }
-    antenne <- if (length(input$perm_antenne) > 0 & level == "antenne") {
+    antenne <- if (length(input$perm_antenne) > 0 & level %in% c("antenne", "zone de sante")) {
       input$perm_antenne
     } else {
       NA_character_
     }
-    zone_de_sante <- if (length(input$perm_zs) > 0 & level == "zone de sante") {
+    zone_de_sante <- if (length(input$perm_zs) > 0 & level %in% c("zone de sante")) {
       input$perm_zs
     } else {
       NA_character_
@@ -1297,42 +1297,48 @@ server <- function(input, output, session) {
   })
 
   #### Surveillance table ----
-  observeEvent(input$monitor_campaign_btn, {
-    req(input$selected_surveillance_drive_folder,
-        input$data_quality_sheet_selection)
+  observeEvent(input$compile_campaign_btn, {
+    req(input$selected_surveillance_drive_folder)
 
     surveillance_folder <- campaign_drive_folders() |>
       dplyr::filter(name == input$selected_surveillance_drive_folder)
 
-    showNotification("Veuillez patienter pendant que les données de la campagne sont en cours de traitement",
-                     type = "default")
-    surveillance_folder_sheets <- find_drive_sheets(surveillance_folder)
-    surveillance_summary(get_sheet_info(surveillance_folder_sheets))
-    # Obtain campaign quality information
-    campaign_quality(get_campaign_progress(surveillance_folder_sheets,
-                                           5:8))
-    showNotification("Informations sur la campagne traitées", type = "message")
-    refresh_status(paste0("Last updated on: ",
-                          as.character(Sys.time())))
-    data_quality_info <- surveillance_summary()
-    campaign_quality_info <- campaign_quality()
+    withProgress(
+      {
+        compile_start <- Sys.time()
+        # Compile all zs templates in the folder to the national template
+        incProgress(1/4, message = "Compilation de masques - province")
+        compile_masques_province(input$selected_surveillance_drive_folder)
 
-    save(data_quality_info, file = data_quality_path)
-    save(campaign_quality_info, file = campaign_quality_path)
+        incProgress(1/4, message = "Compilation de masques - national")
+        national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
+        output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
+                                                            href = national_dribble_url))})
+        # Obtain completeness information
+        incProgress(1/4, message = "Analyse de la qualité des données")
+        national_template_dribble <- googledrive::drive_get(national_dribble_url)
+        surveillance_summary(get_sheet_info(national_template_dribble))
+        data_quality_info <- surveillance_summary()
+        save(data_quality_info, file = data_quality_path)
+        show("download_data_quality_monitoring")
 
-    show("refresh_date")
-    show("download_data_quality_monitoring")
-    show("download_campaign_quality_monitoring")
-  })
+        # Obtain campaign quality information
+        incProgress(1/4, message = "Analyser la progression de la campagne")
+        campaign_quality(get_campaign_progress(national_template_dribble,
+                                               5:8))
+        campaign_quality_info <- campaign_quality()
+        save(campaign_quality_info, file = campaign_quality_path)
+        show("download_campaign_quality_monitoring")
 
-  observeEvent(input$compile_campaign_btn, {
-    req(input$selected_surveillance_drive_folder)
+        compile_end <- difftime(Sys.time(), compile_start, units = "mins")
 
-    showNotification("Veuillez patienter pendant que la demande est traitée")
-    national_dribble_url <- compile_masques(input$selected_surveillance_drive_folder)
-    output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
-                                                      href = national_dribble_url))})
-    showNotification("Traitement terminé", type = "message")
+        refresh_status(paste0("Last updated on: ",
+                              strftime(Sys.time(), format = "%d/%m/%Y %R", usetz = TRUE),
+                              "; Compiled in ", round(compile_end, 2), "mins"))
+        show("refresh_date")
+        showNotification("Traitement terminé", type = "message")
+      }
+    )
   })
 
   ##### Download current data quality monitoring table ----

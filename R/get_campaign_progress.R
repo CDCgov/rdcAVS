@@ -19,6 +19,17 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
   googlesheets4::gs4_auth(TRUE)
   googledrive::drive_auth(TRUE)
 
+  a1_to_colnum <- function(col) {
+    col <- toupper(col)
+    chars <- strsplit(col, "")[[1]]
+    n <- length(chars)
+    col_num <- 0
+    for (i in 1:n) {
+      col_num <- col_num * 26 + (utf8ToInt(chars[i]) - utf8ToInt("A") + 1)
+    }
+    return(col_num)
+  }
+
   get_campaign_progress_single <- function(dribble, sheet) {
 
     # Extract the following columns for each section
@@ -40,25 +51,40 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
     }
 
     # Calculate max rows for each masque
-    ss_max_row <- googlesheets4::range_read(dribble, 1, "D3:D48") |>
-      dplyr::filter(!is.na(`Aires de santé`)) |>
-      nrow()
+    # Calculate max rows for each masque
+    ss_max_row <- googlesheets4::range_read(dribble, 1,
+                                            range = googlesheets4::cell_cols("D"),
+                                            col_names = FALSE) |>
+      dplyr::filter(!is.na(`...1`),
+                    `...1` != "NULL")
+    # Get rid of totals
+    ss_max_row <- ss_max_row[4:nrow(ss_max_row), ]
+    # Get rid of counts, if they exist
+    ss_max_row <- nrow(ss_max_row)
 
     # Obtain the modified time from a dribble object
     dribble_info <- googledrive::drive_reveal(dribble, what = "modifiedTime")
 
-    # Read the spreadsheet
-    geo_info <- googlesheets4::range_read(dribble_info, sheet, range=paste0("A3:D", ss_max_row + 3))
-    target <- googlesheets4::range_read(dribble_info, sheet, range=paste0("CO3:CO", ss_max_row + 3))
-    coverage <- googlesheets4::range_read(dribble_info, sheet, range=paste0("DZ3:DZ", ss_max_row + 3))
-    completeness <- googlesheets4::range_read(dribble_info, sheet, range=paste0("CL3:CM", ss_max_row + 3))
-    rural_urban <- googlesheets4::range_read(dribble_info, sheet, range = paste0("EF3:EI", ss_max_row + 3))
-    rural_urban <- rural_urban |>
+    # Read the spreadsheet once
+    ss_data <- googlesheets4::range_read(dribble_info, sheet, range=googlesheets4::cell_rows(c(3, ss_max_row + 3)))
+    geo_info <- ss_data |> dplyr::select(a1_to_colnum("A"):a1_to_colnum("D")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    target <- ss_data |> dplyr::select(a1_to_colnum("CO")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    coverage <- ss_data |> dplyr::select(a1_to_colnum("DZ")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    completeness <- ss_data |> dplyr::select(a1_to_colnum("CL"):a1_to_colnum("CM")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    rural_urban <- ss_data |> dplyr::select(a1_to_colnum("EF"):a1_to_colnum("EI")) |>
       dplyr::select(2,4) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x)) |>
       dplyr::mutate(dplyr::across(dplyr::everything(), \(x) round(x)))
-    recoveries_0_11 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("GL3:GL", ss_max_row + 3))
-    recoveries_12_23 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("HT3:HT", ss_max_row + 3))
-    recoveries_24_59 <- googlesheets4::range_read(dribble_info, sheet, range = paste0("JB3:JB", ss_max_row + 3))
+    recoveries_0_11 <- ss_data |> dplyr::select(a1_to_colnum("GL")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    recoveries_12_23 <- ss_data |> dplyr::select(a1_to_colnum("HT")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
+    recoveries_24_59 <- ss_data |> dplyr::select(a1_to_colnum("JB")) |>
+      dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
 
     summary <- dplyr::bind_cols(geo_info, target, coverage, completeness,
                                 rural_urban,
