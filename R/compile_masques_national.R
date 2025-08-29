@@ -69,6 +69,13 @@ compile_masques_national <- function(campaign_name) {
 }
 
 # Private function
+
+#' Convert column number to column name.
+#'
+#' @param n `int` Positive integer corresponding to column location. (1 = "A").
+#'
+#' @returns `str` The column name in A1 format.
+#' @keywords internal
 num_to_col <- function(n) {
   s <- ""
   while(n > 0) {
@@ -80,7 +87,18 @@ num_to_col <- function(n) {
   return(s)
 }
 
-gather_data_templates_from_folder <- function(folders, level = "national") {
+#' Gather masques from a folder
+#'
+#' @description
+#' Gathers the data templates (masques) from a drive folder.
+#'
+#' @param folder `dribble` Dribble of the folder.
+#' @param level `str` "national" or "province". National will look for province
+#' level masques while province will look for zone de sante level masques.
+#'
+#' @returns `dribble` A dribble with each row corresponding to a data masque.
+#' @keywords internal
+gather_data_templates_from_folder <- function(folder, level = "national") {
 
   if (!level %in% c("national", "province")) {
     cli::cli_abort("Invalid level. Please use either national or province.")
@@ -91,7 +109,7 @@ gather_data_templates_from_folder <- function(folders, level = "national") {
                          "national" = "_province_",
                          "province" = "ZS")
 
-  templates <- googledrive::drive_ls(folders, recursive = TRUE) |>
+  templates <- googledrive::drive_ls(folder, recursive = TRUE) |>
     googledrive::drive_reveal("mimeType") |>
     googledrive::drive_reveal("webViewLink") |>
     dplyr::filter(stringr::str_detect(mime_type, ".spreadsheet"),
@@ -135,6 +153,21 @@ gather_data_templates_from_folder <- function(folders, level = "national") {
   return(templates)
 }
 
+#' Create a summary masque
+#'
+#' @description
+#' Creates a summary masque. At the national level, the function will compile from
+#' the province level masques.
+#'
+#'
+#' @param folder `dribble` Where the masque should be created
+#' @param template_dribble `dribble` An example of masque to use as a template.
+#' This is simply either a province or zone de sante masque (determined by level) so
+#' that the function knows which columns to copy.
+#' @param level `str` "national" or "province". What level to compile at.
+#'
+#' @returns `dribble` Dribble to the newly created summary masque.
+#' @keywords internal
 create_masque_database <- function(folder, template_dribble, level) {
   if (!level %in% c("national", "province")) {
     cli::cli_abort("Invalid level. Accepted values are national and province")
@@ -188,6 +221,19 @@ grant_read_permission_from_masques <- function(target_masque, source_masques,
 
 }
 
+#' Copy data from data masques into the summary masque
+#'
+#' @description
+#' The function compiles the structure of how the Google Sheet
+#' function IMPORTFROM() and fills in the appropriate arguments of the function.
+#' This is then appended to the summary masque.
+#'
+#' @param summary_masque `dribble` The masque where the data should be copied to.
+#' @param templates `dribble` A dribble of dribbles to copy.
+#' @param sheet_name `str` Name of the sheet to copy from the templates
+#'
+#' @returns NULL
+#' @keywords internal
 copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_name) {
   ss_info <- googlesheets4::gs4_get(summary_masque)
   templates <- templates |>
@@ -222,6 +268,18 @@ copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_n
                               sheet = sheet_name)
 }
 
+#' Check if the masque was compiled completely
+#'
+#' @description
+#' The function basically checks if the number of rows in the first sheet is
+#' equal to the last sheet. This is a basic check to see if the summary masque
+#' was compiled successfully without any interruptions.
+#'
+#'
+#' @param dribble `dribble` A dribble of a summary masque, ideally.
+#'
+#' @returns `str` The URL of the summary masque or NA, if the masque compilation was unsuccessful.
+#' @keywords internal
 complete_compiled_masque <- function(dribble) {
 
   # Check number of rows are the same for first and last tabs

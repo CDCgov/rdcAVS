@@ -1,3 +1,9 @@
+#' Compile masque at the province level
+#'
+#' @param campaign_name `str` Name of the campaign.
+#'
+#' @returns NULL, invisibly.
+#' @keywords internal
 compile_masques_province <- function(campaign_name) {
 
   # Get dribbles of provinces
@@ -50,4 +56,6 @@ compile_masques_province <- function(campaign_name) {
                  })
   }
   showNotification("Masques au niveau des provinces compilés", type = "message")
+
+  return(invisible())
 }
