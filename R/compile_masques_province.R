@@ -6,16 +6,32 @@ compile_masques_province <- function(campaign_name) {
     googledrive::drive_reveal("mimeType") |>
     dplyr::filter(mime_type == "application/vnd.google-apps.folder")
 
-  for (i in folders) {
+  for (i in 1:nrow(folders)) {
+    prov_dribble <- googledrive::drive_ls(folders[i, ]) |>
+      googledrive::drive_reveal("mimeType") |>
+      dplyr::filter(mime_type == "application/vnd.google-apps.spreadsheet")
+
+    if (nrow(prov_dribble) == 0) {
+      cli::cli_alert_warning("Masque needs to be recompiled")
+    } else {
+      prov_url <- complete_compiled_masque(province_dribble)
+      if (!is.na(prov_url)) {
+        showNotification(paste0(folders[i, ]$name, " masque refreshed", type = "message"))
+        next
+      } else {
+        cli::cli_alert_warning(paste0(folders[i, ]$name, " masque needs to be recompiled"))
+      }
+    }
+
     # List masques dribbles for a specific province
-    templates <- gather_data_templates_from_folder(i) # make sure to uncomment the progress bars in this function after testing
+    templates <- gather_data_templates_from_folder(folders[i, ]) # make sure to uncomment the progress bars in this function after testing
 
     # Create province level dribble
-    province_dribble <- create_masque_database(i, templates[1, ], level = "province")
+    province_dribble <- create_masque_database(folders[i, ], templates[1, ], level = "province")
     tab_names <- googlesheets4::sheet_names(province_dribble)
 
     # Set permissions
-    showNotification(paste0("Obtention des autorisations requises pour le masque: ", i$name))
+    showNotification(paste0("Obtention des autorisations requises pour le masque: ", folders[i, ]$name))
     grant_read_permission_from_masques(province_dribble, templates)
     showNotification("Autorisations requises obtenues.", type = "message")
 
