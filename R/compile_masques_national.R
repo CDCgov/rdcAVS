@@ -241,7 +241,7 @@ copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_n
     dplyr::mutate(ss_function = paste0("=IMPORTRANGE(",
                                        '"',
                                        web_view_link,
-                                       '", "',
+                                       '"; "',
                                        sheet_name,
                                        "!",
                                        "A4:",
