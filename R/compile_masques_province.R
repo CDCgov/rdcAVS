@@ -33,7 +33,7 @@ compile_masques_province <- function(campaign_name) {
     templates <- gather_data_templates_from_folder(folders[i, ], level = "province")
 
     # Create province level dribble
-    province_dribble <- create_masque_database(folders[i, ], templates[1, ], level = "province")
+    province_dribble <- create_masque_database(campaign_name, folders[i, ], templates[1, ], level = "province")
     tab_names <- googlesheets4::sheet_names(province_dribble)
 
     # Set permissions

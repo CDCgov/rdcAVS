@@ -40,7 +40,7 @@ compile_masques_national <- function(campaign_name) {
   templates <- gather_data_templates_from_folder(folders)
 
   # Create a new template
-  national_dribble <- create_masque_database(folders, templates[1, ], level = "national")
+  national_dribble <- create_masque_database(campaign_name, folders, templates[1, ], level = "national")
   # Get information
   tab_names <- googlesheets4::sheet_names(national_dribble)
 
@@ -159,7 +159,7 @@ gather_data_templates_from_folder <- function(folder, level = "national") {
 #' Creates a summary masque. At the national level, the function will compile from
 #' the province level masques.
 #'
-#'
+#' @param campaign_name `str` Campaign name
 #' @param folder `dribble` Where the masque should be created
 #' @param template_dribble `dribble` An example of masque to use as a template.
 #' This is simply either a province or zone de sante masque (determined by level) so
@@ -168,7 +168,7 @@ gather_data_templates_from_folder <- function(folder, level = "national") {
 #'
 #' @returns `dribble` Dribble to the newly created summary masque.
 #' @keywords internal
-create_masque_database <- function(folder, template_dribble, level) {
+create_masque_database <- function(campaign_name, folder, template_dribble, level) {
   if (!level %in% c("national", "province")) {
     cli::cli_abort("Invalid level. Accepted values are national and province")
   }

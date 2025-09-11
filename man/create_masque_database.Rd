@@ -4,9 +4,11 @@
 \alias{create_masque_database}
 \title{Create a summary masque}
 \usage{
-create_masque_database(folder, template_dribble, level)
+create_masque_database(campaign_name, folder, template_dribble, level)
 }
 \arguments{
+\item{campaign_name}{\code{str} Campaign name}
+
 \item{folder}{\code{dribble} Where the masque should be created}
 
 \item{template_dribble}{\code{dribble} An example of masque to use as a template.
