@@ -20,7 +20,7 @@ compile_masques_province <- function(campaign_name) {
     if (nrow(prov_dribble) == 0) {
       cli::cli_alert_warning("Masque needs to be recompiled")
     } else {
-      prov_url <- complete_compiled_masque(province_dribble)
+      prov_url <- complete_compiled_masque(prov_dribble)
       if (!is.na(prov_url)) {
         showNotification(paste0(folders[i, ]$name, " masque refreshed"), type = "message")
         next
