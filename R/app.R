@@ -52,6 +52,7 @@ campagneApp <- function() {
           tags$div(
             style = "display: flex; gap: 15px;",
             imageOutput("logo", height = "60px"),
+            h6(paste0("v", get_app_version()))
           ),
           tags$div(style = "flex-grow: 40;"),
           tags$div(

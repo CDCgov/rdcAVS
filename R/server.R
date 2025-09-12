@@ -1,5 +1,13 @@
 server <- function(input, output, session) {
 
+
+  local_version <- get_app_version()
+  update_message <- check_new_version(local_version)
+
+  if (!is.null(update_message)) {
+    showNotification(update_message, type = "message", duration = 10)
+  }
+
   ## Loading data ----
 
   ### Creating local data cache ----
