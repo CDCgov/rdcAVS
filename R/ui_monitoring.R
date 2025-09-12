@@ -34,10 +34,13 @@ ui_monitoring <- function() {
           selectInput("prov_selector_campaign_completeness",
                       "Sélectionner une province:",
                       choices = NULL),
+          selectInput("ant_selector_campaign_completeness",
+                      "Sélectionner une antenne:",
+                      choices = NULL),
           selectInput("zs_selector_campaign_completeness",
                       "Sélectionner une zone de sante:",
                       choices = NULL),
-          col_widths = c(3, 3)
+          col_widths = c(3, 3, 3)
         ),
         card(navset_pill(
           nav_panel(

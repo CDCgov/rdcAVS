@@ -342,8 +342,27 @@ server <- function(input, output, session) {
     )
 
     selected_campaign_prov <- input$prov_selector_campaign_completeness
-    filtered_campaign_zs <- if (!is.null(selected_campaign_prov) &&
-                                length(selected_campaign_prov) > 0) {
+
+    filtered_campaign_ant <- if (!is.null(selected_campaign_prov) &&
+                                 length(selected_campaign_prov) > 0) {
+      campaign_completeness |>
+        dplyr::filter(province == selected_campaign_prov) |>
+        dplyr::pull(antenne) |>
+        unique() |>
+        sort()
+    } else {
+      unique(campaign_completeness$antenne)
+    }
+
+    updateSelectInput(
+      session,
+      "ant_selector_campaign_completeness",
+      choices = filtered_campaign_ant
+    )
+
+    selected_campaign_ant <- input$ant_selector_campaign_completeness
+    filtered_campaign_zs <- if (!is.null(selected_campaign_ant) &&
+                                length(selected_campaign_ant) > 0) {
       campaign_completeness |>
         dplyr::filter(province == selected_campaign_prov) |>
         dplyr::pull(zone_de_sante) |>
@@ -1307,15 +1326,19 @@ server <- function(input, output, session) {
       {
         compile_start <- Sys.time()
         # Compile all zs templates in the folder to the national template
-        incProgress(1/4, message = "Compilation de masques - province")
+
+        incProgress(1/5, message = "Compilation de masques - antenne")
+        compile_masques_antenne(input$selected_surveillance_drive_folder)
+
+        incProgress(1/5, message = "Compilation de masques - province")
         compile_masques_province(input$selected_surveillance_drive_folder)
 
-        incProgress(1/4, message = "Compilation de masques - national")
+        incProgress(1/5, message = "Compilation de masques - national")
         national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
         output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
                                                             href = national_dribble_url))})
         # Obtain completeness information
-        incProgress(1/4, message = "Analyse de la qualité des données")
+        incProgress(1/5, message = "Analyse de la qualité des données")
         national_template_dribble <- googledrive::drive_get(national_dribble_url)
         surveillance_summary(get_sheet_info(national_template_dribble))
         data_quality_info <- surveillance_summary()
@@ -1323,7 +1346,7 @@ server <- function(input, output, session) {
         show("download_data_quality_monitoring")
 
         # Obtain campaign quality information
-        incProgress(1/4, message = "Analyser la progression de la campagne")
+        incProgress(1/5, message = "Analyser la progression de la campagne")
         campaign_quality(get_campaign_progress(national_template_dribble,
                                                5:8))
         campaign_quality_info <- campaign_quality()
