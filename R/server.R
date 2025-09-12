@@ -342,8 +342,27 @@ server <- function(input, output, session) {
     )
 
     selected_campaign_prov <- input$prov_selector_campaign_completeness
-    filtered_campaign_zs <- if (!is.null(selected_campaign_prov) &&
-                                length(selected_campaign_prov) > 0) {
+
+    filtered_campaign_ant <- if (!is.null(selected_campaign_prov) &&
+                                 length(selected_campaign_prov) > 0) {
+      campaign_completeness |>
+        dplyr::filter(province == selected_campaign_prov) |>
+        dplyr::pull(antenne) |>
+        unique() |>
+        sort()
+    } else {
+      unique(campaign_completeness$antenne)
+    }
+
+    updateSelectInput(
+      session,
+      "ant_selector_campaign_completeness",
+      choices = filtered_campaign_ant
+    )
+
+    selected_campaign_ant <- input$ant_selector_campaign_completeness
+    filtered_campaign_zs <- if (!is.null(selected_campaign_ant) &&
+                                length(selected_campaign_ant) > 0) {
       campaign_completeness |>
         dplyr::filter(province == selected_campaign_prov) |>
         dplyr::pull(zone_de_sante) |>
