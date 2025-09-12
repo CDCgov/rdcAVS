@@ -301,11 +301,17 @@ complete_compiled_masque <- function(dribble) {
   first_tab <- googlesheets4::read_sheet(dribble,
                                          sheet = tabs[1],
                                          range = "A3:A",
-                                         col_names = FALSE) |> nrow()
+                                         col_names = TRUE) |>
+    # dplyr method of accessing the first col index
+    dplyr::filter(dplyr::if_any(1, \(x) !is.na(x))) |>
+    nrow()
   last_tab <- googlesheets4::read_sheet(dribble,
                                         sheet = tabs[length(tabs)],
                                         range = "A3:A",
-                                        col_names = FALSE) |> nrow()
+                                        col_names = TRUE) |>
+    # dplyr method of accessing the first col index
+    dplyr::filter(dplyr::if_any(1, \(x) !is.na(x))) |>
+    nrow()
 
   if (first_tab == last_tab & (first_tab > 0)) {
     cli::cli_alert_info("Masque already compiled successfully")
