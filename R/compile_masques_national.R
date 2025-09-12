@@ -15,6 +15,9 @@
 #' }
 compile_masques_national <- function(campaign_name) {
 
+  googledrive::drive_auth(TRUE)
+  googlesheets4::gs4_auth(TRUE)
+
   query <- paste0("mimeType = 'application/vnd.google-apps.spreadsheet' and name contains '",
                   paste0(campaign_name, "_national_rdc"), "'")
   national_masque <- googledrive::drive_find(q = query)
@@ -100,7 +103,7 @@ num_to_col <- function(n) {
 #' @keywords internal
 gather_data_templates_from_folder <- function(folder, level = "national") {
 
-  if (!level %in% c("national", "province")) {
+  if (!level %in% c("national", "province", "antenne")) {
     cli::cli_abort("Invalid level. Please use either national or province.")
   }
 
@@ -169,13 +172,14 @@ gather_data_templates_from_folder <- function(folder, level = "national") {
 #' @returns `dribble` Dribble to the newly created summary masque.
 #' @keywords internal
 create_masque_database <- function(campaign_name, folder, template_dribble, level) {
-  if (!level %in% c("national", "province")) {
-    cli::cli_abort("Invalid level. Accepted values are national and province")
+  if (!level %in% c("national", "province", "antenne")) {
+    cli::cli_abort("Invalid level. Accepted values are national, province, and antenne")
   }
 
   file_suffix <- switch(level,
                         "national" = "_national_rdc",
-                        "province" = paste0("_province_", folder$name))
+                        "province" = paste0("_province_", folder$name),
+                        "antenne" = paste0("_antenne_", folder$name))
 
   # Create a new template
   summary_dribble <- googledrive::drive_cp(template_dribble, folder,
@@ -217,7 +221,6 @@ grant_read_permission_from_masques <- function(target_masque, source_masques,
       httr::add_headers(Authorization = paste("Bearer",
                                               token$auth_token$credentials$access_token))
     )
-    print(response)
   }
 
 }
@@ -233,15 +236,25 @@ grant_read_permission_from_masques <- function(target_masque, source_masques,
 #' @param templates `dribble` A dribble of dribbles to copy.
 #' @param sheet_name `str` Name of the sheet to copy from the templates
 #'
+#' @details
+#' googlesheets4 behaves differently based on the locality. In a French locale,
+#' functions are delimited by a semi-colon but in an English locale, they are delimited
+#' by a comma. As of now, the function strictly deals with either English or French with
+#' no guarantees for other languages.
+#'
+#'
 #' @returns NULL
 #' @keywords internal
 copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_name) {
   ss_info <- googlesheets4::gs4_get(summary_masque)
+
+  delimiter <- ifelse(stringr::str_detect(Sys.getlocale(), "English"), '", "', '"; "')
+
   templates <- templates |>
     dplyr::mutate(ss_function = paste0("=IMPORTRANGE(",
                                        '"',
                                        web_view_link,
-                                       '"; "',
+                                       delimiter,
                                        sheet_name,
                                        "!",
                                        "A4:",

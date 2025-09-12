@@ -1307,15 +1307,19 @@ server <- function(input, output, session) {
       {
         compile_start <- Sys.time()
         # Compile all zs templates in the folder to the national template
-        incProgress(1/4, message = "Compilation de masques - province")
+
+        incProgress(1/5, message = "Compilation de masques - antenne")
+        compile_masques_antenne(input$selected_surveillance_drive_folder)
+
+        incProgress(1/5, message = "Compilation de masques - province")
         compile_masques_province(input$selected_surveillance_drive_folder)
 
-        incProgress(1/4, message = "Compilation de masques - national")
+        incProgress(1/5, message = "Compilation de masques - national")
         national_dribble_url <- compile_masques_national(input$selected_surveillance_drive_folder)
         output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
                                                             href = national_dribble_url))})
         # Obtain completeness information
-        incProgress(1/4, message = "Analyse de la qualité des données")
+        incProgress(1/5, message = "Analyse de la qualité des données")
         national_template_dribble <- googledrive::drive_get(national_dribble_url)
         surveillance_summary(get_sheet_info(national_template_dribble))
         data_quality_info <- surveillance_summary()
@@ -1323,7 +1327,7 @@ server <- function(input, output, session) {
         show("download_data_quality_monitoring")
 
         # Obtain campaign quality information
-        incProgress(1/4, message = "Analyser la progression de la campagne")
+        incProgress(1/5, message = "Analyser la progression de la campagne")
         campaign_quality(get_campaign_progress(national_template_dribble,
                                                5:8))
         campaign_quality_info <- campaign_quality()
