@@ -248,7 +248,8 @@ grant_read_permission_from_masques <- function(target_masque, source_masques,
 copy_sheet_info_to_summary_masque <- function(summary_masque, templates, sheet_name) {
   ss_info <- googlesheets4::gs4_get(summary_masque)
 
-  delimiter <- ifelse(stringr::str_detect(Sys.getlocale(), "English"), '", "', '"; "')
+  # delimiter <- ifelse(stringr::str_detect(Sys.getlocale(), "English"), '", "', '"; "')
+  delimiter <- '"; "'
 
   templates <- templates |>
     dplyr::mutate(ss_function = paste0("=IMPORTRANGE(",
