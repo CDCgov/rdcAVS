@@ -305,6 +305,7 @@ complete_compiled_masque <- function(dribble) {
                                          col_names = TRUE) |>
     # dplyr method of accessing the first col index
     dplyr::filter(dplyr::if_any(1, \(x) !is.na(x))) |>
+    dplyr::filter(dplyr::if_any(1, \(x) !grepl(",", x))) |>
     nrow()
   last_tab <- googlesheets4::read_sheet(dribble,
                                         sheet = tabs[length(tabs)],
@@ -312,6 +313,7 @@ complete_compiled_masque <- function(dribble) {
                                         col_names = TRUE) |>
     # dplyr method of accessing the first col index
     dplyr::filter(dplyr::if_any(1, \(x) !is.na(x))) |>
+    dplyr::filter(dplyr::if_any(1, \(x) !grepl(",", x))) |>
     nrow()
 
   if (first_tab == last_tab & (first_tab > 0)) {
