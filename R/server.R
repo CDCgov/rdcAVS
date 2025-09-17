@@ -359,25 +359,34 @@ server <- function(input, output, session) {
         unique() |>
         sort()
     } else {
-      unique(campaign_completeness$antenne)
+      unique(campaign_completeness |>
+               filter(province %in% selected_campaign_prov) |>
+               pull(antenne))
     }
 
     updateSelectInput(
       session,
       "ant_selector_campaign_completeness",
-      choices = filtered_campaign_ant
+      choices = filtered_campaign_ant,
+      selected = isolate(input$ant_selector_campaign_completeness)
     )
 
     selected_campaign_ant <- input$ant_selector_campaign_completeness
-    filtered_campaign_zs <- if (!is.null(selected_campaign_ant) &&
+    filtered_campaign_zs <- if (!is.null(selected_campaign_prov) &&
+                                !is.null(selected_campaign_ant) &&
+                                length(selected_campaign_prov) > 0 &&
                                 length(selected_campaign_ant) > 0) {
       campaign_completeness |>
-        dplyr::filter(province == selected_campaign_prov) |>
+        dplyr::filter(province == selected_campaign_prov,
+                      antenne == selected_campaign_ant) |>
         dplyr::pull(zone_de_sante) |>
         unique() |>
         sort()
     } else {
-      unique(campaign_completeness$zone_de_sante)
+      unique(campaign_completeness |>
+               filter(antennes %in% selected_campaign_ant) |>
+               pull(zone_de_sante)
+             )
     }
 
     updateSelectInput(
@@ -385,6 +394,7 @@ server <- function(input, output, session) {
       "zs_selector_campaign_completeness",
       choices = filtered_campaign_zs)
   })
+
 
   ### Triggered events ----
 
