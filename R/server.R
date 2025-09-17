@@ -1477,7 +1477,6 @@ server <- function(input, output, session) {
         "Antenne",
         "Zone de Sante",
         "Sheet",
-        "Spreadsheet Name",
         "Range",
         "Section",
         "Cellules Remplies",
