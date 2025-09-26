@@ -44,9 +44,13 @@ ui_monitoring <- function() {
         ),
         card(navset_pill(
           nav_panel(
-            "Couverture Campagne",
+            "Couverture Campagne (Cumulative)",
             plotOutput("campaign_completeness_plot", height = "700px")
             ),
+          nav_panel(
+            "Couverture Campagne (Jour)",
+            plotOutput("campaign_completeness_plot_daily", height = "700px")
+          ),
           nav_panel("Nb moyen d'enfants vaccinés/équipe",
                     plotOutput("campaign_urban_rural_plot", height = "700px")
                     ),
