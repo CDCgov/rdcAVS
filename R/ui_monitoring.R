@@ -45,7 +45,7 @@ ui_monitoring <- function() {
         card(navset_pill(
           nav_panel(
             "Couverture Campagne",
-            plotOutput("campaign_completeness_plot", height = "700px", width = "40%")
+            plotOutput("campaign_completeness_plot", height = "700px")
             ),
           nav_panel("Nb moyen d'enfants vaccinés/équipe",
                     plotOutput("campaign_urban_rural_plot", height = "700px")
