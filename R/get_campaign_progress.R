@@ -194,7 +194,7 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "rapport_completude_pct",
         #"cible_0_59_mois",
         #"vaccination_0_59_mois",
-        #"couverture_campagne_pct",
+        "couverture_campagne_pct",
         "couverture_campaign_cumulative",
         "avg_vax_rural",
         "avg_vax_urban",

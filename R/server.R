@@ -1501,6 +1501,7 @@ server <- function(input, output, session) {
         "Aire de Sante",
         "Jour",
         "Rapport Completude (%)",
+        "Couverture (%)",
         "Couverture (Cumulative)",
         "Nb moyen d'enfants vaccinés/équipe (Rural)",
         "Nb moyen d'enfants vaccinés/équipe (Urban)",
@@ -1526,6 +1527,20 @@ server <- function(input, output, session) {
 
     }
   )
+
+  output$campaign_completeness_plot_daily <- renderPlot(
+    {
+      validate(
+        need(!is.null(campaign_quality()), "No campaign quality data."),
+        need(nrow(campaign_quality()) > 0, "No campaign quality data.")
+      )
+
+      create_daily_campaign_progress_heatmap(campaign_quality() |>
+                                         dplyr::filter(province == input$prov_selector_campaign_completeness,
+                                                       zone_de_sante == input$zs_selector_campaign_completeness))
+    }
+  )
+
   output$campaign_urban_rural_plot <- renderPlot(
     {
       validate(
