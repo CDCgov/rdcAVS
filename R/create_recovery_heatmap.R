@@ -3,25 +3,28 @@ create_recovery_heatmap <- function(summary) {
     mutate(aire_de_sante = str_to_title(aire_de_sante),
            aire_de_sante = factor(aire_de_sante, levels = c(sort(unique(aire_de_sante), decreasing = TRUE))),
            cat_0_11 = case_when(
+             recovery_0_11 == 0 & recovery_0_11_cumulative > 0 & jour %in% c("Jour 2", "Jour 3", "Jour 4") ~ "Aucun changement",
              recovery_0_11_cumulative > 0 ~ "Bien",
              .default = "Zéro"
            ),
            cat_12_23 = case_when(
+             recovery_12_23 == 0 & recovery_12_23_cumulative > 0 & jour %in% c("Jour 2", "Jour 3", "Jour 4") ~ "Aucun changement",
              recovery_12_23_cumulative > 0 ~ "Bien",
              .default = "Zéro"
 
            ),
            cat_24_59 = case_when(
+             recovery_24_59 == 0 & recovery_24_59_cumulative > 0 & jour %in% c("Jour 2", "Jour 3", "Jour 4") ~ "Aucun changement",
              recovery_24_59_cumulative > 0 ~ "Bien",
              .default = "Zéro"
            )
     ) |>
     dplyr::mutate(across(all_of(c("cat_0_11", "cat_12_23", "cat_24_59")),
-                         \(x) factor(x, levels = c("Bien", "Zéro"))))
+                         \(x) factor(x, levels = c("Bien", "Aucun changement", "Zéro"))))
 
   plot_0_11 <- ggplot2::ggplot(plot_data) +
     ggplot2::geom_tile(ggplot2::aes(y =aire_de_sante, x = jour, fill = cat_0_11), show.legend = TRUE) +
-    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E"),
+    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E", "Aucun changement" = "#338F65"),
                                name = "Statut") +
     ggplot2::geom_text(ggplot2::aes(y = aire_de_sante, x = jour, label = recovery_0_11_cumulative), size = 8) +
     ggplot2::theme_void() +
@@ -39,7 +42,7 @@ create_recovery_heatmap <- function(summary) {
 
   plot_12_23 <- ggplot2::ggplot(plot_data) +
     ggplot2::geom_tile(ggplot2::aes(y =aire_de_sante, x = jour, fill = cat_12_23), show.legend = TRUE) +
-    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E"),
+    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E", "Aucun changement" = "#338F65"),
                                name = "Statut") +
     ggplot2::geom_text(ggplot2::aes(y = aire_de_sante, x = jour, label = recovery_12_23_cumulative), size = 8) +
     ggplot2::theme_void() +
@@ -57,7 +60,7 @@ create_recovery_heatmap <- function(summary) {
 
   plot_24_59 <- ggplot2::ggplot(plot_data) +
     ggplot2::geom_tile(ggplot2::aes(y =aire_de_sante, x = jour, fill = cat_24_59), show.legend = TRUE) +
-    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E"),
+    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E", "Aucun changement" = "#338F65"),
                                name = "Statut") +
     ggplot2::geom_text(ggplot2::aes(y = aire_de_sante, x = jour, label = recovery_24_59_cumulative), size = 8) +
     ggplot2::theme_void() +
