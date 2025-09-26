@@ -198,14 +198,30 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "couverture_campaign_cumulative",
         "avg_vax_rural",
         "avg_vax_urban",
-        #"recovery_0_11",
-        #"recovery_12_23",
-        #"recovery_24_59",
+        "recovery_0_11",
+        "recovery_12_23",
+        "recovery_24_59",
         "recovery_0_11_cumulative",
         "recovery_12_23_cumulative",
         "recovery_24_59_cumulative"
       ))
-    )
+    ) |>
+    dplyr::mutate(dplyr::across(dplyr::any_of(c(
+      #"rapports_de_vaccination_attendus",
+      #"rapports_de_vaccination_recus",
+      "rapport_completude_pct",
+      #"cible_0_59_mois",
+      #"vaccination_0_59_mois",
+      "couverture_campagne_pct",
+      "couverture_campaign_cumulative",
+      "avg_vax_rural",
+      "avg_vax_urban",
+      "recovery_0_11",
+      "recovery_12_23",
+      "recovery_24_59",
+      "recovery_0_11_cumulative",
+      "recovery_12_23_cumulative",
+      "recovery_24_59_cumulative")), \(x) ifelse(is.na(x), 0, x)))
 
   return(final_summary)
 }

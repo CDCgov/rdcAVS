@@ -1490,7 +1490,11 @@ server <- function(input, output, session) {
 
   output$campaign_progress_table <- DT::renderDT(
     DT::datatable(
-      campaign_quality(),
+      campaign_quality() |>
+        dplyr::select(-c("recovery_0_11",
+                         "recovery_12_23",
+                         "recovery_24_59")
+                      ),
       options = list(scrollX = TRUE, pageLength = 10,
                      searchHighlight = TRUE),
       filter = "top",
