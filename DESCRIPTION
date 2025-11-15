@@ -27,6 +27,7 @@ Imports:
     googlesheets4,
     httr,
     lubridate,
+    pkgload,
     progressr,
     purrr,
     rappdirs,
