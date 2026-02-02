@@ -774,7 +774,8 @@ server <- function(input, output, session) {
 
   drive_files <- reactiveVal(NULL)
   campaign_drive_folders <- reactiveVal(NULL)
-  
+  user_email <- reactiveVal(NULL)
+  auth_status <- reactiveVal(FALSE)
 
 
   if (drive_has_token()) {
