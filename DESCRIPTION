@@ -33,6 +33,7 @@ Imports:
     rappdirs,
     readr,
     shiny,
+    shiny.fluent,
     shinyFiles,
     shinyjs,
     stringr,
