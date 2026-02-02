@@ -770,22 +770,24 @@ server <- function(input, output, session) {
   ###### Authenticate via Google Drive ----
   # Track auth status
   # Dynamically list campaign folders in Drive after auth
+ 
+
   drive_files <- reactiveVal(NULL)
   campaign_drive_folders <- reactiveVal(NULL)
-  auth_status <- reactiveVal("Non authentifi\u00e9")
+  
+
 
   if (drive_has_token()) {
     query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
     folders <- googledrive::drive_find(q = query)
     campaign_drive_folders(folders)
-    auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
     show("refresh_drive")
     show("refresh_campaign")
   }
 
   observeEvent(input$auth_drive, {
     if (!drive_has_token()) {
-      drive_auth(email = FALSE) # Will open browser to authenticate
+      drive_auth(email = NULL) # Will open browser to authenticate
     }
 
     tryCatch(
@@ -797,18 +799,18 @@ server <- function(input, output, session) {
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
                          type = "message")
 
-        auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
+       
         show("refresh_drive")
       },
       error = \(e) {
-        auth_status("\u274c \u00c9chec de l'authentification.")
+       
+        
       }
     )
   })
 
-  output$auth_status <- renderText({
-    auth_status()
-  })
+    
+
 
   ###### Refresh Google Drive ----
   # Function to update Google Drive files
