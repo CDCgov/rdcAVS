@@ -45,41 +45,63 @@ campagneApp <- function() {
           bootswatch = "yeti"
         ),
         useShinyjs(),
-
-        # Header
-        tags$div(
-          style = "display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;",
-          tags$div(
-            style = "display: flex; gap: 15px;",
-            imageOutput("logo", height = "60px"),
-            h6(paste0("v", get_app_version()))
-          ),
-          tags$div(style = "flex-grow: 40;"),
-          tags$div(
-            style = "display: flex; gap: 15px;",
-            imageOutput("drc_cdc_logo", height = "60px"),
-          ),
-        ),
-        tags$hr(),
-        fluidRow(
-          layout_columns(
-            bslib::input_dark_mode(id = "mode"),
-            br(), br(), br(), br(),
-            actionButton("end_session", label = tagList(icon("sign-out-alt"), "Quitter l'application"), class = "btn btn-danger")
-          ),
-        ),
-        fluidRow(h4("Authentifiez-vous avec Google Drive"),
-                 layout_columns(actionButton("auth_drive", "Authentifier", class = "btn-success"),
-                                      verbatimTextOutput("auth_status"), col_widths = c(1, 3))),
-        navset_tab(
+        bslib::input_dark_mode(id = "mode"),
+         ui_authenticate(),
+      div(id = "main-app", style = "display:none;",
+           fluidPage(
+            title = "rdcAVS",
+              div(
+                style = "
+               display:flex;
+               justify-content:space-between;
+               align-items:center;
+               padding:15px 25px;
+               background-color:#f8f9fa;
+               border-bottom:2px solid #dee2e6;",    
+    div(
+      style = "display:flex; align-items:center; gap:15px;",      
+      tags$img(
+        src = "drc_cdc_logo.svg",
+        style = "height:70px; width:auto;",
+        alt = "Logo"
+      ),
+            h4(
+        "Portail de création des masques de saisie pour les campagnes de vaccination en RDC",
+        style = "margin:0; font-weight:600;"
+      )
+    ),    
+    div(
+      style = "display:flex; align-items:center; gap:8px;",
+      tags$svg(
+        xmlns = "http://www.w3.org/2000/svg",
+        width = "24",
+        height = "24",
+        viewBox = "0 0 24 24",
+        fill = "none",
+        stroke = "#0d6efd",
+        `stroke-width` = "2",
+        `stroke-linecap` = "round",
+        `stroke-linejoin` = "round",
+        tags$path(d = "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"),
+        tags$circle(cx = "12", cy = "7", r = "4")
+      ),
+      span(
+         uiOutput("welcome_message"), 
+        style = "font-size:18px; font-weight:500; color:#0d6efd;"
+      )
+    )
+  ),br(),
+   navset_tab(
           ui_geodatabase(),
           ui_campaign_creation(),
           ui_perm_table(),
           ui_monitoring()
         ),
-        # Footer
+      # Footer
         ui_footer()
-      )
+  )
+ )        
+)
 
       # Server ----
 
