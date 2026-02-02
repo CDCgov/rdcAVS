@@ -42,6 +42,7 @@
 #' @importFrom shinyjs show
 #' @importFrom shinyjs useShinyjs
 #' @importFrom tidyr pivot_longer
+#' @importFrom shiny.fluent Stack MessageBar Text TextField.shinyInput Separator PrimaryButton.shinyInput 
 ## usethis namespace: end
 
 utils::globalVariables(c(
