@@ -829,6 +829,12 @@ server <- function(input, output, session) {
   })
 
 
+observe({
+  req(auth_status()) 
+  shinyjs::hide("Authenticate")
+  shinyjs::show("main-app")
+})
+
 
 
   ###### Refresh Google Drive ----
