@@ -804,7 +804,8 @@ server <- function(input, output, session) {
         show("refresh_drive")
       },
       error = \(e) {
-       
+       showNotification("\u274c \u00c9chec de l'authentification.",
+                         type = "error")
         
       }
     )
