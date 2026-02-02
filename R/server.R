@@ -811,7 +811,24 @@ server <- function(input, output, session) {
     )
   })
 
-    
+  observe({
+    if (drive_has_token()) {
+      auth_status(TRUE)
+      tryCatch({
+        user <- drive_user()
+        user_email(user$emailAddress)
+      }, error = function(e) {
+        user_email("Unknown")
+      })
+    }
+  })
+
+ output$welcome_message <- renderUI({
+     user <- drive_user()    
+    paste0("Bienvenue,"," ",user$displayName)
+  })
+
+
 
 
   ###### Refresh Google Drive ----
