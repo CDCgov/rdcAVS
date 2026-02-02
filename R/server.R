@@ -788,7 +788,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$auth_drive, {
     if (!drive_has_token()) {
-      drive_auth(email = NULL) # Will open browser to authenticate
+      drive_auth(email = input$email, cache = ".secrets") # Will open browser to authenticate
     }
 
     tryCatch(
