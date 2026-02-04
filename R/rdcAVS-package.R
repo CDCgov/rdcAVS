@@ -39,7 +39,7 @@
 #' @importFrom rappdirs user_data_dir
 #' @importFrom readr type_convert
 #' @importFrom shinyjs disable
-#' @importFrom shinyjs show
+#' @importFrom shinyjs show toggle
 #' @importFrom shinyjs useShinyjs
 #' @importFrom tidyr pivot_longer
 #' @importFrom shiny.fluent Stack MessageBar IconButton.shinyInput TooltipHost Text TextField.shinyInput Separator PrimaryButton.shinyInput 

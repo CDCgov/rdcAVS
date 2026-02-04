@@ -681,6 +681,16 @@ server <- function(input, output, session) {
   })
 
   ###### Add geographic entry ----
+
+   observeEvent(input$add_row_question, {
+    shinyjs::toggle("add_new_row", anim = TRUE, animType = "slide")
+  })
+  
+  observeEvent(input$add_row, {
+    shinyjs::toggle("add_new_row", anim = TRUE, animType = "slide")
+  })
+
+
   observeEvent(input$add_row, {
     geo_stack$undo <- c(list(geo_values$data), geo_stack$undo)
     geo_stack$redo <- list()
@@ -771,7 +781,6 @@ server <- function(input, output, session) {
   # Track auth status
   # Dynamically list campaign folders in Drive after auth
  
-
   drive_files <- reactiveVal(NULL)
   campaign_drive_folders <- reactiveVal(NULL)
   user_email <- reactiveVal(NULL)
@@ -800,7 +809,8 @@ server <- function(input, output, session) {
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
                          type = "message")
 
-       
+        shinyjs::hide("Authenticate")
+        shinyjs::show("main-app")
         show("refresh_drive")
       },
       error = \(e) {
@@ -829,11 +839,7 @@ server <- function(input, output, session) {
   })
 
 
-observe({
-  req(auth_status()) 
-  shinyjs::hide("Authenticate")
-  shinyjs::show("main-app")
-})
+
 
 
 
