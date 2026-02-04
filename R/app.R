@@ -47,6 +47,7 @@ campagneApp <- function() {
         useShinyjs(),
         bslib::input_dark_mode(id = "mode"),
         downloadButton("download_template", label = "", style = "visibility:hidden;"),
+        downloadButton("download_geo_ok", label = "", style = "visibility:hidden;"),
          ui_authenticate(),
       div(id = "main-app", style = "display:none;",
            fluidPage(

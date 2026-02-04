@@ -651,6 +651,8 @@ server <- function(input, output, session) {
     shinyjs::click("download_template")
   })
 
+
+
   output$download_template <- downloadHandler(
     filename = function(){
       paste("template_geographic",Sys.Date(),".csv",sep = "")
@@ -661,12 +663,17 @@ server <- function(input, output, session) {
   )
 
 
-  output$download_geo <- downloadHandler(
+observeEvent(input$download_geo,{
+    shinyjs::click("download_geo_ok")
+  })
+
+  output$download_geo_ok <- downloadHandler(
     filename = paste0("geo_table_", Sys.Date(), ".csv"),
     content = function(file) {
       write_csv(geo_data_reactive(), file, na = "")
     }
   )
+  
 
   ###### Edit geo table ----
   observeEvent(input$geo_table_cell_edit, {
