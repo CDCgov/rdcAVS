@@ -645,6 +645,22 @@ server <- function(input, output, session) {
   })
 
   ###### Download current geo table ----
+
+  ### Download a template dataset -----
+  observeEvent(input$download_template_link, {
+    shinyjs::click("download_template")
+  })
+
+  output$download_template <- downloadHandler(
+    filename = function(){
+      paste("template_geographic",Sys.Date(),".csv",sep = "")
+    },
+    content = function(file){
+       write.csv(template_data_geographics,file,row.names = FALSE)
+    }
+  )
+
+
   output$download_geo <- downloadHandler(
     filename = paste0("geo_table_", Sys.Date(), ".csv"),
     content = function(file) {
