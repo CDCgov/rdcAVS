@@ -1,45 +1,140 @@
 ui_campaign_creation <- function() {
-
-  checkbox_title_style <- "border: 1px solid #ccc; background-color: white; padding: 1px; margin-bottom: 10px;"
-  checkbox_style <- "height: 100px; overflow-y: scroll; background-color: white; padding-top: 3px;"
-
   nav_panel(
-    "Cr\u00e9er Une Campagne",
-      h4("Informations sur la Campagne"),
-      layout_columns(card(textInput("campaign_name", h6("Nom de la Campagne"))),
-                      card(dateInput("start_date", h6("D\u00e9but"),
-                                language = "fr", format = "dd/mm/yyyy")),
-                      card(dateInput("end_date", h6("Fin"),
-                                language = "fr", format = "dd/mm/yyyy")),
-                      br()),
-      layout_columns(
-        card(
-          h6("Provinces"),
-          actionLink("select_all_prov", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-          tags$div(style = checkbox_title_style, tags$div(
-            style = checkbox_style,
-            checkboxGroupInput("selected_provinces", NULL, choices = NULL)
-          ))
+    "Créer Une Campagne",
+    Stack(
+      tokens = list(childrenGap = 14),
+      br(),      
+      Text(variant = "xLarge", "Informations sur la Campagne"),
+      
+      fluent_card(
+        Stack(
+          horizontal = TRUE,
+          wrap = TRUE,
+          tokens = list(childrenGap = 12),          
+          div(
+            style = "flex:2; min-width:280px;",
+            TextField.shinyInput(
+              "campaign_name",
+              label = "Nom de la campagne",
+              placeholder = "Inserer le nom de la campagne ici",
+              required = TRUE
+            )
+          ),          
+          div(
+            style = "flex:1; min-width:220px;",
+            DatePicker.shinyInput(
+              "start_date",
+              label = "Début",
+              isRequired = TRUE
+            )
+          ),          
+          div(
+            style = "flex:1; min-width:220px;",
+            DatePicker.shinyInput(
+              "end_date",
+              label = "Fin",
+              isRequired = TRUE
+            )
+          )
         ),
-        card(
-          h6("Antennes"),
-          actionLink("select_all_ant", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-          tags$div(style = checkbox_title_style, tags$div(
-            style = checkbox_style,
-            checkboxGroupInput("selected_ant", NULL, choices = NULL)
-          ))
+        
+        div(style = "height:14px;"),
+        
+        Stack(
+          horizontal = TRUE,
+          wrap = TRUE,
+          tokens = list(childrenGap = 12),
+          
+          # Provinces
+          div(
+            style = "flex:1; min-width:260px;",
+            Stack(tokens = list(childrenGap = 6),
+                  Text(variant = "mediumPlus", "Provinces"),
+                  DefaultButton.shinyInput(
+                    "select_all_prov",
+                    text = "Tout sélectionner / désélectionner",
+                    iconProps = list(iconName = "CheckList")
+                  ),
+                  div(
+                    style = "
+                  max-height:170px; overflow:auto; padding:8px;
+                  border:1px solid #edebe9; border-radius:10px; background:#faf9f8;
+                ",
+                    checkboxGroupInput("selected_provinces", NULL, choices = NULL)
+                  )
+            )
+          ),
+          
+          # Antennes
+          div(
+            style = "flex:1; min-width:260px;",
+            Stack(tokens = list(childrenGap = 6),
+                  Text(variant = "mediumPlus", "Antennes"),
+                  DefaultButton.shinyInput(
+                    "select_all_ant",
+                    text = "Tout sélectionner / désélectionner",
+                    iconProps = list(iconName = "CheckList")
+                  ),
+                  div(
+                    style = "
+                  max-height:170px; overflow:auto; padding:8px;
+                  border:1px solid #edebe9; border-radius:10px; background:#faf9f8;
+                ",
+                    checkboxGroupInput("selected_ant", NULL, choices = NULL)
+                  )
+            )
+          ),
+          
+          # Zones de sante
+          div(
+            style = "flex:1; min-width:260px;",
+            Stack(tokens = list(childrenGap = 6),
+                  Text(variant = "mediumPlus", "Zones de santé"),
+                  DefaultButton.shinyInput(
+                    "select_all_zs",
+                    text = "Tout sélectionner / désélectionner",
+                    iconProps = list(iconName = "CheckList")
+                  ),
+                  div(
+                    style = "
+                  max-height:170px; overflow:auto; padding:8px;
+                  border:1px solid #edebe9; border-radius:10px; background:#faf9f8;
+                ",
+                    checkboxGroupInput("selected_zs", NULL, choices = NULL)
+                  )
+            )
+          )
         ),
-        card(
-          h6("Zones de Sante"),
-          actionLink("select_all_zs", "S\u00e9lectionner Tout / D\u00e9s\u00e9lectionner Tout"),
-          tags$div(style = checkbox_title_style, tags$div(
-            style = checkbox_style, checkboxGroupInput("selected_zs", NULL, choices = NULL)
-          ))
-        ),
-        br()),
-      textInput("zs_template_url", h6("Adresse URL de mod\u00e8le de masque")),
-      input_task_button("create_campaign", "Cr\u00e9er une Campagne", class = "btn-primary",
-                        label_busy = "Traitement..."),
-    layout_columns(uiOutput("campagne_folder_url"))
+        
+        div(style = "height:14px;"),        
+        Stack(
+          horizontal = TRUE,
+          wrap = TRUE,
+          tokens = list(childrenGap = 12),
+          verticalAlign = "end",
+          
+          div(
+            style = "flex:2; min-width:300px;",
+            TextField.shinyInput(
+              "zs_template_url",
+              label = "Adresse URL du modèle de masque",
+              placeholder = "https://…",
+              iconProps = list(iconName = "Link")
+            )
+          ),
+          
+          div(
+            style = "flex:1; min-width:240px;",
+            PrimaryButton.shinyInput(
+              "create_campaign",
+              text = "Créer une campagne",
+              iconProps = list(iconName = "Rocket")
+            )
+          )
+        )
+      ),
+      uiOutput("campagne_folder_url")
     )
+  )
 }
+
