@@ -92,7 +92,8 @@ campagneApp <- function() {
       span(
          uiOutput("welcome_message"), 
         style = "font-size:18px; font-weight:500; color:#0d6efd;"
-      )
+      ),
+    icon_btn("end_session", "SignOut", "Quitter l'application", type = "danger"),
     )
   ),br(),
    navset_tab(

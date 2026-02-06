@@ -69,7 +69,6 @@ ui_authenticate <- function() {
               required = TRUE
             )
           ),
-
           div(
             style = "flex:1; min-width:220px;",
             PrimaryButton.shinyInput(
