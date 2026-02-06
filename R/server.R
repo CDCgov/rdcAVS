@@ -1498,6 +1498,19 @@ observeEvent(input$download_geo,{
   })
 
   #### Permissions table ----
+
+ observe({
+  req(perm_data_reactive()) 
+    
+    if(nrow(perm_data_reactive()) == 0){
+       shinyjs::hide("show_permissions")
+    } else {
+     shinyjs::show("show_permissions")
+    }
+     
+  })
+
+
   output$permissions_table <- DT::renderDT({
     DT::datatable(
       perm_data_reactive(),
