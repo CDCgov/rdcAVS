@@ -1118,6 +1118,11 @@ observeEvent(input$download_geo,{
   )
 
   ####### Download current permissions table ----
+
+  observeEvent(input$press_download_permissions,{
+       shinyjs::click("download_permissions")
+  })
+
   output$download_permissions <- downloadHandler(
     filename = paste0("permissions_table_", Sys.Date(), ".csv"),
     content = function(file) {
@@ -1300,8 +1305,25 @@ observeEvent(input$download_geo,{
     }
   })
 
-  ####### Set permissions button ----
+  ####### Download the permission template --------
 
+  observeEvent(input$download_template_link_permissions,{
+            shinyjs::click("download_template_permission")
+  })
+
+  output$download_template_permission <- downloadHandler(
+    filename = function(){
+      paste("template_permissions",Sys.Date(),".csv",sep = "")
+    },
+    content = function(file){
+       write.csv(data_perm,file,row.names = FALSE)
+    }
+  )
+
+
+
+  ####### Set permissions button ----
+  
   observeEvent(input$set_permissions_btn, {
     req(input$selected_campaign_drive_folder)
 
