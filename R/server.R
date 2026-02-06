@@ -293,14 +293,15 @@ server <- function(input, output, session) {
     ##### Permissions tab ----
 
     req(current_data) # Ensure current_data is available
+    `%||%` <- function(x, y) if (is.null(x) || length(x) == 0 || !nzchar(x)) y else x  
 
     # Update province select input
-    updateSelectizeInput(
-      session,
-      "perm_province",
-      choices = sort(unique(current_data$provinces)),
-      selected = input$perm_province
-    )
+    updateDropdown.shinyInput(
+    session,
+    "perm_province",
+    options = lapply(x <- sort(unique(current_data$provinces)), function(x){list(key = x, text = x)}),
+   # selectedKey = input$perm_province %||% sort(unique(current_data$provinces))[1]
+)
 
     # Antennes
     selected_prov <- input$perm_province
@@ -313,11 +314,11 @@ server <- function(input, output, session) {
     } else {
       unique(current_data$antennes)
     }
-    updateSelectizeInput(
-      session,
-      "perm_antenne",
-      choices = sort(unique(filtered_antennes_p)),
-      selected = input$perm_antenne
+    updateDropdown.shinyInput(
+    session,
+    "perm_antenne",
+    options = lapply(x <- sort(unique(filtered_antennes_p)), function(x){list(key = x, text = x)}),
+    #value = sort(unique(filtered_antennes_p))[1]
     )
 
     # Zones de Sante
@@ -331,12 +332,12 @@ server <- function(input, output, session) {
     } else {
       unique(current_data$zones_de_sante)
     }
-    updateSelectizeInput(
-      session,
-      "perm_zs",
-      choices = sort(unique(filtered_zs_p)),
-      selected = input$perm_zs
-    )
+    updateDropdown.shinyInput(
+    session,
+    "perm_zs",
+    options = lapply(x <- sort(unique(filtered_zs_p)), function(x){list(key = x, text = x)}),
+    #value = sort(unique(filtered_zs_p))[1]
+   )
 
 
     # Selected provinces
@@ -1158,7 +1159,7 @@ observeEvent(input$download_geo,{
   observeEvent(input$add_permission, {
     perm_stack$undo <- c(list(perm_values$data), perm_stack$undo)
     perm_stack$redo <- list()
-
+ 
     level <- tolower(input$perm_level)
     # Check for required fields
     missing_fields <- c()
@@ -1169,25 +1170,25 @@ observeEvent(input$download_geo,{
       missing_fields <- c(missing_fields, "Role")
     }
 
-    if (level == "province" && input$perm_province == "") {
+    if (level == "province" && is.null(input$perm_province)) {
       missing_fields <- c(missing_fields, "Province")
     }
 
-    if (level == "antenne" && (input$perm_province == "" || input$perm_antenne == "")) {
-      if (input$perm_province == "") {
+     if (level == "antenne" && (is.null(input$perm_province) || is.null(input$perm_antenne))) {
+      if (is.null(input$perm_province)) {
         missing_fields <- c(missing_fields, "Province")
       }
 
-      if (input$perm_antenne == "") {
+      if (is.null(input$perm_antenne)) {
         missing_fields <- c(missing_fields, "Antenne")
       }
 
     }
 
-    if (level == "zone de sante" && (input$perm_province == "" || input$perm_antenne == "" || input$perm_zs == "")) {
-      if (input$perm_province == "") {missing_fields <- c(missing_fields, "Province")}
-      if (input$perm_antenne == "") {missing_fields <- c(missing_fields, "Antenne")}
-      if (input$perm_zs == "") {missing_fields <- c(missing_fields, "Zone de Sant\u00e9")}
+    if (level == "zone de sante" && (is.null(input$perm_province) || is.null(input$perm_antenne) || is.null(input$perm_zs))) {
+      if (is.null(input$perm_province)) {missing_fields <- c(missing_fields, "Province")}
+      if (is.null(input$perm_antenne))  {missing_fields <- c(missing_fields, "Antenne")}
+      if (is.null(input$perm_zs)) {missing_fields <- c(missing_fields, "Zone de Sant\u00e9")}
     }
 
     if (length(missing_fields) > 0) {
@@ -1510,6 +1511,10 @@ observeEvent(input$download_geo,{
      
   })
 
+  
+  observeEvent(input$add_row_question_perm, {
+    shinyjs::toggle("add_permissions", anim = TRUE, animType = "slide")
+  })
 
   output$permissions_table <- DT::renderDT({
     DT::datatable(

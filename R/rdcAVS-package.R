@@ -42,7 +42,7 @@
 #' @importFrom shinyjs show toggle click
 #' @importFrom shinyjs useShinyjs
 #' @importFrom tidyr pivot_longer
-#' @importFrom shiny.fluent Stack MessageBar Dropdown.shinyInput DefaultButton.shinyInput IconButton.shinyInput TooltipHost DatePicker.shinyInput Text TextField.shinyInput Separator PrimaryButton.shinyInput 
+#' @importFrom shiny.fluent Stack MessageBar updateDropdown.shinyInput Dropdown.shinyInput DefaultButton.shinyInput IconButton.shinyInput TooltipHost DatePicker.shinyInput Text TextField.shinyInput Separator PrimaryButton.shinyInput 
 ## usethis namespace: end
 
 utils::globalVariables(c(

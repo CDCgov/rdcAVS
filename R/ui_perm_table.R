@@ -64,7 +64,8 @@ ui_perm_table <- function() {
             icon_btn("clear_perm", "DeleteRows", "Tout effacer", type = "danger"),
             icon_btn("press_download_permissions", "Download", "Télécharger", type = "success"),
             icon_btn("add_row_question_perm", "Add", "Ajouter une entrée", type = "success")
-          ),br(),
+          ),
+          br(),
           div(
       id = "add_permissions",
       style = "display:none;",
