@@ -63,17 +63,17 @@ campagneApp <- function() {
                background-color:#f8f9fa;
                border-bottom:2px solid #dee2e6;",    
     div(
-      style = "display:flex; align-items:center; gap:15px;",      
-      tags$img(
-        src = "drc_cdc_logo.svg",
-        style = "height:70px; width:auto;",
-        alt = "Logo"
-      ),
-            h4(
-        "Portail de création des masques de saisie pour les campagnes de vaccination en RDC",
-        style = "margin:0; font-weight:600;"
-      )
-    ),    
+          style = "display:flex; align-items:center; gap:10px; flex-wrap:nowrap;",   
+          imageOutput("drc_cdc_logo", height = "60px"),  
+            h5(
+          "Portail de création des masques de saisie des campagnes de vaccination en RDC",
+           style = "
+            margin:0;
+            font-weight:500;
+            white-space:nowrap;
+          "
+       )
+     ),    
     div(
       style = "display:flex; align-items:center; gap:8px;",
       tags$svg(

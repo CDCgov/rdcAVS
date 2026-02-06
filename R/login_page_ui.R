@@ -27,17 +27,12 @@ ui_authenticate <- function() {
           horizontal = TRUE,
           verticalAlign = "center",
           tokens = list(childrenGap = 12),
-
-          tags$img(
-            src = "drc_logo.png",
-            style = "height:56px; width:auto;"
-          ),
-
+          imageOutput("logo", height = "60px"),
           Stack(
             tokens = list(childrenGap = 2),
             Text(
               variant = "xLarge",
-              "Portail de création des masques de saisie pour les campagnes de vaccination en RDC"
+              "Portail de création des masques de saisie des campagnes de vaccination en RDC"
             ),
             Text(
               variant = "small",

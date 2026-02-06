@@ -205,21 +205,25 @@ server <- function(input, output, session) {
   observe({
     #### Render images ----
     output$drc_cdc_logo <- renderImage(
-      {
-        list(
-          src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
-          width = 180,
-          height = 80
-        )
-      },
-      deleteFile = FALSE
+  {
+    list(
+      src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
+      contentType = "image/svg+xml",
+      height = "70px",
+      width = "auto",
+      alt = "Logo"
     )
+  },
+  deleteFile = FALSE
+)
+
     output$logo <- renderImage(
       {
         list(
-          src = system.file("www", "logo.svg", package = "rdcAVS"),
-          width = 80,
-          height = 80
+          src = system.file("www", "drc_logo.png", package = "rdcAVS"),
+          height = "56px",
+          width = "auto",
+          alt = "Logo"
         )
       },
       deleteFile = FALSE
