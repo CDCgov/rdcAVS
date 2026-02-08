@@ -229,6 +229,18 @@ server <- function(input, output, session) {
       deleteFile = FALSE
     )
 
+    output$package_logo <- renderImage(
+      {
+        list(
+          src = system.file("www", "logo.svg", package = "rdcAVS"),
+          height = "56px",
+          width = "auto",
+          alt = "Logo"
+        )
+      },
+      deleteFile = FALSE
+    )
+
     #### Geographic selection observers ----
     current_data <- geo_data_reactive()
 
