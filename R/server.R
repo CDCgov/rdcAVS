@@ -845,7 +845,13 @@ observeEvent(input$download_geo,{
         query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
         folders <- googledrive::drive_find(q = query)
         campaign_drive_folders(folders)
-
+        user <- drive_user()
+        user_email(user$emailAddress)
+        
+         showNotification(
+          paste("Authentifié avec succès en tant que", user_email()),
+          type = "message"
+        )
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
                          type = "message")
 
