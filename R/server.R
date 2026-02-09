@@ -205,21 +205,37 @@ server <- function(input, output, session) {
   observe({
     #### Render images ----
     output$drc_cdc_logo <- renderImage(
+  {
+    list(
+      src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
+      contentType = "image/svg+xml",
+      height = "70px",
+      width = "auto",
+      alt = "Logo"
+    )
+  },
+  deleteFile = FALSE
+)
+
+    output$logo <- renderImage(
       {
         list(
-          src = system.file("www", "drc_cdc_logo.svg", package = "rdcAVS"),
-          width = 180,
-          height = 80
+          src = system.file("www", "drc_logo.png", package = "rdcAVS"),
+          height = "56px",
+          width = "auto",
+          alt = "Logo"
         )
       },
       deleteFile = FALSE
     )
-    output$logo <- renderImage(
+
+    output$package_logo <- renderImage(
       {
         list(
           src = system.file("www", "logo.svg", package = "rdcAVS"),
-          width = 80,
-          height = 80
+          height = "56px",
+          width = "auto",
+          alt = "Logo"
         )
       },
       deleteFile = FALSE
@@ -293,14 +309,15 @@ server <- function(input, output, session) {
     ##### Permissions tab ----
 
     req(current_data) # Ensure current_data is available
+    `%||%` <- function(x, y) if (is.null(x) || length(x) == 0 || !nzchar(x)) y else x  
 
     # Update province select input
-    updateSelectizeInput(
-      session,
-      "perm_province",
-      choices = sort(unique(current_data$provinces)),
-      selected = input$perm_province
-    )
+    updateDropdown.shinyInput(
+    session,
+    "perm_province",
+    options = lapply(x <- sort(unique(current_data$provinces)), function(x){list(key = x, text = x)}),
+   # selectedKey = input$perm_province %||% sort(unique(current_data$provinces))[1]
+)
 
     # Antennes
     selected_prov <- input$perm_province
@@ -313,11 +330,11 @@ server <- function(input, output, session) {
     } else {
       unique(current_data$antennes)
     }
-    updateSelectizeInput(
-      session,
-      "perm_antenne",
-      choices = sort(unique(filtered_antennes_p)),
-      selected = input$perm_antenne
+    updateDropdown.shinyInput(
+    session,
+    "perm_antenne",
+    options = lapply(x <- sort(unique(filtered_antennes_p)), function(x){list(key = x, text = x)}),
+    #value = sort(unique(filtered_antennes_p))[1]
     )
 
     # Zones de Sante
@@ -331,12 +348,12 @@ server <- function(input, output, session) {
     } else {
       unique(current_data$zones_de_sante)
     }
-    updateSelectizeInput(
-      session,
-      "perm_zs",
-      choices = sort(unique(filtered_zs_p)),
-      selected = input$perm_zs
-    )
+    updateDropdown.shinyInput(
+    session,
+    "perm_zs",
+    options = lapply(x <- sort(unique(filtered_zs_p)), function(x){list(key = x, text = x)}),
+    #value = sort(unique(filtered_zs_p))[1]
+   )
 
 
     # Selected provinces
@@ -645,12 +662,35 @@ server <- function(input, output, session) {
   })
 
   ###### Download current geo table ----
-  output$download_geo <- downloadHandler(
+
+  ### Download a template dataset -----
+  observeEvent(input$download_template_link, {
+    shinyjs::click("download_template")
+  })
+
+
+
+  output$download_template <- downloadHandler(
+    filename = function(){
+      paste("template_geographic",Sys.Date(),".csv",sep = "")
+    },
+    content = function(file){
+       write.csv(template_data_geographics,file,row.names = FALSE)
+    }
+  )
+
+
+observeEvent(input$download_geo,{
+    shinyjs::click("download_geo_ok")
+  })
+
+  output$download_geo_ok <- downloadHandler(
     filename = paste0("geo_table_", Sys.Date(), ".csv"),
     content = function(file) {
       write_csv(geo_data_reactive(), file, na = "")
     }
   )
+  
 
   ###### Edit geo table ----
   observeEvent(input$geo_table_cell_edit, {
@@ -681,6 +721,16 @@ server <- function(input, output, session) {
   })
 
   ###### Add geographic entry ----
+
+   observeEvent(input$add_row_question, {
+    shinyjs::toggle("add_new_row", anim = TRUE, animType = "slide")
+  })
+  
+  observeEvent(input$add_row, {
+    shinyjs::toggle("add_new_row", anim = TRUE, animType = "slide")
+  })
+
+
   observeEvent(input$add_row, {
     geo_stack$undo <- c(list(geo_values$data), geo_stack$undo)
     geo_stack$redo <- list()
@@ -770,22 +820,24 @@ server <- function(input, output, session) {
   ###### Authenticate via Google Drive ----
   # Track auth status
   # Dynamically list campaign folders in Drive after auth
+ 
   drive_files <- reactiveVal(NULL)
   campaign_drive_folders <- reactiveVal(NULL)
-  auth_status <- reactiveVal("Non authentifi\u00e9")
+  user_email <- reactiveVal(NULL)
+  auth_status <- reactiveVal(FALSE)
+
 
   if (drive_has_token()) {
     query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
     folders <- googledrive::drive_find(q = query)
     campaign_drive_folders(folders)
-    auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
     show("refresh_drive")
     show("refresh_campaign")
   }
 
   observeEvent(input$auth_drive, {
     if (!drive_has_token()) {
-      drive_auth(email = FALSE) # Will open browser to authenticate
+      drive_auth(email = input$email, cache = ".secrets") # Will open browser to authenticate
     }
 
     tryCatch(
@@ -793,22 +845,49 @@ server <- function(input, output, session) {
         query <- "mimeType = 'application/vnd.google-apps.folder' and name contains 'CAMPAGNE_'"
         folders <- googledrive::drive_find(q = query)
         campaign_drive_folders(folders)
-
+        user <- drive_user()
+        user_email(user$emailAddress)
+        
+         showNotification(
+          paste("Authentifié avec succès en tant que", user_email()),
+          type = "message"
+        )
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
                          type = "message")
 
-        auth_status("\u2705 Suthentifi\u00e9 avec succ\u00e8s avec Google Drive.")
+        shinyjs::hide("Authenticate")
+        shinyjs::show("main-app")
         show("refresh_drive")
       },
       error = \(e) {
-        auth_status("\u274c \u00c9chec de l'authentification.")
+       showNotification("\u274c \u00c9chec de l'authentification.",
+                         type = "error")
+        
       }
     )
   })
 
-  output$auth_status <- renderText({
-    auth_status()
+  observe({
+    if (drive_has_token()) {
+      auth_status(TRUE)
+      tryCatch({
+        user <- drive_user()
+        user_email(user$emailAddress)
+      }, error = function(e) {
+        user_email("Unknown")
+      })
+    }
   })
+
+ output$welcome_message <- renderUI({
+     user <- drive_user()    
+    paste0("Bienvenue,"," ",user$displayName)
+  })
+
+
+
+
+
 
   ###### Refresh Google Drive ----
   # Function to update Google Drive files
@@ -1061,6 +1140,11 @@ server <- function(input, output, session) {
   )
 
   ####### Download current permissions table ----
+
+  observeEvent(input$press_download_permissions,{
+       shinyjs::click("download_permissions")
+  })
+
   output$download_permissions <- downloadHandler(
     filename = paste0("permissions_table_", Sys.Date(), ".csv"),
     content = function(file) {
@@ -1102,7 +1186,7 @@ server <- function(input, output, session) {
   observeEvent(input$add_permission, {
     perm_stack$undo <- c(list(perm_values$data), perm_stack$undo)
     perm_stack$redo <- list()
-
+ 
     level <- tolower(input$perm_level)
     # Check for required fields
     missing_fields <- c()
@@ -1113,25 +1197,25 @@ server <- function(input, output, session) {
       missing_fields <- c(missing_fields, "Role")
     }
 
-    if (level == "province" && input$perm_province == "") {
+    if (level == "province" && is.null(input$perm_province)) {
       missing_fields <- c(missing_fields, "Province")
     }
 
-    if (level == "antenne" && (input$perm_province == "" || input$perm_antenne == "")) {
-      if (input$perm_province == "") {
+     if (level == "antenne" && (is.null(input$perm_province) || is.null(input$perm_antenne))) {
+      if (is.null(input$perm_province)) {
         missing_fields <- c(missing_fields, "Province")
       }
 
-      if (input$perm_antenne == "") {
+      if (is.null(input$perm_antenne)) {
         missing_fields <- c(missing_fields, "Antenne")
       }
 
     }
 
-    if (level == "zone de sante" && (input$perm_province == "" || input$perm_antenne == "" || input$perm_zs == "")) {
-      if (input$perm_province == "") {missing_fields <- c(missing_fields, "Province")}
-      if (input$perm_antenne == "") {missing_fields <- c(missing_fields, "Antenne")}
-      if (input$perm_zs == "") {missing_fields <- c(missing_fields, "Zone de Sant\u00e9")}
+    if (level == "zone de sante" && (is.null(input$perm_province) || is.null(input$perm_antenne) || is.null(input$perm_zs))) {
+      if (is.null(input$perm_province)) {missing_fields <- c(missing_fields, "Province")}
+      if (is.null(input$perm_antenne))  {missing_fields <- c(missing_fields, "Antenne")}
+      if (is.null(input$perm_zs)) {missing_fields <- c(missing_fields, "Zone de Sant\u00e9")}
     }
 
     if (length(missing_fields) > 0) {
@@ -1243,8 +1327,25 @@ server <- function(input, output, session) {
     }
   })
 
-  ####### Set permissions button ----
+  ####### Download the permission template --------
 
+  observeEvent(input$download_template_link_permissions,{
+            shinyjs::click("download_template_permission")
+  })
+
+  output$download_template_permission <- downloadHandler(
+    filename = function(){
+      paste("template_permissions",Sys.Date(),".csv",sep = "")
+    },
+    content = function(file){
+       write.csv(data_perm,file,row.names = FALSE)
+    }
+  )
+
+
+
+  ####### Set permissions button ----
+  
   observeEvent(input$set_permissions_btn, {
     req(input$selected_campaign_drive_folder)
 
@@ -1442,6 +1543,23 @@ server <- function(input, output, session) {
   })
 
   #### Permissions table ----
+
+ observe({
+  req(perm_data_reactive()) 
+    
+    if(nrow(perm_data_reactive()) == 0){
+       shinyjs::hide("show_permissions")
+    } else {
+     shinyjs::show("show_permissions")
+    }
+     
+  })
+
+  
+  observeEvent(input$add_row_question_perm, {
+    shinyjs::toggle("add_permissions", anim = TRUE, animType = "slide")
+  })
+
   output$permissions_table <- DT::renderDT({
     DT::datatable(
       perm_data_reactive(),
