@@ -48,8 +48,12 @@ An example of the app deployed can be viewed
   : Creates a heatmap showing campaign progress daily
 - [`find_drive_sheets()`](https://mcuadera.github.io/rdcAVS/reference/find_drive_sheets.md)
   : Obtain spreadsheets within a Drive folder
+- [`fluent_card()`](https://mcuadera.github.io/rdcAVS/reference/fluent_card.md)
+  : Fluent-style Card Container
 - [`get_campaign_progress()`](https://mcuadera.github.io/rdcAVS/reference/get_campaign_progress.md)
   : Monitor campaign quality
 - [`get_sheet_info()`](https://mcuadera.github.io/rdcAVS/reference/get_sheet_info.md)
   : Obtain the information from a dribble tab or tabs
+- [`icon_btn()`](https://mcuadera.github.io/rdcAVS/reference/icon_btn.md)
+  : Icon Button with Tooltip (Fluent Style)
 
