@@ -79,11 +79,11 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
       dplyr::select(2,4) |>
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x)) |>
       dplyr::mutate(dplyr::across(dplyr::everything(), \(x) round(x)))
-    recoveries_0_11 <- ss_data |> dplyr::select(a1_to_colnum("GL")) |>
+    recoveries_0_11 <- ss_data |> dplyr::select(a1_to_colnum("IX")) |>  # Previously GL
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
-    recoveries_12_23 <- ss_data |> dplyr::select(a1_to_colnum("HT")) |>
+    recoveries_12_23 <- ss_data |> dplyr::select(a1_to_colnum("KF")) |> # Previously HT
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
-    recoveries_24_59 <- ss_data |> dplyr::select(a1_to_colnum("JB")) |>
+    recoveries_24_59 <- ss_data |> dplyr::select(a1_to_colnum("LN")) |> # Previously JB
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
 
     summary <- dplyr::bind_cols(geo_info, target, coverage, completeness,
@@ -126,9 +126,7 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "recovery_12_23",
         "recovery_24_59"
       )))
-
     return(summary)
-
   }
 
   ## Parallel call ----
@@ -167,7 +165,8 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
                                        NULL
                                      }
                                  )
-                                   })
+                                   }
+                                )
         sheet_info <- sheet_info |> dplyr::bind_rows()
       })
   })
