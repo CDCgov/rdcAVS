@@ -1515,12 +1515,24 @@ observeEvent(input$download_geo,{
   })
 
   ##### Download current data quality monitoring table ----
+
+
+  observeEvent(input$click_download_data_quality_monitoring,{
+      shinyjs::click("download_data_quality_monitoring")
+    })
+
+
   output$download_data_quality_monitoring <- downloadHandler(
     filename = paste0("data_quality_table_", Sys.Date(), ".csv"),
     content = function(file) {
       readr::write_csv(surveillance_summary(), file, na = "")
     }
   )
+
+observeEvent(input$click_download_campaign_quality_monitoring,{
+      shinyjs::click("download_campaign_quality_monitoring")
+})
+  
 
   output$download_campaign_quality_monitoring <- downloadHandler(
     filename = paste0("campaign_quality_table_", Sys.Date(), ".csv"),

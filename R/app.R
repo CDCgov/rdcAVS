@@ -160,6 +160,8 @@ campagneApp <- function() {
         downloadButton("download_geo_ok", label = "", style = "visibility:hidden;"),
         downloadButton("download_template_permission", label = "", style = "visibility:hidden;"),
         downloadButton("download_permissions", label = "", style = "visibility:hidden;"),
+        downloadButton("download_campaign_quality_monitoring",label = "",style = "visibility:hidden;"),
+        downloadButton("download_data_quality_monitoring",label = "",style = "visibility:hidden;"),
          ui_authenticate(),
       div(id = "main-app", style = "display:none;",
            fluidPage(

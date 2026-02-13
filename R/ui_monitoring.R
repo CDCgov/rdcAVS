@@ -78,9 +78,6 @@ ui_monitoring <- function() {
            opacity: 0;
            transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease;         
          }
-
-
-          
           .fluent-accordion-item.is-open .fluent-accordion-content {
             max-height: 5000px;
             opacity: 1;
@@ -184,16 +181,11 @@ ui_monitoring <- function() {
               ),
               tags$div(
                 class = "fluent-accordion-content",
-                br(),
-                DT::DTOutput("campaign_info_table"),
                 tags$div(
                   class = "fluent-download-btn",
-                  shiny.fluent::DefaultButton.shinyInput(
-                    inputId = "download_data_quality_monitoring",
-                    text = "Télécharger",
-                    iconProps = list(iconName = "Download")
-                  )
-                )
+                  icon_btn("click_download_data_quality_monitoring", "Download", "Télécharger", type = "success")
+                ),
+                DT::DTOutput("campaign_info_table")                
               )
             ),
             tags$div(
@@ -223,16 +215,12 @@ ui_monitoring <- function() {
               ),
               
               tags$div(
-                class = "fluent-accordion-content",
-                DT::DTOutput("campaign_progress_table"),
+                class = "fluent-accordion-content",                
                 tags$div(
                   class = "fluent-download-btn",
-                  shiny.fluent::DefaultButton.shinyInput(
-                    inputId = "download_campaign_quality_monitoring",
-                    text = "Télécharger",
-                    iconProps = list(iconName = "Download")
-                  )
-                )
+                  icon_btn("click_download_campaign_quality_monitoring", "Download", "Télécharger", type = "success")
+                ),
+                DT::DTOutput("campaign_progress_table")                
               )
             ),
             tags$div(
@@ -324,10 +312,29 @@ ui_monitoring <- function() {
               }, 100);
            }
               $(document).on('shiny:idle', function() {
-    setTimeout(function() {
-      window.dispatchEvent(new Event('resize'));
-    }, 500);
-  });
+                 setTimeout(function() {
+                 window.dispatchEvent(new Event('resize'));
+                }, 500);
+              });
+            function toggleAccordion(button) {
+              const item = button.closest('.fluent-accordion-item');
+              const allItems = document.querySelectorAll('.fluent-accordion-item');
+  
+                allItems.forEach(otherItem => {
+                  if (otherItem !== item) {
+                    otherItem.classList.remove('is-open');
+                  }
+              });  
+          item.classList.toggle('is-open');  
+          setTimeout(function() {
+          $(item).find('.dataTable').each(function() {
+            if ($.fn.DataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust().draw();
+          }
+        });
+    Shiny.bindAll(item);
+      }, 300);
+      }
           "
           )
       )
