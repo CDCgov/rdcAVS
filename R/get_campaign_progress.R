@@ -125,7 +125,10 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "recovery_0_11",
         "recovery_12_23",
         "recovery_24_59"
-      )))
+      ))) |> 
+      dplyr::distinct(.keep_all = TRUE)
+      
+      
     return(summary)
   }
 
@@ -156,7 +159,7 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
                                  \(i) {
                                    tryCatch(
                                      {
-                                       get_campaign_progress_single(dribble[x, ], i)
+                                       get_campaign_progress_single(dribble[x, ], i) 
 
                                        },
                                      error = \(e) {
@@ -171,7 +174,7 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
       })
   })
 
-  final_summary <- dplyr::bind_rows(y) |>
+  final_summary <- dplyr::bind_rows(y) |>    
     dplyr::group_by(province, antenne, zone_de_sante, aire_de_sante) |>
     dplyr::arrange(jour) |>
     dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct),

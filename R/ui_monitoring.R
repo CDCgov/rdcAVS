@@ -122,8 +122,7 @@ ui_monitoring <- function() {
             min-width: 200px;
           }
         "))
-        ),
-        
+        ),        
         tags$div(
           class = "fluent-page-container",         
           
@@ -134,19 +133,13 @@ ui_monitoring <- function() {
               "Surveillance de Campagne",
               style = list(fontWeight = "600", color = "#201f1e")
             ),
-            uiOutput("campaign_surveillance"),
-            fluidRow(
-            column(
-              width = 6,
-              align = "left",
-            shiny.fluent::PrimaryButton.shinyInput(
+              uiOutput("campaign_surveillance"),
+              shiny.fluent::PrimaryButton.shinyInput(
               inputId = "compile_campaign_btn",
               text = "Compiler des masques",
               iconProps = list(iconName = "CompactDisc")
-            )
-          )
-        ),
-         shiny.fluent::Stack(
+             ),
+          shiny.fluent::Stack(
               horizontal = TRUE,
               tokens = list(childrenGap = 20),
               uiOutput("campaign_template_url"),
@@ -332,11 +325,19 @@ ui_monitoring <- function() {
             $(this).DataTable().columns.adjust().draw();
           }
         });
-    Shiny.bindAll(item);
-      }, 300);
-      }
+          Shiny.bindAll(item);
+          }, 
+          300
+          );
+        }
+        $(document).on('shiny:idle', function() {
+           $('#compile_campaign_btn').closest('div').css({
+          'max-width': '350px',
+          'display': 'inline-block'
+          });
+        });
           "
-          )
+        )
       )
     )
 }

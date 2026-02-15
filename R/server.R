@@ -358,9 +358,8 @@ server <- function(input, output, session) {
 
     # Selected provinces
     campaign_completeness <- campaign_quality()
-
-    print(campaign_completeness)
-
+       
+   
     updateDropdown.shinyInput(
       session,
       "prov_selector_campaign_completeness",
@@ -1693,11 +1692,14 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
       )
 
       create_campaign_progress_heatmap(campaign_quality() |>
+                                       
                                          dplyr::filter(province == input$prov_selector_campaign_completeness,
                                                        zone_de_sante == input$zs_selector_campaign_completeness))
 
     }
   )
+
+ 
 
   output$campaign_completeness_plot_daily <- renderPlot(
     {
