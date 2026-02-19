@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2026-02-09T14:19Z
+last_built: 2026-02-19T16:11Z
 urls:
   reference: https://mcuadera.github.io/rdcAVS/reference
   article: https://mcuadera.github.io/rdcAVS/articles
