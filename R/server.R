@@ -358,12 +358,20 @@ server <- function(input, output, session) {
 
     # Selected provinces
     campaign_completeness <- campaign_quality()
-
-    updateSelectInput(
+       
+   
+    updateDropdown.shinyInput(
       session,
       "prov_selector_campaign_completeness",
-      choices = sort(unique(campaign_completeness$province)),
-      selected = input$prov_selector_campaign_completeness
+      options  = lapply(x <- sort(unique(campaign_completeness$province)),
+                  function(x) list(key = x, text = x)               
+                   ) ,
+      value = if(is.null(input$prov_selector_campaign_completeness)){
+              sort(unique(campaign_completeness$province))[1]
+      } else {
+        input$prov_selector_campaign_completeness
+      }
+     # value = input$prov_selector_campaign_completeness
     )
 
     selected_campaign_prov <- input$prov_selector_campaign_completeness
@@ -381,12 +389,21 @@ server <- function(input, output, session) {
                pull(antenne))
     }
 
-    updateSelectInput(
+    updateDropdown.shinyInput(
       session,
       "ant_selector_campaign_completeness",
-      choices = filtered_campaign_ant,
-      selected = isolate(input$ant_selector_campaign_completeness)
+      options  = lapply(x <- filtered_campaign_ant,
+                function(x) list(key = x, text = x)
+              ),
+      value = if (is.null(isolate(input$ant_selector_campaign_completeness))) {
+                    filtered_campaign_ant[1]
+                  } else {
+                  isolate(input$ant_selector_campaign_completeness)
+      }
+    #  value = isolate(input$ant_selector_campaign_completeness)
     )
+
+    
 
     selected_campaign_ant <- input$ant_selector_campaign_completeness
     filtered_campaign_zs <- if (!is.null(selected_campaign_prov) &&
@@ -400,16 +417,26 @@ server <- function(input, output, session) {
         unique() |>
         sort()
     } else {
+      
+     # req(selected_campaign_prov)
+     # req(selected_campaign_ant)
+
       unique(campaign_completeness |>
-               filter(antennes %in% selected_campaign_ant) |>
+               filter(antenne %in% selected_campaign_ant) |>
                pull(zone_de_sante)
              )
     }
 
-    updateSelectInput(
+
+
+    updateDropdown.shinyInput(
       session,
       "zs_selector_campaign_completeness",
-      choices = filtered_campaign_zs)
+      options = lapply(x <- filtered_campaign_zs,
+                function(x) list(key = x, text = x)
+              ),
+      value = filtered_campaign_zs[1]
+            )
   })
 
 
@@ -939,11 +966,14 @@ observeEvent(input$download_geo,{
 
   ###### Display available campaigns in the surveillance tab ----
   output$campaign_surveillance <- renderUI({
-    selectInput(
-      "selected_surveillance_drive_folder",
-      h6("Campagne"),
-      choices = campaign_drive_folders()$name
-    )
+    shiny.fluent::Dropdown.shinyInput(
+  inputId = "selected_surveillance_drive_folder",
+  label = shiny::h6("Campagne"),
+  options = lapply(
+    campaign_drive_folders()$name,
+    function(x) list(key = x, text = x)
+  )
+)
   })
   output$refresh_date <- renderText({
     refresh_status()
@@ -1484,12 +1514,24 @@ observeEvent(input$download_geo,{
   })
 
   ##### Download current data quality monitoring table ----
+
+
+  observeEvent(input$click_download_data_quality_monitoring,{
+      shinyjs::click("download_data_quality_monitoring")
+    })
+
+
   output$download_data_quality_monitoring <- downloadHandler(
     filename = paste0("data_quality_table_", Sys.Date(), ".csv"),
     content = function(file) {
       readr::write_csv(surveillance_summary(), file, na = "")
     }
   )
+
+observeEvent(input$click_download_campaign_quality_monitoring,{
+      shinyjs::click("download_campaign_quality_monitoring")
+})
+  
 
   output$download_campaign_quality_monitoring <- downloadHandler(
     filename = paste0("campaign_quality_table_", Sys.Date(), ".csv"),
@@ -1584,6 +1626,7 @@ observeEvent(input$download_geo,{
   })
 
   #### Surveillance table ----
+
   output$campaign_info_table <- DT::renderDT(
     DT::datatable(
       surveillance_summary(),
@@ -1605,6 +1648,8 @@ observeEvent(input$download_geo,{
       )
     )
   )
+
+  outputOptions(output,"campaign_info_table",suspendWhenHidden = FALSE)
 
   output$campaign_progress_table <- DT::renderDT(
     DT::datatable(
@@ -1634,6 +1679,9 @@ observeEvent(input$download_geo,{
     )
   )
 
+
+  outputOptions(output,"campaign_progress_table",suspendWhenHidden = FALSE)
+
   #### Plots ----
   output$campaign_completeness_plot <- renderPlot(
     {
@@ -1644,11 +1692,14 @@ observeEvent(input$download_geo,{
       )
 
       create_campaign_progress_heatmap(campaign_quality() |>
+                                       
                                          dplyr::filter(province == input$prov_selector_campaign_completeness,
                                                        zone_de_sante == input$zs_selector_campaign_completeness))
 
     }
   )
+
+ 
 
   output$campaign_completeness_plot_daily <- renderPlot(
     {

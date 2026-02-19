@@ -79,11 +79,11 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
       dplyr::select(2,4) |>
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x)) |>
       dplyr::mutate(dplyr::across(dplyr::everything(), \(x) round(x)))
-    recoveries_0_11 <- ss_data |> dplyr::select(a1_to_colnum("GL")) |>
+    recoveries_0_11 <- ss_data |> dplyr::select(a1_to_colnum("IX")) |>  # Previously GL
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
-    recoveries_12_23 <- ss_data |> dplyr::select(a1_to_colnum("HT")) |>
+    recoveries_12_23 <- ss_data |> dplyr::select(a1_to_colnum("KF")) |> # Previously HT
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
-    recoveries_24_59 <- ss_data |> dplyr::select(a1_to_colnum("JB")) |>
+    recoveries_24_59 <- ss_data |> dplyr::select(a1_to_colnum("LN")) |> # Previously JB
       dplyr::rename_with(\(x) gsub("\\.\\.\\.[0-9]+$", "", x))
 
     summary <- dplyr::bind_cols(geo_info, target, coverage, completeness,
@@ -125,10 +125,11 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
         "recovery_0_11",
         "recovery_12_23",
         "recovery_24_59"
-      )))
-
+      ))) |> 
+      dplyr::distinct(.keep_all = TRUE)
+      
+      
     return(summary)
-
   }
 
   ## Parallel call ----
@@ -158,7 +159,7 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
                                  \(i) {
                                    tryCatch(
                                      {
-                                       get_campaign_progress_single(dribble[x, ], i)
+                                       get_campaign_progress_single(dribble[x, ], i) 
 
                                        },
                                      error = \(e) {
@@ -167,12 +168,13 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
                                        NULL
                                      }
                                  )
-                                   })
+                                   }
+                                )
         sheet_info <- sheet_info |> dplyr::bind_rows()
       })
   })
 
-  final_summary <- dplyr::bind_rows(y) |>
+  final_summary <- dplyr::bind_rows(y) |>    
     dplyr::group_by(province, antenne, zone_de_sante, aire_de_sante) |>
     dplyr::arrange(jour) |>
     dplyr::mutate(couverture_campaign_cumulative = cumsum(couverture_campagne_pct),
