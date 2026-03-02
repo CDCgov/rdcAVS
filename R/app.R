@@ -178,7 +178,7 @@ campagneApp <- function() {
           style = "display:flex; align-items:center; gap:10px; flex-wrap:nowrap;",   
           imageOutput("drc_cdc_logo", height = "60px"),  
             h5(
-          "Portail de création des masques de saisie des campagnes de vaccination en RDC",
+          "Portail de cr\u00e9ation des masques de saisie des campagnes de vaccination en RDC",
            style = "
             margin:0;
             font-weight:500;
