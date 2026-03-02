@@ -47,9 +47,9 @@ ui_authenticate <- function() {
           isMultiline = TRUE,
           styles = list(text = list(fontSize = 14, lineHeight = "1.55")),
           Stack(tokens = list(childrenGap = 6),
-            Text("Veuillez saisir votre adresse mail, ensuite cliquez sur “S’authentifier”."),
-            Text("Cette application ne collecte ni n’enregistre votre mot de passe."),
-            Text("Une fenêtre va s’ouvrir : suivez les instructions pour compl\u00e9ter l’authentification.")
+            Text("Veuillez saisir votre adresse mail, ensuite cliquez sur 'S\u0027authentifier'."),
+            Text("Cette application ne collecte ni n\u0027enregistre votre mot de passe."),
+            Text("Une fen\u00eatre va s\u0027ouvrir : suivez les instructions pour compl\u00e9ter l\u0027authentification.")
           )
         ),
         Separator(),

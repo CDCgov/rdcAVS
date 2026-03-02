@@ -41,7 +41,7 @@ ui_geodatabase <- function() {
             "upload_geo",
             label = NULL,
             accept = ".csv",
-            buttonLabel = "Parcourir…",
+            buttonLabel = "Parcourir...",
             placeholder = "Aucun fichier choisi"
           )
         )

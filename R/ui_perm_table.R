@@ -18,7 +18,7 @@ ui_perm_table <- function() {
             "upload_permissions",
             label = NULL,
             accept = ".csv",
-            buttonLabel = "Parcourir…",
+            buttonLabel = "Parcourir...",
             placeholder = "Aucun fichier s\u00e9lectionn\u00e9"
           ),
 
@@ -28,7 +28,7 @@ ui_perm_table <- function() {
             styles = list(text = list(fontSize = 14, lineHeight = "1.55")),
             Stack(tokens = list(childrenGap = 6),
               Text('Si le niveau est "national", les zones g\u00e9ographiques sont facultatives.'),
-              Text("Une zone g\u00e9ographique valide doit être incluse dans les autres niveaux."),
+              Text("Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux."),
               Text('Exemple : si le niveau est "zone de sant\u00e9", incluez une valeur pour "province", "antenne" et "zone de sant\u00e9".')
             ),br(),
             Stack(
@@ -91,11 +91,11 @@ ui_perm_table <- function() {
             ),
             div(
               style = "flex:1; min-width:240px;",
-              TextField.shinyInput("perm_phone", label = "Phone", placeholder = "+243…")
+              TextField.shinyInput("perm_phone", label = "Phone", placeholder = "+243...")
             ),
             div(
               style = "flex:2; min-width:280px;",
-              TextField.shinyInput("perm_notes", label = "Notes", placeholder = "Affiliation, Poste, etc…")
+              TextField.shinyInput("perm_notes", label = "Notes", placeholder = "Affiliation, Poste, etc...")
             )
           ),
 

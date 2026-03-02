@@ -117,8 +117,8 @@ ui_campaign_creation <- function() {
             style = "flex:2; min-width:300px;",
             TextField.shinyInput(
               "zs_template_url",
-              label = "Adresse URL du modèle de masque",
-              placeholder = "https://…",
+              label = "Adresse URL du mod\u00e8le de masque",
+              placeholder = "https://...",
               iconProps = list(iconName = "Link")
             )
           ),

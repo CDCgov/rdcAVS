@@ -876,7 +876,7 @@ observeEvent(input$download_geo,{
         user_email(user$emailAddress)
         
          showNotification(
-          paste("Authentifi\u00e9 avec succès en tant que", user_email()),
+          paste("Authentifi\u00e9 avec succ\u00e8s en tant que", user_email()),
           type = "message"
         )
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
@@ -1643,7 +1643,7 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
         "Cellules Remplies",
         "Cellules Totales",
         "Exhaustivit\u00e9",
-        "Jours Depuis la Dernière Modification",
+        "Jours Depuis la Derni\u00e8re Modification",
         "Date d'Ex\u00e9cution"
       )
     )

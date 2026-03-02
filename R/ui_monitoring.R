@@ -169,7 +169,7 @@ ui_monitoring <- function() {
                 ),
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               tags$div(
@@ -203,7 +203,7 @@ ui_monitoring <- function() {
                 
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               
@@ -238,7 +238,7 @@ ui_monitoring <- function() {
                 
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               

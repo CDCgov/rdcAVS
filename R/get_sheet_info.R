@@ -119,8 +119,8 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
     if (sheet == 1) {
       switch(name,
              "Situation des \u00e9quipes de vaccination par aires de sant\u00e9" = "E:G",
-             "Populations cibles vaccin\u00e9es à la campagne pr\u00e9c\u00e9dente" = "N:O",
-             "Disponilit\u00e9 du vaccin, antigène utilis\u00e9" = "V:V",
+             "Populations cibles vaccin\u00e9es \u00e0 la campagne pr\u00e9c\u00e9dente" = "N:O",
+             "Disponilit\u00e9 du vaccin, antig\u00e8ne utilis\u00e9" = "V:V",
              "Nombre d'\u00e9quipes de mobilisation sociale de proxi" = "Y:Y",
              "RESEAU/ INTERNET" = "Z:AB",
              "Enfants 0 - 11 mois identifi\u00e9s pour etre r\u00e9cup\u00e9r\u00e9s en PEV de routine" = "AC:AQ",
@@ -234,8 +234,8 @@ get_sheet_info <- function(dribble, sheets = 1:8) {
     if (sheet == 1) {
       c(
         "Situation des \u00e9quipes de vaccination par aires de sant\u00e9",
-        "Populations cibles vaccin\u00e9es à la campagne pr\u00e9c\u00e9dente",
-        "Disponilit\u00e9 du vaccin, antigène utilis\u00e9" ,
+        "Populations cibles vaccin\u00e9es \u00e0 la campagne pr\u00e9c\u00e9dente",
+        "Disponilit\u00e9 du vaccin, antig\u00e8ne utilis\u00e9" ,
         "Nombre d'\u00e9quipes de mobilisation sociale de proxi",
         "RESEAU/ INTERNET" ,
         "Enfants 0 - 11 mois identifi\u00e9s pour etre r\u00e9cup\u00e9r\u00e9s en PEV de routine",

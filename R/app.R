@@ -19,7 +19,7 @@
 #' tabs that creates a campaign, add geographic information, and set Google Drive
 #' permissions. Creating a campaign outputs a folder prefixed with "CAMPAGNE_",
 #' which contains a hierarchical structure, going from the largest geographic unit (Province)
-#' to the lowest geographic unit (Zone de Sant\u00e9). Within the Zone de Sant\u00e9 folder, contains
+#' to the lowest geographic unit (Zone de Santé). Within the Zone de Santé folder, contains
 #' a template file.
 #'
 #' @details
