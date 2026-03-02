@@ -876,7 +876,7 @@ observeEvent(input$download_geo,{
         user_email(user$emailAddress)
         
          showNotification(
-          paste("Authentifié avec succès en tant que", user_email()),
+          paste("Authentifi\u00e9 avec succès en tant que", user_email()),
           type = "message"
         )
         showNotification("Donn\u00e9es Google Drive collect\u00e9es.",
@@ -1487,7 +1487,7 @@ observeEvent(input$download_geo,{
         output$campaign_template_url <- renderUI({tagList(a("Lien vers le masque de campagne",
                                                             href = national_dribble_url))})
         # Obtain completeness information
-        incProgress(1/5, message = "Analyse de la qualité des données")
+        incProgress(1/5, message = "Analyse de la qualit\u00e9 des donn\u00e9es")
         national_template_dribble <- googledrive::drive_get(national_dribble_url)
         surveillance_summary(get_sheet_info(national_template_dribble))
         data_quality_info <- surveillance_summary()
@@ -1508,7 +1508,7 @@ observeEvent(input$download_geo,{
                               strftime(Sys.time(), format = "%d/%m/%Y %R", usetz = TRUE),
                               "; Compiled in ", round(compile_end, 2), "mins"))
         show("refresh_date")
-        showNotification("Traitement terminé", type = "message")
+        showNotification("Traitement termin\u00e9", type = "message")
       }
     )
   })
@@ -1642,9 +1642,9 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
         "Section",
         "Cellules Remplies",
         "Cellules Totales",
-        "Exhaustivité",
+        "Exhaustivit\u00e9",
         "Jours Depuis la Dernière Modification",
-        "Date d'Exécution"
+        "Date d'Ex\u00e9cution"
       )
     )
   )
@@ -1670,11 +1670,11 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
         "Rapport Completude (%)",
         "Couverture (%)",
         "Couverture (Cumulative)",
-        "Nb moyen d'enfants vaccinés/équipe (Rural)",
-        "Nb moyen d'enfants vaccinés/équipe (Urban)",
-        "Récupérations (0-11 mois, cumulative)",
-        "Récupérations (12-23 mois, cumulative)",
-        "Récupérations (24-59 mois, cumulative)"
+        "Nb moyen d'enfants vaccin\u00e9s/\u00e9quipe (Rural)",
+        "Nb moyen d'enfants vaccin\u00e9s/\u00e9quipe (Urban)",
+        "R\u00e9cup\u00e9rations (0-11 mois, cumulative)",
+        "R\u00e9cup\u00e9rations (12-23 mois, cumulative)",
+        "R\u00e9cup\u00e9rations (24-59 mois, cumulative)"
       )
     )
   )

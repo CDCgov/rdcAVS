@@ -53,7 +53,7 @@ compile_masques_national <- function(campaign_name) {
   showNotification("Autorisations requises obtenues.", type = "message")
 
   # Compile all templates for one sheet at a time
-  withProgress(message = "Compilation des données dans: ",
+  withProgress(message = "Compilation des donn\u00e9es dans: ",
                {
                  n <- length(tab_names)
                  for (i in 1:n) {

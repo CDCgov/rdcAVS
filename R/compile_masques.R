@@ -38,7 +38,7 @@ compile_masques <- function(campaign_name) {
              })
 
   # Compile all templates for one sheet at a time
-  withProgress(message = "Compilation des données dans: ",
+  withProgress(message = "Compilation des donn\u00e9es dans: ",
                {
                  n <- length(tab_names)
                  for (i in 1:n) {

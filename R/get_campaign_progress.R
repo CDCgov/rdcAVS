@@ -92,17 +92,17 @@ get_campaign_progress <- function(dribble, sheets = 5:8) {
       dplyr::rename(
         "province" = "Province",
         "antenne" = "Antenne",
-        "zone_de_sante" = "Zone de Santé",
-        "aire_de_sante" = "Aire de Santé",
+        "zone_de_sante" = "Zone de Sant\u00e9",
+        "aire_de_sante" = "Aire de Sant\u00e9",
         "rapports_de_vaccination_attendus" = "Attendus",
         "rapports_de_vaccination_recus" = "Recus",
         "cible_0_59_mois" = "Cible 0-59 mois",
         "vaccination_0_59_mois" = "Total",
-        "avg_vax_rural" = "Nb moyen d'enfants vaccinés/équipe (ref 100 enfants)",
-        "avg_vax_urban" = "Nb moyen d'enfants vaccinés/équipe (ref 200 enfants)",
-        "recovery_0_11" = "# Récupérations 0-11 mois",
-        "recovery_12_23" = "# Récupérations 12-23 mois",
-        "recovery_24_59" = "# Récupérations 24-59 mois"
+        "avg_vax_rural" = "Nb moyen d'enfants vaccin\u00e9s/\u00e9quipe (ref 100 enfants)",
+        "avg_vax_urban" = "Nb moyen d'enfants vaccin\u00e9s/\u00e9quipe (ref 200 enfants)",
+        "recovery_0_11" = "# R\u00e9cup\u00e9rations 0-11 mois",
+        "recovery_12_23" = "# R\u00e9cup\u00e9rations 12-23 mois",
+        "recovery_24_59" = "# R\u00e9cup\u00e9rations 24-59 mois"
       ) |>
       dplyr::mutate(cible_0_59_mois = round(cible_0_59_mois, 0),
                     rapport_completude_pct = round(rapports_de_vaccination_recus / rapports_de_vaccination_attendus * 100, 0),
