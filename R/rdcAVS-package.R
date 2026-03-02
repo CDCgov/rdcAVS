@@ -45,7 +45,7 @@
 #' @importFrom shinyjs show toggle click
 #' @importFrom shinyjs useShinyjs
 #' @importFrom tidyr pivot_longer
-#' @importFrom utils txtProgressBar winProgressBar globalVariables Rprof summaryRprof download.file contrib.url available.packages read.table write.csv
+#' @importFrom utils write.csv
 #' @importFrom shiny.fluent Stack MessageBar updateDropdown.shinyInput Dropdown.shinyInput DefaultButton.shinyInput IconButton.shinyInput TooltipHost DatePicker.shinyInput Text TextField.shinyInput Separator PrimaryButton.shinyInput 
 ## usethis namespace: end
 
@@ -53,8 +53,19 @@ utils::globalVariables(c(
   "aires_de_sante", "antenne", "antennes", "debut", "email",
   "fin", "level", "local_path", "masque_names",
   "mime_type", "path", "population_totale", "province", "provinces", "role",
-  "x", "zone_de_sante", "zones_de_sante"
-  
+  "x", "zone_de_sante", "zones_de_sante",
+  "name", "web_view_link", "grid_columns", "max_rows",
+  "aire_de_sante", "jour", "couverture_campaign_cumulative",
+  "couverture_campagne_pct", "cat_0_11", "recovery_0_11_cumulative",
+  "cat_12_23", "recovery_12_23_cumulative", "cat_24_59",
+  "recovery_24_59_cumulative", "cat_rural", "cat_urban",
+  "avg_vax_rural", "avg_vax_urban", "period", "zs_path",
+  "...1", "section", "empty_cells", "filled_cells", "total_cells",
+  "prov", "completeness", "cible_0_59_mois", "vaccination_0_59_mois",
+  "rapports_de_vaccination_recus", "rapports_de_vaccination_attendus",
+  "recovery_0_11", "recovery_12_23", "recovery_24_59",
+  "template_data_geographics", "data_perm", "dir_path",
+  "write.csv"
 ))
 
 NULL
