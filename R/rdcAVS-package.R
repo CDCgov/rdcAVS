@@ -45,6 +45,7 @@
 #' @importFrom shinyjs show toggle click
 #' @importFrom shinyjs useShinyjs
 #' @importFrom tidyr pivot_longer
+#' @importFrom utils txtProgressBar winProgressBar globalVariables Rprof summaryRprof download.file contrib.url available.packages read.table write.csv
 #' @importFrom shiny.fluent Stack MessageBar updateDropdown.shinyInput Dropdown.shinyInput DefaultButton.shinyInput IconButton.shinyInput TooltipHost DatePicker.shinyInput Text TextField.shinyInput Separator PrimaryButton.shinyInput 
 ## usethis namespace: end
 
@@ -53,6 +54,7 @@ utils::globalVariables(c(
   "fin", "level", "local_path", "masque_names",
   "mime_type", "path", "population_totale", "province", "provinces", "role",
   "x", "zone_de_sante", "zones_de_sante"
+  
 ))
 
 NULL

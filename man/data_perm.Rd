@@ -5,7 +5,7 @@
 \alias{data_perm}
 \title{Template for user permissions data}
 \format{
-A tibble
+A tibble with 9 columns
 \describe{
 \item{name}{Full name of the user (character)}
 \item{phone}{Phone number of the user (numeric)}

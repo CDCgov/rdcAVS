@@ -40,7 +40,8 @@ Imports:
     shinyFiles,
     shinyjs,
     stringr,
-    tidyr
+    tidyr,
+    utils
 Suggests:
     stringi
 URL: https://mcuadera.github.io/rdcAVS/

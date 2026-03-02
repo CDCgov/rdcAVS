@@ -5,7 +5,7 @@
 \alias{template_data_geographics}
 \title{Template for geographic data}
 \format{
-A tibble with rows and 5 columns:
+A tibble with 5 columns:
 \describe{
 \item{provinces}{Name of the province (character)}
 \item{antennes}{Name of the antenne (character)}
