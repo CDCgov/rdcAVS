@@ -9,6 +9,9 @@
 #' @import dplyr stringr readr
 #' @import googledrive
 #' @import shiny shinyFiles
+#' @import ggplot2
+#' @importFrom openxlsx loadWorkbook writeData saveWorkbook
+#' @importFrom scales percent
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_alert
 #' @importFrom cli cli_alert_info
