@@ -38,7 +38,7 @@
 #' @importFrom progressr progressor
 #' @importFrom progressr with_progress
 #' @importFrom purrr pwalk
-#' @importFrom purrr walk
+#' @importFrom purrr walk map
 #' @importFrom rappdirs user_data_dir
 #' @importFrom readr type_convert
 #' @importFrom shinyjs disable
