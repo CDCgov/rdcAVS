@@ -1,3 +1,5 @@
+#' JS handlers for taskButton busy/ready states
+#' @keywords internal
 #' @export
 
 task_button_js <- "
@@ -38,7 +40,10 @@ task_button_js <- "
 
 })();
 "
+#'  CSS for taskButton spinner animation
+#' @keywords internal
 #' @export
+
 
 task_button_css <- "
 @keyframes task-spin {
@@ -172,10 +177,10 @@ task_button_css <- "
 #'
 #' @param inputId `chr` The input that will be used to access the value.
 #' @param label `chr` The button label.
+#' @param label_busy `chr` Label shown during busy state. Defaults to \code{"Processing..."}
 #' @param ... Additional arguments passed to \code{PrimaryButton.shinyInput}.
-#'
 #' @return A \code{tagList} containing the button with CSS and JS handlers.
-#' @noRd
+#' 
 #' @export
 
 taskButton <- function(inputId, label, label_busy = "Processing...", ...) {
@@ -203,7 +208,7 @@ taskButton <- function(inputId, label, label_busy = "Processing...", ...) {
 #' @param label_busy `chr` Label shown during processing. Defaults to \code{"Processing..."}.
 #'
 #' @return Invisibly returns the result of \code{expr}.
-#' @noRd
+#' 
 #' @export
 
 withTaskButton <- function(session, inputId, expr,
