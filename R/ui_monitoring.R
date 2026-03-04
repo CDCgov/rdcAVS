@@ -134,9 +134,9 @@ ui_monitoring <- function() {
               style = list(fontWeight = "600", color = "#201f1e")
             ),
               uiOutput("campaign_surveillance"),
-              shiny.fluent::PrimaryButton.shinyInput(
-              inputId = "compile_campaign_btn",
-              text = "Compiler des masques",
+              taskButton(
+              "compile_campaign_btn",
+              label = "Compiler des masques",
               iconProps = list(iconName = "CompactDisc")
              ),
           shiny.fluent::Stack(

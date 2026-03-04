@@ -125,9 +125,9 @@ ui_campaign_creation <- function() {
           
           div(
             style = "flex:1; min-width:240px;",
-            PrimaryButton.shinyInput(
+            taskButton(
               "create_campaign",
-              text = "Cr\u00e9er une campagne",
+              label = "Cr\u00e9er une campagne",
               iconProps = list(iconName = "Rocket")
             )
           )

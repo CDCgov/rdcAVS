@@ -204,20 +204,16 @@ ui_perm_table <- function() {
           tokens = list(childrenGap = 12),
 
           Text(variant = "xLarge", "S\u00e9lection de Campagne"),
-
           uiOutput("campaign_drive_picker"),
-
           Stack(
             horizontal = TRUE,
             wrap = TRUE,
             tokens = list(childrenGap = 10),
-
-            PrimaryButton.shinyInput(
+            taskButton(
               "set_permissions_btn",
-              text = "D\u00e9finir l'autorisation",
+              label = "D\u00e9finir l'autorisation",
               iconProps = list(iconName = "Permissions")
             ),
-
             DefaultButton.shinyInput(
               "refresh_drive",
               text = "Actualiser",
