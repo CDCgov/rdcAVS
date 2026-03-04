@@ -41,8 +41,9 @@ drive_init_campaign <- function(start_date,
     campaign_name <- Sys.Date()
   }
 
-  start_date <- lubridate::as_date(start_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
-  end_date <- lubridate::as_date(end_date, format = c("%d/%m/%Y", "%Y-%m-%d"))
+  start_date <- lubridate::as_date(start_date)
+  end_date <- lubridate::as_date(end_date)
+
   campaign_name <- paste0("CAMPAGNE_", campaign_name)
 
   if (!is.null(prov_target)) {
