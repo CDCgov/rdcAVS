@@ -486,23 +486,29 @@ server <- function(input, output, session) {
   })
 
   ##### Campaign creation button ----
-  observeEvent(input$create_campaign, {
+ 
+   observeEvent(input$create_campaign, {
     req(
       input$campaign_name,
       input$start_date,
       input$end_date,
-      input$zs_template_url
-    )
-    req(
+      input$zs_template_url,
       input$selected_provinces,
       input$selected_ant,
       input$selected_zs
     )
 
-    showNotification("Veuillez patienter pendant la cr\u00e9ation de la campagne...",
-                     type = "default")
+    campaign_name <- input$campaign_name
+    start_date    <- input$start_date
+    end_date      <- input$end_date
+    template_url  <- input$zs_template_url
+    prov_target   <- input$selected_provinces
+    ant_target    <- input$selected_ant
+    zs_target     <- input$selected_zs
+    gdb           <- geo_data_reactive()
 
-    tryCatch(
+    withTaskButton(session, "create_campaign", label_busy = "En cours...", {
+         tryCatch(
       {
         zs_masque_dribble <- googledrive::drive_get(stringr::str_trim(input$zs_template_url))
         campagne_folder_url <- drive_init_campaign(
@@ -516,18 +522,20 @@ server <- function(input, output, session) {
           zs_masque = zs_masque_dribble
         )
 
-        showNotification("Campagne initialis\u00e9e avec succ\u00e8s",
-                         type = "message")
-        output$campagne_folder_url <- renderUI({tagList(a("Lien vers le dossier Campagne", href = campagne_folder_url))})
+        session$sendCustomMessage("taskBtnReady", list(id = "create_campaign_wrapper"))
+        showNotification("Campagne initialis\u00e9e avec succ\u00e8s", type = "message")
+        output$campagne_folder_url <- renderUI({
+          tagList(a("Lien vers le dossier Campagne", href = campagne_folder_url))
+        })
       },
       error = function(e) {
-        showNotification(paste("Erreur - " , "Quelque chose s'est mal pass\u00e9:", e$message),
-                         type = "error",
-                         duration = NULL)
-
+        session$sendCustomMessage("taskBtnReady", list(id = "create_campaign_wrapper"))
+        showNotification(paste("Erreur:", e$message), type = "error", duration = NULL)
       }
     )
+    })
   })
+
 
   ##### Geographic table editing ----
 
@@ -957,23 +965,27 @@ observeEvent(input$download_geo,{
   ###### Display available campaigns ----
   output$campaign_drive_picker <- renderUI({
     folders <- campaign_drive_folders()
-    selectInput(
-      "selected_campaign_drive_folder",
-      NULL,
-      choices = folders$name
+   column(3,
+      shiny.fluent::Dropdown.shinyInput(
+        "selected_campaign_drive_folder",
+        options = map(folders$name, ~ list(key = .x, text = .x)),
+        value = folders$name[1]
+      )
     )
-  })
+})
 
   ###### Display available campaigns in the surveillance tab ----
   output$campaign_surveillance <- renderUI({
-    shiny.fluent::Dropdown.shinyInput(
+  column(3,
+  shiny.fluent::Dropdown.shinyInput(
   inputId = "selected_surveillance_drive_folder",
   label = shiny::h6("Campagne"),
   options = lapply(
     campaign_drive_folders()$name,
     function(x) list(key = x, text = x)
-  )
-)
+                )
+              )
+      )
   })
   output$refresh_date <- renderText({
     refresh_status()
@@ -1381,8 +1393,12 @@ observeEvent(input$download_geo,{
 
     showNotification("Veuillez patienter pendant que les autorisations sont d\u00e9finies...",
                      type = "default")
-
-
+    
+    withTaskButton(
+      session,
+      inputId = "set_permissions_btn",
+      label_busy = "En cours...",
+      {
     folders <- campaign_drive_folders()
     files <- drive_files()
 
@@ -1402,8 +1418,9 @@ observeEvent(input$download_geo,{
       files <- googledrive::drive_reveal(files, what = "path")
       drive_files(files)
     }
-
+        
     tryCatch(
+
       {
         set_permissions(
           input$selected_campaign_drive_folder,
@@ -1420,7 +1437,10 @@ observeEvent(input$download_geo,{
             paste("Erreur - Quelque chose s'est mal pass\u00e9:", e$message),
             type = "error")
       }
-    )
+     )
+    }
+  )
+    
   })
 
   ###### Undo/redo/clear all perm table ----
@@ -1468,9 +1488,16 @@ observeEvent(input$download_geo,{
   observeEvent(input$compile_campaign_btn, {
     req(input$selected_surveillance_drive_folder)
 
+   withTaskButton(
+    session,
+    "compile_campaign_btn",
+    label_busy = "En cours...",
+    {
+      
     surveillance_folder <- campaign_drive_folders() |>
-      dplyr::filter(name == input$selected_surveillance_drive_folder)
-
+      dplyr::filter(name == input$selected_surveillance_drive_folder) 
+    
+      
     withProgress(
       {
         compile_start <- Sys.time()
@@ -1511,7 +1538,11 @@ observeEvent(input$download_geo,{
         showNotification("Traitement termin\u00e9", type = "message")
       }
     )
-  })
+    
+   }
+
+  )
+})
 
   ##### Download current data quality monitoring table ----
 
