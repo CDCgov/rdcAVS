@@ -134,9 +134,9 @@ ui_monitoring <- function() {
               style = list(fontWeight = "600", color = "#201f1e")
             ),
               uiOutput("campaign_surveillance"),
-              shiny.fluent::PrimaryButton.shinyInput(
-              inputId = "compile_campaign_btn",
-              text = "Compiler des masques",
+              taskButton(
+              "compile_campaign_btn",
+              label = "Compiler des masques",
               iconProps = list(iconName = "CompactDisc")
              ),
           shiny.fluent::Stack(
@@ -164,19 +164,19 @@ ui_monitoring <- function() {
                   ),
                   tags$h3(
                     class = "fluent-accordion-title",
-                    "Informations sur la complétude"
+                    "Informations sur la compl\u00e9tude"
                   )
                 ),
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               tags$div(
                 class = "fluent-accordion-content",
                 tags$div(
                   class = "fluent-download-btn",
-                  icon_btn("click_download_data_quality_monitoring", "Download", "Télécharger", type = "success")
+                  icon_btn("click_download_data_quality_monitoring", "Download", "T\u00e9l\u00e9charger", type = "success")
                 ),
                 DT::DTOutput("campaign_info_table")                
               )
@@ -203,7 +203,7 @@ ui_monitoring <- function() {
                 
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               
@@ -211,7 +211,7 @@ ui_monitoring <- function() {
                 class = "fluent-accordion-content",                
                 tags$div(
                   class = "fluent-download-btn",
-                  icon_btn("click_download_campaign_quality_monitoring", "Download", "Télécharger", type = "success")
+                  icon_btn("click_download_campaign_quality_monitoring", "Download", "T\u00e9l\u00e9charger", type = "success")
                 ),
                 DT::DTOutput("campaign_progress_table")                
               )
@@ -238,7 +238,7 @@ ui_monitoring <- function() {
                 
                 tags$span(
                   class = "fluent-accordion-chevron",
-                  "▼"
+                  "\u25BC"
                 )
               ),
               
@@ -248,17 +248,17 @@ ui_monitoring <- function() {
                   class = "selector-group",
                   shiny.fluent::Dropdown.shinyInput(
                     inputId = "prov_selector_campaign_completeness",
-                    label = "Sélectionner une province:",
+                    label = "S\u00e9lectionner une province:",
                     options = list()
                   ),
                   shiny.fluent::Dropdown.shinyInput(
                     inputId = "ant_selector_campaign_completeness",
-                    label = "Sélectionner une antenne:",
+                    label = "S\u00e9lectionner une antenne:",
                     options = list()
                   ),
                   shiny.fluent::Dropdown.shinyInput(
                     inputId = "zs_selector_campaign_completeness",
-                    label = "Sélectionner une zone de sante:",
+                    label = "S\u00e9lectionner une zone de sante:",
                     options = list()
                   )
                 ),
@@ -274,11 +274,11 @@ ui_monitoring <- function() {
                       plotOutput("campaign_completeness_plot_daily", height = "700px")
                     ),
                     shiny.fluent::PivotItem(
-                      headerText = "Nb moyen d'enfants vaccinés/équipe",
+                      headerText = "Nb moyen d'enfants vaccin\u00e9s/\u00e9quipe",
                       plotOutput("campaign_urban_rural_plot", height = "700px")
                     ),
                     shiny.fluent::PivotItem(
-                      headerText = "Récupérations",
+                      headerText = "R\u00e9cup\u00e9rations",
                       plotOutput("campaign_recovery_plot", height = "700px")
                     )
                   )

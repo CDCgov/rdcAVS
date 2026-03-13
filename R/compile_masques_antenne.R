@@ -55,7 +55,7 @@ compile_masques_antenne <- function(campaign_name) {
 
     # Compile masques
     # Compile all templates for one sheet at a time
-    withProgress(message = "Compilation des données dans: ",
+    withProgress(message = "Compilation des donn\u00e9es dans: ",
                  {
                    n <- length(tab_names)
                    for (j in 1:n) {
@@ -67,7 +67,7 @@ compile_masques_antenne <- function(campaign_name) {
                    }
                  })
   }
-  showNotification("Masques au niveau des antennes compilés", type = "message")
+  showNotification("Masques au niveau des antennes compil\u00e9es", type = "message")
 
   return(invisible())
 }

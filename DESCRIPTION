@@ -1,6 +1,6 @@
 Package: rdcAVS
 Title: SIA Campaign Builder for DRC
-Version: 0.0.0.9008
+Version: 0.0.0.9009
 Authors@R: 
     person("Mervin Keith", "Cuadera", , "xrg9@cdc.com", role = c("aut", "cre"))
 Description: This app assists in creating campaigns and setting permissions for 
@@ -22,22 +22,26 @@ Imports:
     foreach,
     fs,
     future,
+    ggplot2,
     ggpubr,
     googledrive,
     googlesheets4,
     httr,
     lubridate,
+    openxlsx,
     pkgload,
     progressr,
     purrr,
     rappdirs,
     readr,
+    scales,
     shiny,
     shiny.fluent,
     shinyFiles,
     shinyjs,
     stringr,
-    tidyr
+    tidyr,
+    utils
 Suggests:
     stringi
 URL: https://mcuadera.github.io/rdcAVS/

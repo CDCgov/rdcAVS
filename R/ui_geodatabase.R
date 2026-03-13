@@ -1,7 +1,7 @@
 
 ui_geodatabase <- function() {
   nav_panel(
-    "Informations Géographiques",br(),
+    "Informations G\u00e9ographiques",br(),
     Stack(
       tokens = list(childrenGap = 14),
       MessageBar(
@@ -22,7 +22,7 @@ ui_geodatabase <- function() {
             horizontal = TRUE,
             verticalAlign = "center",
             tokens = list(childrenGap = 6),
-            Text("Vous pouvez télécharger au besoin un template"),
+            Text("Vous pouvez t\u00e9l\u00e9charger au besoin un template"),
             actionLink(
               "download_template_link",
               "ici",
@@ -36,12 +36,12 @@ ui_geodatabase <- function() {
           tokens = list(childrenGap = 10),
 
           Text(variant = "large", "Charger un fichier CSV"),
-          Text("Veuillez charger un fichier CSV avec les informations géographiques."),
+          Text("Veuillez charger un fichier CSV avec les informations g\u00e9ographiques."),
           fileInput(
             "upload_geo",
             label = NULL,
             accept = ".csv",
-            buttonLabel = "Parcourir…",
+            buttonLabel = "Parcourir...",
             placeholder = "Aucun fichier choisi"
           )
         )
@@ -55,12 +55,12 @@ ui_geodatabase <- function() {
             verticalAlign = "center",
             tokens = list(childrenGap = 8),
 
-            icon_btn("delete_row", "Delete", "Supprimer la sélection", type = "danger"),
+            icon_btn("delete_row", "Delete", "Supprimer la s\u00e9lection", type = "danger"),
             icon_btn("undo_geo", "Undo", "Annuler", type = "primary"),
-            icon_btn("redo_geo", "Redo", "Rétablir", type = "primary"),
+            icon_btn("redo_geo", "Redo", "R\u00e9tablir", type = "primary"),
             icon_btn("clear_geo", "DeleteRows", "Tout effacer", type = "danger"),
-            icon_btn("download_geo", "Download", "Télécharger", type = "success"),
-            icon_btn("add_row_question", "Add", "Ajouter une entrée", type = "success")
+            icon_btn("download_geo", "Download", "T\u00e9l\u00e9charger", type = "success"),
+            icon_btn("add_row_question", "Add", "Ajouter une entr\u00e9e", type = "success")
           ),
           div(
             id = "add_new_row",
@@ -76,7 +76,7 @@ ui_geodatabase <- function() {
               Stack(
                 tokens = list(childrenGap = 12),
 
-                Text(variant = "mediumPlus", "Nouvelle entrée"),
+                Text(variant = "mediumPlus", "Nouvelle entr\u00e9e"),
 
                 Stack(
                   horizontal = TRUE,
@@ -103,16 +103,16 @@ ui_geodatabase <- function() {
                     style = "flex:1; min-width:240px;",
                     TextField.shinyInput(
                       "new_zs",
-                      label = "Zones de santé",
-                      placeholder = "Veuillez entrer le nom de la Zones de santé ici"
+                      label = "Zones de sant\u00e9",
+                      placeholder = "Veuillez entrer le nom de la Zones de sant\u00e9 ici"
                     )
                   ),
                   div(
                     style = "flex:1; min-width:240px;",
                     TextField.shinyInput(
                       "new_as",
-                      label = "Aires de santé",
-                      placeholder = "Veuillez entrer le nom de l'aire de santé ici"
+                      label = "Aires de sant\u00e9",
+                      placeholder = "Veuillez entrer le nom de l'aire de sant\u00e9 ici"
                     )
                   ),
                   div(

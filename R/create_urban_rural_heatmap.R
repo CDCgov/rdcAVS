@@ -6,15 +6,15 @@ create_urban_rural_heatmap <- function(summary) {
            cat_rural = case_when(
              between(avg_vax_rural, 1, 99) ~ "Objectif Non Atteint",
              avg_vax_rural >= 100 ~ "Bien",
-             .default = "Zéro"
+             .default = "Z\u00e9ro"
            ),
-           cat_rural = factor(cat_rural, levels = c("Bien", "Objectif Non Atteint", "Zéro")),
+           cat_rural = factor(cat_rural, levels = c("Bien", "Objectif Non Atteint", "Z\u00e9ro")),
            cat_urban = case_when(
              between(avg_vax_urban, 1, 199) ~ "Objectif Non Atteint",
              avg_vax_urban >= 200 ~ "Bien",
-             .default = "Zéro"
+             .default = "Z\u00e9ro"
            ),
-           cat_urban = factor(cat_urban, levels = c("Bien", "Objectif Non Atteint", "Zéro")),
+           cat_urban = factor(cat_urban, levels = c("Bien", "Objectif Non Atteint", "Z\u00e9ro")),
            avg_vax_rural = round(avg_vax_rural),
            avg_vax_urban = round(avg_vax_urban)
     ) |>
@@ -22,7 +22,7 @@ create_urban_rural_heatmap <- function(summary) {
 
   rural_plot <- ggplot2::ggplot(data = plot_data) +
     ggplot2::geom_tile(ggplot2::aes(y =aire_de_sante, x = jour, fill = cat_rural), show.legend = TRUE) +
-    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E", "Objectif Non Atteint" = "#ED2938"),
+    ggplot2::scale_fill_manual(values = c("Z\u00e9ro" = "lightgrey", "Bien" = "#006B3E", "Objectif Non Atteint" = "#ED2938"),
                                name = "Statut") +
     ggplot2::geom_text(ggplot2::aes(y = aire_de_sante, x = jour, label = avg_vax_rural), size = 8) +
     ggplot2::theme_void() +
@@ -40,7 +40,7 @@ create_urban_rural_heatmap <- function(summary) {
 
   urban_plot <- ggplot2::ggplot(data = plot_data) +
     ggplot2::geom_tile(ggplot2::aes(y =aire_de_sante, x = jour, fill = cat_urban), show.legend = TRUE) +
-    ggplot2::scale_fill_manual(values = c("Zéro" = "lightgrey", "Bien" = "#006B3E", "Objectif Non Atteint" = "#ED2938"),
+    ggplot2::scale_fill_manual(values = c("Z\u00e9ro" = "lightgrey", "Bien" = "#006B3E", "Objectif Non Atteint" = "#ED2938"),
                                name = "Statut") +
     ggplot2::geom_text(ggplot2::aes(y = aire_de_sante, x = jour, label = avg_vax_urban), size = 8) +
     ggplot2::theme_void() +

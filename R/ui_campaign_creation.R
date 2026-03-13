@@ -1,6 +1,6 @@
 ui_campaign_creation <- function() {
   nav_panel(
-    "Créer Une Campagne",
+    "Cr\u00e9er Une Campagne",
     Stack(
       tokens = list(childrenGap = 14),
       br(),      
@@ -24,7 +24,7 @@ ui_campaign_creation <- function() {
             style = "flex:1; min-width:220px;",
             DatePicker.shinyInput(
               "start_date",
-              label = "Début",
+              label = "D\u00e9but",
               isRequired = TRUE
             )
           ),          
@@ -52,7 +52,7 @@ ui_campaign_creation <- function() {
                   Text(variant = "mediumPlus", "Provinces"),
                   DefaultButton.shinyInput(
                     "select_all_prov",
-                    text = "Tout sélectionner / désélectionner",
+                    text = "Tout s\u00e9lectionner / d\u00e9s\u00e9lectionner",
                     iconProps = list(iconName = "CheckList")
                   ),
                   div(
@@ -72,7 +72,7 @@ ui_campaign_creation <- function() {
                   Text(variant = "mediumPlus", "Antennes"),
                   DefaultButton.shinyInput(
                     "select_all_ant",
-                    text = "Tout sélectionner / désélectionner",
+                    text = "Tout s\u00e9lectionner / d\u00e9s\u00e9lectionner",
                     iconProps = list(iconName = "CheckList")
                   ),
                   div(
@@ -89,10 +89,10 @@ ui_campaign_creation <- function() {
           div(
             style = "flex:1; min-width:260px;",
             Stack(tokens = list(childrenGap = 6),
-                  Text(variant = "mediumPlus", "Zones de santé"),
+                  Text(variant = "mediumPlus", "Zones de sant\u00e9"),
                   DefaultButton.shinyInput(
                     "select_all_zs",
-                    text = "Tout sélectionner / désélectionner",
+                    text = "Tout s\u00e9lectionner / d\u00e9s\u00e9lectionner",
                     iconProps = list(iconName = "CheckList")
                   ),
                   div(
@@ -117,17 +117,17 @@ ui_campaign_creation <- function() {
             style = "flex:2; min-width:300px;",
             TextField.shinyInput(
               "zs_template_url",
-              label = "Adresse URL du modèle de masque",
-              placeholder = "https://…",
+              label = "Adresse URL du mod\u00e8le de masque",
+              placeholder = "https://...",
               iconProps = list(iconName = "Link")
             )
           ),
           
           div(
             style = "flex:1; min-width:240px;",
-            PrimaryButton.shinyInput(
+            taskButton(
               "create_campaign",
-              text = "Créer une campagne",
+              label = "Cr\u00e9er une campagne",
               iconProps = list(iconName = "Rocket")
             )
           )

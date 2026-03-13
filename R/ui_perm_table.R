@@ -1,12 +1,12 @@
 
 ui_perm_table <- function() {
   nav_panel(
-    "Gérer les Autorisations",br(),
+    "G\u00e9rer les Autorisations",br(),
 
     Stack(
       tokens = list(childrenGap = 14),
 
-      Text(variant = "xLarge", "Gérer les Niveaux d'Autorisation"),
+      Text(variant = "xLarge", "G\u00e9rer les Niveaux d'Autorisation"),
 
       fluent_card(
         Stack(
@@ -18,8 +18,8 @@ ui_perm_table <- function() {
             "upload_permissions",
             label = NULL,
             accept = ".csv",
-            buttonLabel = "Parcourir…",
-            placeholder = "Aucun fichier sélectionné"
+            buttonLabel = "Parcourir...",
+            placeholder = "Aucun fichier s\u00e9lectionn\u00e9"
           ),
 
           MessageBar(
@@ -27,15 +27,15 @@ ui_perm_table <- function() {
             isMultiline = TRUE,
             styles = list(text = list(fontSize = 14, lineHeight = "1.55")),
             Stack(tokens = list(childrenGap = 6),
-              Text('Si le niveau est "national", les zones géographiques sont facultatives.'),
-              Text("Une zone géographique valide doit être incluse dans les autres niveaux."),
-              Text('Exemple : si le niveau est "zone de santé", incluez une valeur pour "province", "antenne" et "zone de santé".')
+              Text('Si le niveau est "national", les zones g\u00e9ographiques sont facultatives.'),
+              Text("Une zone g\u00e9ographique valide doit \u00eatre incluse dans les autres niveaux."),
+              Text('Exemple : si le niveau est "zone de sant\u00e9", incluez une valeur pour "province", "antenne" et "zone de sant\u00e9".')
             ),br(),
             Stack(
             horizontal = TRUE,
             verticalAlign = "center",
             tokens = list(childrenGap = 6),
-            Text("Vous pouvez télécharger au besoin un template"),
+            Text("Vous pouvez t\u00e9l\u00e9charger au besoin un template"),
             actionLink(
               "download_template_link_permissions",
               "ici",
@@ -58,12 +58,12 @@ ui_perm_table <- function() {
             verticalAlign = "center",
             tokens = list(childrenGap = 8),
 
-            icon_btn("delete_permission", "Delete", "Supprimer la sélection", type = "danger"),
+            icon_btn("delete_permission", "Delete", "Supprimer la s\u00e9lection", type = "danger"),
             icon_btn("undo_perm", "Undo", "Annuler", type = "primary"),
-            icon_btn("redo_perm", "Redo", "Rétablir", type = "primary"),
+            icon_btn("redo_perm", "Redo", "R\u00e9tablir", type = "primary"),
             icon_btn("clear_perm", "DeleteRows", "Tout effacer", type = "danger"),
-            icon_btn("press_download_permissions", "Download", "Télécharger", type = "success"),
-            icon_btn("add_row_question_perm", "Add", "Ajouter une entrée", type = "success")
+            icon_btn("press_download_permissions", "Download", "T\u00e9l\u00e9charger", type = "success"),
+            icon_btn("add_row_question_perm", "Add", "Ajouter une entr\u00e9e", type = "success")
           ),
           br(),
           div(
@@ -91,11 +91,11 @@ ui_perm_table <- function() {
             ),
             div(
               style = "flex:1; min-width:240px;",
-              TextField.shinyInput("perm_phone", label = "Phone", placeholder = "+243…")
+              TextField.shinyInput("perm_phone", label = "Phone", placeholder = "+243...")
             ),
             div(
               style = "flex:2; min-width:280px;",
-              TextField.shinyInput("perm_notes", label = "Notes", placeholder = "Affiliation, Poste, etc…")
+              TextField.shinyInput("perm_notes", label = "Notes", placeholder = "Affiliation, Poste, etc...")
             )
           ),
 
@@ -144,7 +144,7 @@ ui_perm_table <- function() {
                 Dropdown.shinyInput(
                   "perm_province",
                   label = "Province",
-                  placeholder = "Sélectionnez une province",
+                  placeholder = "S\u00e9lectionnez une province",
                   options = list(),
                   required = TRUE
                 )
@@ -157,7 +157,7 @@ ui_perm_table <- function() {
                 Dropdown.shinyInput(
                   "perm_antenne",
                   label = "Antenne",
-                  placeholder = "Sélectionnez une antenne",
+                  placeholder = "S\u00e9lectionnez une antenne",
                   required = TRUE,
                   options = list()
                 )
@@ -170,8 +170,8 @@ ui_perm_table <- function() {
                 style = "flex:1; min-width:240px;",
                 Dropdown.shinyInput(
                   "perm_zs",
-                  label = "Zones de Santé",
-                  placeholder = "Sélectionnez une zone de santé",
+                  label = "Zones de Sant\u00e9",
+                  placeholder = "S\u00e9lectionnez une zone de sant\u00e9",
                   options = list(),
                   required = TRUE
                 )
@@ -185,7 +185,7 @@ ui_perm_table <- function() {
 
             PrimaryButton.shinyInput(
               "add_permission",
-              text = "Ajouter une entrée",
+              text = "Ajouter une entr\u00e9e",
               iconProps = list(iconName = "Add")
             )
           )
@@ -203,21 +203,17 @@ ui_perm_table <- function() {
         Stack(
           tokens = list(childrenGap = 12),
 
-          Text(variant = "xLarge", "Sélection de Campagne"),
-
+          Text(variant = "xLarge", "S\u00e9lection de Campagne"),
           uiOutput("campaign_drive_picker"),
-
           Stack(
             horizontal = TRUE,
             wrap = TRUE,
             tokens = list(childrenGap = 10),
-
-            PrimaryButton.shinyInput(
+            taskButton(
               "set_permissions_btn",
-              text = "Définir l'autorisation",
+              label = "D\u00e9finir l'autorisation",
               iconProps = list(iconName = "Permissions")
             ),
-
             DefaultButton.shinyInput(
               "refresh_drive",
               text = "Actualiser",
