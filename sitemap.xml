@@ -16,6 +16,7 @@
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/create_campaign_progress_heatmap.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/create_daily_campaign_progress_heatmap.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/create_masque_database.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/data_perm.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_cp_zs_template_parallel.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_init_campaign.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/drive_mkdir_parallel.html</loc></url>
@@ -35,6 +36,11 @@
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/rdcAVS-package.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/set_permissions.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/set_permissions_parallel.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/taskButton.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/task_button_css.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/task_button_js.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/template_data_geographics.html</loc></url>
 <url><loc>https://mcuadera.github.io/rdcAVS/reference/validate_geography.html</loc></url>
+<url><loc>https://mcuadera.github.io/rdcAVS/reference/withTaskButton.html</loc></url>
 </urlset>
 
