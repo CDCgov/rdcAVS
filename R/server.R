@@ -710,7 +710,8 @@ server <- function(input, output, session) {
       paste("template_geographic",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-       write.csv(template_data_geographics,file,row.names = FALSE)
+      x <- get("template_data_geographics", envir = asNamespace("rdcAVS"))
+       write.csv(x,file,row.names = FALSE)
     }
   )
 
@@ -1380,7 +1381,8 @@ observeEvent(input$download_geo,{
       paste("template_permissions",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-       write.csv(data_perm,file,row.names = FALSE)
+       y <- get("data_perm", envir = asNamespace("rdcAVS"))
+       write.csv(y,file,row.names = FALSE)
     }
   )
 
