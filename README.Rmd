@@ -29,7 +29,7 @@ You can install the development version of rdcAVS from [GitHub](https://github.c
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mcuadera/rdcAVS")
+devtools::install_github("CDCGov/rdcAVS")
 ```
 
 ## Example

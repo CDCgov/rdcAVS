@@ -2,6 +2,7 @@ rdcAVS
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -23,7 +24,7 @@ You can install the development version of rdcAVS from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mcuadera/rdcAVS")
+devtools::install_github("CDCGov/rdcAVS")
 ```
 
 ## Example

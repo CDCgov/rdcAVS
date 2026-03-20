@@ -7,7 +7,7 @@
 #'
 check_new_version <- function(local_version = get_app_version()) {
   # Replace with your actual GitHub raw URL
-  remote_desc_url <- "https://raw.githubusercontent.com/mcuadera/rdcAVS/refs/heads/master/DESCRIPTION"
+  remote_desc_url <- "https://raw.githubusercontent.com/CDCGov/rdcAVS/refs/heads/master/DESCRIPTION"
 
   remote_desc <- tryCatch({
     read.dcf(url(remote_desc_url), fields = "Version")
