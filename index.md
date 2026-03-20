@@ -15,7 +15,7 @@ You can install the development version of rdcAVS from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mcuadera/rdcAVS")
+devtools::install_github("CDCGov/rdcAVS")
 ```
 
 ## Example

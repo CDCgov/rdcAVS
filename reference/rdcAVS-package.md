@@ -12,3 +12,8 @@ Useful links:
 ## Author
 
 **Maintainer**: Mervin Keith Cuadera <xrg9@cdc.com>
+([ORCID](https://orcid.org/0000-0003-4898-2659))
+
+Authors:
+
+- Aureol-Le-Rocher Ngako Njiacheu <aureollerocher@gmail.com>
