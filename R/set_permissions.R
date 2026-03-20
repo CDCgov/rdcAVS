@@ -83,6 +83,7 @@ set_permissions <- function(campaign_name,
 
   dribble_files <- dribble_files |>
     dplyr::mutate(dir_path = ifelse(stringr::str_ends(path, "/"), path, paste0(fs::path_dir(path), "/"))) |>
+     dplyr::mutate(path = stringr::str_to_upper(path)) |>
     googledrive::drive_reveal("mimeType")
   files_for_zs_editors <- dribble_files |>
     dplyr::filter(str_ends(mime_type, "spreadsheet")) |>
