@@ -16,7 +16,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Mervin Keith Cuadera \email{xrg9@cdc.com}
+\strong{Maintainer}: Mervin Keith Cuadera \email{xrg9@cdc.com} (\href{https://orcid.org/0000-0003-4898-2659}{ORCID})
+
+Authors:
+\itemize{
+  \item Aureol-Le-Rocher Ngako Njiacheu \email{aureollerocher@gmail.com}
+}
 
 }
 \keyword{internal}
