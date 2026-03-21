@@ -1718,6 +1718,8 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
   #### Plots ----
   output$campaign_completeness_plot <- renderPlot(
     {
+      req(input$prov_selector_campaign_completeness)
+      req(input$zs_selector_campaign_completeness)
 
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
@@ -1736,6 +1738,9 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_completeness_plot_daily <- renderPlot(
     {
+
+      req(input$prov_selector_campaign_completeness)
+      req(input$zs_selector_campaign_completeness)
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
@@ -1749,6 +1754,9 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_urban_rural_plot <- renderPlot(
     {
+       req(input$prov_selector_campaign_completeness)
+       req(input$zs_selector_campaign_completeness)
+
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
@@ -1763,6 +1771,8 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_recovery_plot <- renderPlot(
     {
+       req(input$prov_selector_campaign_completeness)
+       req(input$zs_selector_campaign_completeness)
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
