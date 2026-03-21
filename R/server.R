@@ -127,9 +127,13 @@ server <- function(input, output, session) {
       aire_de_sante = character(),
       jour = character(),
       rapport_completude_pct = numeric(),
+      couverture_campagne_pct = numeric(), # Was missing
       couverture_campaign_cumulative = numeric(),
       avg_vax_rural = numeric(),
       avg_vax_urban = numeric(),
+      recovery_0_11 = numeric(),      # Was missing and was returning an error at the start of the app 
+      recovery_12_23 = numeric(),     # Was missing
+      recovery_24_59 = numeric(),     # Was missing
       recovery_0_11_cumulative = numeric(),
       recovery_12_23_cumulative = numeric(),
       recovery_24_59_cumulative = numeric(),
@@ -342,7 +346,7 @@ server <- function(input, output, session) {
     filtered_zs_p <- if (!is.null(selected_prov) &&
                          length(selected_prov) > 0) {
       current_data |>
-        filter(provinces %in% selected_prov) |>
+        filter(provinces %in% selected_prov,antennes %in% input$perm_antenne) |>
         pull(zones_de_sante) |>
         unique()
     } else {
@@ -395,12 +399,14 @@ server <- function(input, output, session) {
       options  = lapply(x <- filtered_campaign_ant,
                 function(x) list(key = x, text = x)
               ),
-      value = if (is.null(isolate(input$ant_selector_campaign_completeness))) {
-                    filtered_campaign_ant[1]
-                  } else {
-                  isolate(input$ant_selector_campaign_completeness)
+      value = {
+          current <- isolate(input$ant_selector_campaign_completeness)
+          if (!is.null(current) && current %in% filtered_campaign_ant) {
+          current
+          } else {
+            filtered_campaign_ant[1]
+        }
       }
-    #  value = isolate(input$ant_selector_campaign_completeness)
     )
 
     
@@ -703,15 +709,16 @@ server <- function(input, output, session) {
     shinyjs::click("download_template")
   })
 
-
+  data("template_data_geographics", package = "rdcAVS", envir = globalenv())
+  data("data_perm", package = "rdcAVS", envir = globalenv())
 
   output$download_template <- downloadHandler(
     filename = function(){
       paste("template_geographic",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-      x <- get("template_data_geographics", envir = asNamespace("rdcAVS"))
-       write.csv(x,file,row.names = FALSE)
+     # x <- get("template_data_geographics", envir = asNamespace("rdcAVS"))
+       write.csv(template_data_geographics,file,row.names = FALSE)
     }
   )
 
@@ -1381,8 +1388,8 @@ observeEvent(input$download_geo,{
       paste("template_permissions",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-       y <- get("data_perm", envir = asNamespace("rdcAVS"))
-       write.csv(y,file,row.names = FALSE)
+      # y <- get("data_perm", envir = asNamespace("rdcAVS"))
+       write.csv(data_perm,file,row.names = FALSE)
     }
   )
 
@@ -1718,6 +1725,8 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
   #### Plots ----
   output$campaign_completeness_plot <- renderPlot(
     {
+      req(input$prov_selector_campaign_completeness)
+      req(input$zs_selector_campaign_completeness)
 
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
@@ -1736,6 +1745,9 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_completeness_plot_daily <- renderPlot(
     {
+
+      req(input$prov_selector_campaign_completeness)
+      req(input$zs_selector_campaign_completeness)
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
@@ -1749,6 +1761,9 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_urban_rural_plot <- renderPlot(
     {
+       req(input$prov_selector_campaign_completeness)
+       req(input$zs_selector_campaign_completeness)
+
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
@@ -1763,6 +1778,8 @@ observeEvent(input$click_download_campaign_quality_monitoring,{
 
   output$campaign_recovery_plot <- renderPlot(
     {
+       req(input$prov_selector_campaign_completeness)
+       req(input$zs_selector_campaign_completeness)
       validate(
         need(!is.null(campaign_quality()), "No campaign quality data."),
         need(nrow(campaign_quality()) > 0, "No campaign quality data.")
