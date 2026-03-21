@@ -342,7 +342,7 @@ server <- function(input, output, session) {
     filtered_zs_p <- if (!is.null(selected_prov) &&
                          length(selected_prov) > 0) {
       current_data |>
-        filter(provinces %in% selected_prov) |>
+        filter(provinces %in% selected_prov,antennes %in% input$perm_antenne) |>
         pull(zones_de_sante) |>
         unique()
     } else {
