@@ -395,12 +395,14 @@ server <- function(input, output, session) {
       options  = lapply(x <- filtered_campaign_ant,
                 function(x) list(key = x, text = x)
               ),
-      value = if (is.null(isolate(input$ant_selector_campaign_completeness))) {
-                    filtered_campaign_ant[1]
-                  } else {
-                  isolate(input$ant_selector_campaign_completeness)
+      value = {
+          current <- isolate(input$ant_selector_campaign_completeness)
+          if (!is.null(current) && current %in% filtered_campaign_ant) {
+          current
+          } else {
+            filtered_campaign_ant[1]
+        }
       }
-    #  value = isolate(input$ant_selector_campaign_completeness)
     )
 
     
