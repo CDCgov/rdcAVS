@@ -709,15 +709,16 @@ server <- function(input, output, session) {
     shinyjs::click("download_template")
   })
 
-
+  data("template_data_geographics", package = "rdcAVS", envir = globalenv())
+  data("data_perm", package = "rdcAVS", envir = globalenv())
 
   output$download_template <- downloadHandler(
     filename = function(){
       paste("template_geographic",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-      x <- get("template_data_geographics", envir = asNamespace("rdcAVS"))
-       write.csv(x,file,row.names = FALSE)
+     # x <- get("template_data_geographics", envir = asNamespace("rdcAVS"))
+       write.csv(template_data_geographics,file,row.names = FALSE)
     }
   )
 
@@ -1387,8 +1388,8 @@ observeEvent(input$download_geo,{
       paste("template_permissions",Sys.Date(),".csv",sep = "")
     },
     content = function(file){
-       y <- get("data_perm", envir = asNamespace("rdcAVS"))
-       write.csv(y,file,row.names = FALSE)
+      # y <- get("data_perm", envir = asNamespace("rdcAVS"))
+       write.csv(data_perm,file,row.names = FALSE)
     }
   )
 

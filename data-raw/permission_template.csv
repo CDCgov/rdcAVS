@@ -1,0 +1,5 @@
+name,phone,notes,email,level,role,province,antenne,zone_de_sante
+Test Level zone de sante,8175149870,Data manager_ZS,paul08@gmail.com,zone de sante,writer,PROVINCE1,ANTENNE1,ZONE SANTE 1
+Test Level Antenne,82231416576,Data manager_ANTENNE,km34@gmail.com,antenne,reader,PROVINCE2,ANTENNE2,
+Test Level Province,814649110,Data manger_PROVINCE,kwa@gmail.com,province,reader,PROVINCE1,,
+Test Level National,,partenaire,auer@gmail.com,national,writer,,,
