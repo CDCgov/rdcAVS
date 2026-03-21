@@ -127,9 +127,13 @@ server <- function(input, output, session) {
       aire_de_sante = character(),
       jour = character(),
       rapport_completude_pct = numeric(),
+      couverture_campagne_pct = numeric(), # Was missing
       couverture_campaign_cumulative = numeric(),
       avg_vax_rural = numeric(),
       avg_vax_urban = numeric(),
+      recovery_0_11 = numeric(),      # Was missing and was returning an error at the start of the app 
+      recovery_12_23 = numeric(),     # Was missing
+      recovery_24_59 = numeric(),     # Was missing
       recovery_0_11_cumulative = numeric(),
       recovery_12_23_cumulative = numeric(),
       recovery_24_59_cumulative = numeric(),
